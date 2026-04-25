@@ -4,6 +4,8 @@
 
 Generate interviewer voice audio for a question only when the candidate reaches that question.
 
+The voice should support the benchmark-driven interview experience: serious, professional, strict, and focused on the question being asked.
+
 ## Scope
 
 Implement only:
@@ -24,6 +26,8 @@ Do not implement:
 - Answer evaluation.
 - Realtime voice conversation.
 - Voice cloning.
+- Benchmark analysis.
+- Question generation.
 
 ## Files Likely Involved
 
@@ -50,6 +54,7 @@ Use existing `interview_questions.tts_object_key`.
 - [ ] Mock mode works without OpenAI API key.
 - [ ] Real mode uses configured TTS model and voice settings.
 - [ ] Repeated calls should not regenerate audio unnecessarily if already available.
+- [ ] The generated voice uses a strict, professional interviewer style.
 - [ ] No candidate transcription or evaluation is added.
 
 ## Verification
@@ -70,3 +75,4 @@ curl -X POST http://localhost:8000/api/questions/{question_id}/tts
 
 - Use a professional, strict interviewer tone.
 - Do not expose permanent object storage credentials.
+- Do not add realtime voice or voice cloning.
