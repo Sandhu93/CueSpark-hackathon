@@ -2,7 +2,7 @@
 
 ## Goal
 
-Expose candidate answer transcript, communication metrics, and evaluation result to the frontend.
+Expose candidate answer transcript, communication metrics, and benchmark-aware evaluation result to the frontend.
 
 ## Scope
 
@@ -11,6 +11,7 @@ Implement only:
 - `GET /api/answers/{answer_id}`.
 - Response schema for answer details.
 - Include evaluation if available.
+- Include benchmark gap coverage score if available.
 - 404 handling for unknown answer.
 
 ## Out of Scope
@@ -21,6 +22,7 @@ Do not implement:
 - Final report generation.
 - Frontend UI.
 - Reprocessing endpoints.
+- Benchmark comparison generation.
 
 ## Files Likely Involved
 
@@ -43,6 +45,7 @@ None.
 - [ ] Endpoint returns transcript when available.
 - [ ] Endpoint returns communication metrics when available.
 - [ ] Endpoint returns evaluation when available.
+- [ ] Evaluation response includes benchmark gap coverage score when available.
 - [ ] Unknown answer returns 404.
 - [ ] Endpoint does not trigger transcription or evaluation.
 - [ ] No AI call happens in this task.
@@ -65,3 +68,4 @@ curl http://localhost:8000/api/answers/{answer_id}
 
 - This endpoint is read-only.
 - Keep response stable for frontend integration.
+- Do not generate or modify benchmark comparison data here.
