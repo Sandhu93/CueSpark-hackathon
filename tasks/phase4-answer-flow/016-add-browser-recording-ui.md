@@ -1,12 +1,41 @@
-# Task: Add Browser Audio Recording UI
+# Deprecated Task: Add Browser Audio Recording UI
 
-## Goal
+## Status
 
-Add a frontend component that records candidate answers from the browser microphone during the turn-based interview.
+Deprecated for the current product roadmap.
 
-## Scope
+This older audio-only task has been superseded by the multimodal product path:
 
-Implement only:
+```txt
+tasks/phase4-multimodal-response/024-add-response-modality-model.md
+tasks/phase4-multimodal-response/025-update-answer-upload-for-multimodal.md
+tasks/phase4-multimodal-response/026-add-audio-transcription-agent.md
+tasks/phase6-product-frontend/035-build-response-mode-aware-interview-room.md
+tasks/phase6-product-frontend/036-add-spoken-answer-recording-flow.md
+```
+
+## Why This Is Deprecated
+
+This task only adds a reusable browser microphone recording component. That was useful for the old audio-only answer flow, but the current product must support response modes:
+
+```txt
+spoken_answer
+written_answer
+code_answer
+mixed_answer
+```
+
+The current frontend should be built around a response-mode-aware interview room, not a standalone audio recorder.
+
+## Do Not Execute This Task
+
+Do not give this file to Codex for the current product implementation.
+
+Use the active Phase 4 and Phase 6 task files instead.
+
+## Historical Scope
+
+The original intent was:
 
 - Audio recording component using browser APIs.
 - Start/stop recording controls.
@@ -14,52 +43,8 @@ Implement only:
 - Produce an audio blob suitable for upload.
 - Graceful handling when microphone permission is denied.
 
-## Out of Scope
+This functionality is still needed, but it should be implemented inside the active product task:
 
-Do not implement:
-
-- Full interview screen polish.
-- Answer upload endpoint.
-- Transcription.
-- Evaluation.
-- Realtime WebRTC conversation.
-- Video recording.
-
-## Files Likely Involved
-
-- `frontend/src/components/`
-- `frontend/src/hooks/`
-- `frontend/src/lib/`
-
-## API Contract
-
-No new backend endpoint is required in this task.
-
-## Data Model Changes
-
-None.
-
-## Acceptance Criteria
-
-- [ ] User can start recording.
-- [ ] User can stop recording.
-- [ ] Component exposes the recorded audio blob to parent code.
-- [ ] UI shows recording state.
-- [ ] Microphone permission failure is handled clearly.
-- [ ] No backend changes are made unless strictly necessary.
-
-## Verification
-
-Run:
-
-```bash
-cd frontend
-npm run lint
-npm run build
+```txt
+tasks/phase6-product-frontend/036-add-spoken-answer-recording-flow.md
 ```
-
-## Notes for Codex
-
-- Use TypeScript types; avoid `any`.
-- Keep the component reusable.
-- Do not add heavy recording libraries unless necessary.
