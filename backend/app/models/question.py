@@ -27,6 +27,13 @@ class QuestionSource(str, Enum):
     BENCHMARK_GAP = "benchmark_gap"
 
 
+class ResponseMode(str, Enum):
+    SPOKEN_ANSWER = "spoken_answer"
+    WRITTEN_ANSWER = "written_answer"
+    CODE_ANSWER = "code_answer"
+    MIXED_ANSWER = "mixed_answer"
+
+
 class InterviewQuestion(Base):
     __tablename__ = "interview_questions"
 
@@ -44,5 +51,12 @@ class InterviewQuestion(Base):
     benchmark_gap_refs: Mapped[list] = mapped_column(JSONB, default=list)
     # Human-readable annotation explaining why this question was chosen
     why_this_was_asked: Mapped[str | None] = mapped_column(Text, nullable=True)
+    response_mode: Mapped[str] = mapped_column(
+        String, default=ResponseMode.SPOKEN_ANSWER.value
+    )
+    requires_audio: Mapped[bool] = mapped_column(default=True)
+    requires_video: Mapped[bool] = mapped_column(default=False)
+    requires_text: Mapped[bool] = mapped_column(default=False)
+    requires_code: Mapped[bool] = mapped_column(default=False)
     tts_object_key: Mapped[str | None] = mapped_column(String, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

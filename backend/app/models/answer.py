@@ -8,6 +8,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
+from app.models.question import ResponseMode
 
 
 class CandidateAnswer(Base):
@@ -21,10 +22,17 @@ class CandidateAnswer(Base):
         ForeignKey("interview_questions.id", ondelete="CASCADE"), index=True
     )
     audio_object_key: Mapped[str | None] = mapped_column(String, nullable=True)
+    answer_mode: Mapped[str] = mapped_column(
+        String, default=ResponseMode.SPOKEN_ANSWER.value
+    )
     transcript: Mapped[str | None] = mapped_column(Text, nullable=True)
+    text_answer: Mapped[str | None] = mapped_column(Text, nullable=True)
+    code_answer: Mapped[str | None] = mapped_column(Text, nullable=True)
+    code_language: Mapped[str | None] = mapped_column(String, nullable=True)
     duration_seconds: Mapped[float | None] = mapped_column(Float, nullable=True)
     word_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     words_per_minute: Mapped[float | None] = mapped_column(Float, nullable=True)
     filler_word_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     communication_metrics: Mapped[dict] = mapped_column(JSONB, default=dict)
+    visual_signal_metadata: Mapped[dict] = mapped_column(JSONB, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

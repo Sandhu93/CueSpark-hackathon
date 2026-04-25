@@ -15,6 +15,13 @@ router = APIRouter()
 TASK_REGISTRY: dict[str, str] = {
     "dummy": "app.tasks.dummy.run",
     "prepare_session": "app.tasks.prepare_session.run",
+    "process_audio_answer": "app.tasks.process_audio_answer.run",
+    "analyze_text_answer": "app.tasks.analyze_text_answer.run",
+    "analyze_code_answer": "app.tasks.analyze_code_answer.run",
+    "analyze_video_signals": "app.tasks.analyze_video_signals.run",
+    "analyze_benchmark_gap_coverage": "app.tasks.analyze_benchmark_gap_coverage.run",
+    "evaluate_answer": "app.tasks.evaluate_answer.run",
+    "generate_report": "app.tasks.generate_report.run",
     # "transcribe": "app.tasks.transcribe.run",
     # "score_answer": "app.tasks.score_answer.run",
 }

@@ -268,6 +268,11 @@ def _persist_questions(
             source=question.source,
             benchmark_gap_refs=question.benchmark_gap_refs,
             why_this_was_asked=question.why_this_was_asked,
+            response_mode=question.response_mode.value,
+            requires_audio=question.requires_audio,
+            requires_video=question.requires_video,
+            requires_text=question.requires_text,
+            requires_code=question.requires_code,
         )
         db.add(row)
     logger.info(

@@ -1,8 +1,21 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict
+
+
+class FinalEvaluationResult(BaseModel):
+    overall_score: int
+    category_scores: dict[str, int]
+    strict_feedback: str
+    strengths: list[str]
+    weaknesses: list[str]
+    improvement_suggestions: list[str]
+    benchmark_gap_summary: str
+    communication_summary: str
+    modality_breakdown: dict[str, Any]
 
 
 class EvaluationRead(BaseModel):

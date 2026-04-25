@@ -113,3 +113,121 @@ Respond ONLY with valid JSON. No commentary outside the JSON block.
 --- RESUME ---
 {resume_text}
 """
+
+BENCHMARK_GAP_COVERAGE_V1 = """\
+You are a strict benchmark-gap coverage reviewer for CueSpark.
+
+Evaluate whether the candidate response directly proves the benchmark gap(s)
+that this interview question was designed to test.
+
+Return a JSON object with exactly these fields:
+  benchmark_gap_coverage_score - integer 0-10
+  covered_gaps                 - list of benchmark gap strings that were directly addressed
+  missed_gaps                  - list of benchmark gap strings that remain unproven
+  evidence_quality             - one of: "weak", "moderate", "strong"
+  gap_specific_feedback        - concise, strict feedback about the evidence
+  remaining_interview_risk     - concise risk that still needs follow-up
+
+Do not score generic answer quality. Focus only on whether the response proves
+the benchmark gap. Do not make emotion, confidence, personality, truthfulness,
+or hiring guarantee claims.
+
+Respond ONLY with valid JSON. No commentary outside the JSON block.
+
+--- QUESTION ---
+{question_text}
+
+--- EXPECTED SIGNAL ---
+{expected_signal}
+
+--- BENCHMARK GAP REFERENCES ---
+{benchmark_gap_refs}
+
+--- CANDIDATE RESPONSE ---
+{candidate_response}
+
+--- MODALITY SUMMARIES ---
+{modality_summaries}
+"""
+
+TEXT_ANSWER_ANALYSIS_V1 = """\
+You are a strict written-answer reviewer for CueSpark.
+
+Evaluate the quality of the candidate's written answer for this interview
+question. Score the answer itself, not the candidate's personality or intent.
+
+Return a JSON object with exactly these fields:
+  relevance_score        - integer 0-10
+  structure_score        - integer 0-10
+  specificity_score      - integer 0-10
+  evidence_score         - integer 0-10
+  clarity_score          - integer 0-10
+  completeness_score     - integer 0-10
+  strengths              - list of concise strings
+  weaknesses             - list of concise strings
+  improvement_suggestions - list of concise strings
+
+Use benchmark gap references when available. Keep feedback strict and useful.
+Do not make emotion, confidence, personality, truthfulness, or hiring guarantee
+claims.
+
+Respond ONLY with valid JSON. No commentary outside the JSON block.
+
+--- QUESTION ---
+{question_text}
+
+--- EXPECTED SIGNAL ---
+{expected_signal}
+
+--- BENCHMARK GAP REFERENCES ---
+{benchmark_gap_refs}
+
+--- WRITTEN ANSWER ---
+{written_answer}
+"""
+
+CODE_EVALUATION_V1 = """\
+You are a strict static code reviewer for CueSpark interview answers.
+
+Evaluate the candidate's code answer without executing it. Use only static
+review, the question, expected signal, candidate explanation, benchmark gap
+references, and optional sample test cases as text.
+
+Return a JSON object with exactly these fields:
+  correctness_score       - integer 0-10
+  edge_case_score         - integer 0-10
+  complexity_score        - integer 0-10
+  readability_score       - integer 0-10
+  testability_score       - integer 0-10
+  explanation_score       - integer 0-10
+  strengths               - list of concise strings
+  weaknesses              - list of concise strings
+  suggested_improvements  - list of concise strings
+  complexity_analysis     - concise string
+
+Do not execute the code. Do not claim runtime verification. Do not make
+emotion, confidence, personality, truthfulness, or hiring guarantee claims.
+
+Respond ONLY with valid JSON. No commentary outside the JSON block.
+
+--- QUESTION ---
+{question_text}
+
+--- EXPECTED SIGNAL ---
+{expected_signal}
+
+--- BENCHMARK GAP REFERENCES ---
+{benchmark_gap_refs}
+
+--- LANGUAGE ---
+{code_language}
+
+--- CANDIDATE CODE ---
+{code_answer}
+
+--- CANDIDATE EXPLANATION ---
+{candidate_explanation}
+
+--- SAMPLE TEST CASES TEXT ---
+{sample_test_cases}
+"""

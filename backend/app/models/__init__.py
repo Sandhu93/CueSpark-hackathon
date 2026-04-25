@@ -1,3 +1,4 @@
+from app.models.agent_result import AgentResult
 from app.models.answer import CandidateAnswer
 from app.models.benchmark_comparison import BenchmarkComparison
 from app.models.benchmark_profile import BenchmarkProfile
@@ -11,6 +12,7 @@ from app.models.session import InterviewSession
 
 __all__ = [
     "CandidateAnswer",
+    "AgentResult",
     "BenchmarkComparison",
     "BenchmarkProfile",
     "Document",

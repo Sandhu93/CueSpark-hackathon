@@ -23,6 +23,12 @@ class ReportRead(BaseModel):
     benchmark_gaps: list[Any]
     interview_risk_areas: list[Any]
     answer_feedback: list[Any]
+    benchmark_gap_coverage_summary: str | None
+    audio_communication_summary: str | None
+    visual_signal_summary: str | None
+    written_answer_quality_summary: str | None
+    code_answer_quality_summary: str | None
+    multimodal_summary: dict[str, Any]
     resume_feedback: str | None
     improvement_plan: str | None
     created_at: datetime

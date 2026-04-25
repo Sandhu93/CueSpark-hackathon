@@ -149,6 +149,11 @@ def test_generation_persists_question_rows(monkeypatch):
     assert rows[0].session_id == "session-42"
     assert rows[0].source == QuestionSource.BENCHMARK_GAP.value
     assert rows[0].benchmark_gap_refs
+    assert rows[0].response_mode == "spoken_answer"
+    assert rows[0].requires_audio is True
+    assert rows[0].requires_video is False
+    assert rows[0].requires_text is False
+    assert rows[0].requires_code is False
 
 
 def test_format_benchmark_section_includes_question_targets():

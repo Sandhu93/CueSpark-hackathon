@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 
 import pytest
@@ -23,7 +23,7 @@ class FakeSession:
         if self.pending is not None:
             if self.pending.id is None:
                 self.pending.id = str(uuid.uuid4())
-            now = datetime.utcnow()
+            now = datetime.now(UTC)
             if self.pending.created_at is None:
                 self.pending.created_at = now
             if self.pending.updated_at is None:
@@ -35,7 +35,7 @@ class FakeSession:
     async def refresh(self, item: Any) -> None:
         if item.id is None:
             item.id = str(uuid.uuid4())
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         if item.created_at is None:
             item.created_at = now
         if item.updated_at is None:

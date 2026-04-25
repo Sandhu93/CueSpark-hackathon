@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class UploadInitRequest(BaseModel):
@@ -23,6 +23,8 @@ class JobCreate(BaseModel):
 
 
 class JobOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     kind: str
     status: str
@@ -31,6 +33,3 @@ class JobOut(BaseModel):
     error: str | None
     created_at: datetime
     updated_at: datetime
-
-    class Config:
-        from_attributes = True

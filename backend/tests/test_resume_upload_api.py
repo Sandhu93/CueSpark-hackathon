@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 
 import pytest
@@ -35,7 +35,7 @@ class FakeSession:
     def _persist(self, item: Any) -> None:
         if item.id is None:
             item.id = str(uuid.uuid4())
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         if hasattr(item, "created_at") and item.created_at is None:
             item.created_at = now
         if hasattr(item, "updated_at") and item.updated_at is None:
