@@ -307,29 +307,39 @@ minioadmin / minioadmin
 ## Required Environment Variables
 
 ```env
-AI_PROVIDER=openai
-AI_MOCK_MODE=true
+ENV=development
+LOG_LEVEL=INFO
+
+API_PORT=8000
+API_CORS_ORIGINS=http://localhost:3000
+
+WEB_PORT=3000
+NEXT_PUBLIC_API_URL=http://localhost:8000
+
 OPENAI_API_KEY=
 OPENAI_CHAT_MODEL=gpt-4o-mini
 OPENAI_TTS_MODEL=gpt-4o-mini-tts
+OPENAI_TTS_VOICE=marin
 OPENAI_TRANSCRIBE_MODEL=gpt-4o-transcribe
 OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+ANTHROPIC_API_KEY=
 
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_DB=cuespark_interview
+POSTGRES_USER=app
+POSTGRES_PASSWORD=app
+POSTGRES_DB=app
 POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
 
+REDIS_HOST=redis
+REDIS_PORT=6379
 REDIS_URL=redis://redis:6379/0
 
+MINIO_ROOT_USER=minioadmin
+MINIO_ROOT_PASSWORD=minioadmin
 MINIO_ENDPOINT=minio:9000
-MINIO_ACCESS_KEY=minioadmin
-MINIO_SECRET_KEY=minioadmin
-MINIO_BUCKET=cuespark
-MINIO_SECURE=false
-
-NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+MINIO_PUBLIC_ENDPOINT=http://localhost:9000
+MINIO_BUCKET=uploads
+MINIO_USE_SSL=false
 ```
 
 ---

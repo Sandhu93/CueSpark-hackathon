@@ -32,6 +32,7 @@ Do not implement:
 ## Recommended Demo Roles
 
 ```txt
+ai engineer
 project_manager
 backend_developer
 data_analyst

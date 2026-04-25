@@ -34,14 +34,15 @@ export default function Home() {
   return (
     <main className="mx-auto max-w-2xl px-6 py-16 font-mono">
       <header className="mb-12">
-        <h1 className="text-3xl font-bold tracking-tight">hackathon · template</h1>
+        <h1 className="text-3xl font-bold tracking-tight">CueSpark Interview Coach</h1>
         <p className="mt-2 text-[var(--muted)]">
-          FastAPI · Next.js · Postgres · Redis · MinIO · Worker
+          Benchmark-driven AI interview readiness built on FastAPI, Next.js, Postgres,
+          Redis, MinIO, and workers.
         </p>
       </header>
 
       <section className="mb-10 rounded border border-[var(--border)] p-6">
-        <h2 className="mb-4 text-lg">1 · Upload</h2>
+        <h2 className="mb-4 text-lg">1 - File upload check</h2>
         <input
           type="file"
           onChange={handleFile}
@@ -58,12 +59,12 @@ export default function Home() {
       </section>
 
       <section className="rounded border border-[var(--border)] p-6">
-        <h2 className="mb-4 text-lg">2 · Run a background job</h2>
+        <h2 className="mb-4 text-lg">2 - Worker queue check</h2>
         <button
           onClick={startDummyJob}
           className="rounded bg-[var(--accent)] px-4 py-2 text-sm text-black"
         >
-          enqueue dummy job
+          enqueue demo job
         </button>
 
         {job && (

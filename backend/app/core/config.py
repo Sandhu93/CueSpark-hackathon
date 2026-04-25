@@ -31,6 +31,11 @@ class Settings(BaseSettings):
 
     # AI providers
     openai_api_key: str = ""
+    openai_chat_model: str = "gpt-4o-mini"
+    openai_tts_model: str = "gpt-4o-mini-tts"
+    openai_tts_voice: str = "marin"
+    openai_transcribe_model: str = "gpt-4o-transcribe"
+    openai_embedding_model: str = "text-embedding-3-small"
     anthropic_api_key: str = ""
 
     @property

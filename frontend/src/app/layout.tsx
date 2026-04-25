@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Hackathon Template",
-  description: "FastAPI + Next.js + Workers starter",
+  title: "CueSpark Interview Coach",
+  description: "Benchmark-driven AI interview readiness for role-specific preparation",
 };
 
 export default function RootLayout({
