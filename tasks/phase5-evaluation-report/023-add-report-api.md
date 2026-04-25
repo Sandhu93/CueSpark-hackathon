@@ -1,75 +1,41 @@
-# Task: Add Report API
+# Deprecated Task: Add Report API
 
-## Goal
+## Status
 
-Expose endpoints to generate and retrieve the final benchmark-aware interview report.
+Deprecated as a standalone task for the current product roadmap.
 
-## Scope
+The report API is still required, but it must now return the multimodal readiness report contract defined in:
 
-Implement only:
-
-- `POST /api/sessions/{session_id}/report`.
-- `GET /api/sessions/{session_id}/report`.
-- Enqueue report generation job.
-- Return stored report when available.
-- Include benchmark-aware report fields in the response.
-
-## Out of Scope
-
-Do not implement:
-
-- Frontend report page.
-- PDF export.
-- Email delivery.
-- Recruiter workflows.
-- Login or accounts.
-- Benchmark comparison generation.
-
-## Files Likely Involved
-
-- `backend/app/api/reports.py`
-- `backend/app/api/jobs.py`
-- `backend/app/tasks/generate_report.py`
-- `backend/app/schemas/`
-- `backend/app/models/`
-- Router registration file
-
-## API Contract
-
-Follow `docs/09-api-contracts-detailed.md`.
-
-## Data Model Changes
-
-None.
-
-## Acceptance Criteria
-
-- [ ] `POST /api/sessions/{session_id}/report` enqueues report generation.
-- [ ] Unknown session returns 404.
-- [ ] `GET /api/sessions/{session_id}/report` returns report when available.
-- [ ] Report response includes benchmark similarity, resume competitiveness, evidence strength, benchmark gaps, and interview risk areas when available.
-- [ ] Missing report returns a clear pending/not-found response.
-- [ ] No report is generated inside the GET endpoint.
-- [ ] No benchmark comparison is generated inside either report endpoint.
-- [ ] No frontend changes are made in this task.
-
-## Verification
-
-Run:
-
-```bash
-pytest backend/tests
+```txt
+docs/09-api-contracts-detailed.md
+tasks/phase5-multimodal-evaluation/033-add-multimodal-readiness-report.md
+tasks/phase6-product-frontend/039-add-multimodal-readiness-report-page.md
 ```
 
-Manual:
+## Why This Is Deprecated
 
-```bash
-curl -X POST http://localhost:8000/api/sessions/{session_id}/report
-curl http://localhost:8000/api/sessions/{session_id}/report
-```
+The old task exposes a simpler benchmark-aware report. The current report must include multimodal sections:
 
-## Notes for Codex
+- communication summary
+- visual signal summary if available
+- written answer summary if available
+- code answer summary if available
+- benchmark gap coverage summary
+- final orchestrator scoring output
 
-- Use the existing job system for long-running work.
-- Keep endpoints thin.
-- The GET endpoint is read-only.
+## Do Not Execute This Task
+
+Do not give this file to Codex for the current product implementation.
+
+Use the active Phase 5 multimodal report task and the API contract document instead.
+
+## Historical Scope
+
+The original intent was:
+
+- `POST /api/sessions/{session_id}/report`
+- `GET /api/sessions/{session_id}/report`
+- enqueue report generation
+- return stored benchmark-aware report
+
+These endpoints are still valid, but their implementation must follow the multimodal report contract.
