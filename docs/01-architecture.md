@@ -2,7 +2,7 @@
 
 ## Existing Template Base
 
-The repository starts from a FastAPI + Next.js hackathon template with:
+The repository starts from a FastAPI + Next.js template with:
 
 - FastAPI API service.
 - Next.js frontend.
@@ -13,41 +13,44 @@ The repository starts from a FastAPI + Next.js hackathon template with:
 - Upload endpoints.
 - Generic job queue pattern.
 
-Do not replace this architecture. Extend it.
+Do not replace this architecture. Extend it as a modular monolith.
 
-## System Architecture
+## Product Architecture
+
+CueSpark is now a benchmark-driven, multimodal interview readiness product.
 
 ```text
 Next.js frontend
-  |-- paste JD/resume
-  |-- upload resume/audio
-  |-- show benchmark gap dashboard
-  |-- play TTS audio
-  |-- record candidate answer
+  |-- JD/resume setup
+  |-- benchmark gap dashboard
+  |-- response-mode-aware interview room
+  |-- audio/text/code answer capture
+  |-- optional visual signal capture MVP
+  |-- final readiness report
   v
 FastAPI API
   |-- thin route handlers
-  |-- creates sessions/questions/answers/jobs
-  |-- returns current state
+  |-- sessions/questions/answers/jobs
+  |-- benchmark read APIs
+  |-- response capture APIs
+  |-- report APIs
   v
 Postgres + pgvector
   |-- structured interview state
-  |-- benchmark profiles
-  |-- benchmark comparisons
+  |-- benchmark profiles and comparisons
+  |-- response metadata and transcripts
+  |-- agent results
+  |-- final answer evaluations and reports
   |-- vector embeddings
-  |-- reports and evaluations
   v
 Redis + RQ worker
-  |-- parse documents
-  |-- generate embeddings
-  |-- generate match analysis
-  |-- seed/retrieve benchmark profiles
-  |-- generate benchmark gap analysis
-  |-- generate benchmark-driven questions
-  |-- generate TTS audio
-  |-- transcribe answers
-  |-- evaluate answers
-  |-- generate final report
+  |-- prepare session pipeline
+  |-- TTS generation
+  |-- transcription
+  |-- audio/text/code/video-signal agents
+  |-- benchmark gap coverage agent
+  |-- final evaluation orchestrator
+  |-- report generation
   v
 MinIO
   |-- original resumes
@@ -58,7 +61,7 @@ MinIO
 
 ## Modular Monolith Rule
 
-The first version must remain a modular monolith.
+The first product version must remain a modular monolith.
 
 Use modules, not microservices:
 
@@ -66,10 +69,12 @@ Use modules, not microservices:
 backend/app/api/        FastAPI routers
 backend/app/models/     SQLAlchemy tables
 backend/app/schemas/    Pydantic request/response contracts
-backend/app/services/   business logic and AI gateway wrappers
+backend/app/services/   business logic, agents, and AI gateway wrappers
 backend/app/tasks/      RQ background jobs
 backend/app/core/       settings, db, redis, storage
 ```
+
+The architecture should support future extraction into services, but the current product should not pay microservice complexity upfront.
 
 ## Benchmark Engine Position
 
@@ -84,19 +89,44 @@ JD + Resume
   -> benchmark-driven question generation
 ```
 
-For the hackathon, benchmark profiles are curated/anonymized fixtures. Do not live-scrape personal resumes.
+Benchmark profiles are curated/anonymized fixtures or user-approved curated data. Do not live-scrape personal resumes by default.
+
+## Multimodal Evaluation Position
+
+The multimodal layer starts after a question is asked.
+
+```text
+Benchmark-driven question
+  -> expected response mode
+  -> candidate response capture
+  -> modality-specific agents
+  -> benchmark gap coverage agent
+  -> final evaluation orchestrator
+  -> readiness report
+```
+
+Supported response modes:
+
+```text
+spoken_answer
+written_answer
+code_answer
+mixed_answer
+```
+
+Each mode activates only the relevant analyzers.
 
 ## Request Lifecycle
 
 ### Session Preparation
 
 ```text
-POST /sessions
+POST /api/sessions
   -> create interview_sessions row
   -> store JD text
   -> store resume text and/or resume object key
 
-POST /sessions/{session_id}/prepare
+POST /api/sessions/{session_id}/prepare
   -> enqueue prepare_session job
 
 prepare_session job
@@ -110,7 +140,7 @@ prepare_session job
   -> compare candidate resume against benchmark profiles
   -> save benchmark_comparisons row
   -> generate benchmark-driven interview plan
-  -> save questions
+  -> save questions with response_mode and required modality flags
   -> mark session ready
 ```
 
@@ -126,7 +156,7 @@ benchmark seed command/task
 benchmark retrieval
   -> use role key first
   -> use vector similarity second
-  -> return top 5 benchmark profiles
+  -> return top benchmark profiles
 
 benchmark comparison
   -> compare JD, resume, and benchmark profiles
@@ -137,7 +167,7 @@ benchmark comparison
 ### Question Audio
 
 ```text
-POST /questions/{question_id}/tts
+POST /api/questions/{question_id}/tts
   -> generate or retrieve interviewer audio
 
 worker/service
@@ -146,35 +176,85 @@ worker/service
   -> save tts_object_key on question
 ```
 
-### Candidate Answer
+### Multimodal Candidate Answer
 
 ```text
-POST /questions/{question_id}/answers
-  -> upload/store candidate audio
+POST /api/questions/{question_id}/answers
+  -> validate submitted payload against question response_mode
+  -> store audio artifact in MinIO if present
+  -> store text/code answer in Postgres if present
   -> create candidate_answers row
-  -> enqueue transcribe_answer job
+  -> enqueue relevant agent jobs
+```
 
-transcribe_answer job
-  -> call OpenAI transcription or mock transcription
-  -> save transcript and basic audio metadata
-  -> compute communication signals
-  -> enqueue/trigger evaluate_answer job
+Mode examples:
 
-evaluate_answer job
-  -> retrieve JD/resume/rubric/benchmark context
-  -> evaluate answer using strict benchmark-aware rubric
-  -> save answer_evaluations row
+```text
+spoken_answer -> audio agent -> benchmark gap agent -> final orchestrator
+written_answer -> text answer agent -> benchmark gap agent -> final orchestrator
+code_answer -> code evaluation agent -> benchmark gap agent -> final orchestrator
+mixed_answer -> relevant modality agents -> benchmark gap agent -> final orchestrator
+```
+
+### Audio Agent
+
+```text
+audio agent
+  -> transcribe answer
+  -> save transcript
+  -> compute speaking pace, filler words, hesitation markers, answer structure
+  -> save agent_results row
+```
+
+### Text Answer Agent
+
+```text
+text answer agent
+  -> evaluate relevance, structure, evidence, completeness, clarity
+  -> save agent_results row
+```
+
+### Code Evaluation Agent
+
+```text
+code evaluation agent
+  -> static review of correctness, edge cases, complexity, readability, testability, explanation
+  -> save agent_results row
+```
+
+Do not run arbitrary candidate code on the main backend. Future code execution requires sandboxing.
+
+### Video Signal Agent MVP
+
+```text
+video signal agent
+  -> accept frontend-provided or sampled metadata
+  -> evaluate face in frame, lighting, camera presence, eye contact proxy, posture stability
+  -> save summary in agent_results
+```
+
+Do not claim emotion detection, personality detection, truthfulness detection, or true confidence detection.
+
+### Final Answer Evaluation
+
+```text
+final evaluation orchestrator
+  -> read question metadata
+  -> read candidate answer
+  -> read available agent_results
+  -> apply response-mode-specific scoring weights
+  -> store answer_evaluations row
 ```
 
 ### Final Report
 
 ```text
-POST /sessions/{session_id}/report
+POST /api/sessions/{session_id}/report
   -> enqueue generate_report job
 
 worker
-  -> aggregate session, match analysis, benchmark comparison, questions, answers, evaluations
-  -> generate strict benchmark-aware final report
+  -> aggregate session, match analysis, benchmark comparison, questions, answers, agent results, evaluations
+  -> generate multimodal benchmark-aware final report
   -> save interview_reports row
 ```
 
@@ -189,7 +269,10 @@ Use jobs for operations that may take more than 1 second or call external AI API
 - Generating interview plan.
 - TTS generation.
 - Transcription.
-- Evaluation.
+- Text/code answer analysis.
+- Video signal analysis.
+- Benchmark gap coverage analysis.
+- Final evaluation orchestration.
 - Report generation.
 
 Route handlers should return quickly.
@@ -208,6 +291,8 @@ reports/{session_id}.json
 ```
 
 Do not store audio bytes in Postgres.
+
+For video MVP, prefer storing metadata/summaries instead of full video files.
 
 ## Vector Storage Boundary
 
@@ -245,7 +330,11 @@ All OpenAI calls should go through this service or small wrappers that depend on
 - `match_analyzer.py`
 - `benchmark_analyzer.py`
 - `question_generator.py`
-- `answer_evaluator.py`
+- `audio_agent.py`
+- `text_answer_agent.py`
+- `code_evaluation_agent.py`
+- `benchmark_gap_agent.py`
+- `final_evaluation_orchestrator.py`
 - `report_generator.py`
 
 Do not call OpenAI from FastAPI routes or React.
@@ -268,12 +357,13 @@ Expected screens:
   -> interview risk areas
 
 /session/[sessionId]/interview
-  -> question audio
-  -> answer recording
+  -> AI interviewer question audio
+  -> response-mode-aware capture
+  -> audio recording, text answer, code answer, or mixed response
   -> transcript/evaluation status
 
 /session/[sessionId]/report
-  -> benchmark-aware readiness report
+  -> multimodal benchmark-aware readiness report
 ```
 
-The benchmark dashboard is a core demo screen, not optional decoration.
+The benchmark dashboard and final report are core product screens, not optional decoration.
