@@ -30,14 +30,37 @@ Do not add AI generation yet.
 2. Add embedding service.
 3. Add `embedding_chunks` table.
 4. Embed JD and resume chunks.
-5. Generate JD-resume match analysis.
+5. Generate basic JD-resume match analysis.
 
 Do not build interview UI yet.
 
-## Phase 3 — Interview Question Engine
+## Phase 2.5 — Benchmark Engine
 
-1. Generate 10 base questions.
-2. Store question category, difficulty, expected signal, and provenance.
+This is the hackathon novelty layer.
+
+1. Add curated benchmark profile models.
+2. Add 5 benchmark profile fixtures per demo role.
+3. Seed benchmark profiles into Postgres.
+4. Chunk and embed benchmark profile content.
+5. Retrieve the most relevant benchmark profiles for a session role/JD.
+6. Compare:
+   - JD vs candidate resume
+   - JD vs benchmark profiles
+   - candidate resume vs benchmark profiles
+7. Generate benchmark gap analysis:
+   - missing skills
+   - weak evidence
+   - missing metrics
+   - weak ownership signals
+   - interview risk areas
+8. Store benchmark comparison results.
+
+Do not add live web scraping in the hackathon version. Use curated/anonymized benchmark fixtures first.
+
+## Phase 3 — Benchmark-Driven Interview Question Engine
+
+1. Generate 10 base questions using JD, resume, match analysis, and benchmark gap analysis.
+2. Store question category, difficulty, expected signal, provenance, and benchmark gap reference where applicable.
 3. Add question fetch endpoint.
 4. Add on-demand TTS generation for one question.
 
@@ -54,12 +77,13 @@ Do not add adaptive follow-up yet unless explicitly requested.
 
 Do not generate final report yet.
 
-## Phase 5 — Evaluation and Report
+## Phase 5 — Benchmark-Aware Evaluation and Report
 
-1. Evaluate each answer.
+1. Evaluate each answer against the question, JD, resume, and benchmark gap being tested.
 2. Store category scores.
 3. Generate final readiness report.
-4. Build report UI.
+4. Include benchmark similarity, resume evidence gaps, answer quality, and readiness score.
+5. Build report UI.
 
 ## Phase 6 — Polish
 
@@ -68,6 +92,7 @@ Do not generate final report yet.
 3. Add error states.
 4. Add retry behavior for failed jobs.
 5. Add demo data.
+6. Add clear benchmark explanation for judges.
 
 ## Future Scope
 
@@ -81,3 +106,10 @@ Do not implement until explicitly approved:
 - Code compiler
 - Recruiter dashboard
 - Video confidence analysis
+- Live scraping of personal resumes from LinkedIn, Naukri, or similar platforms
+
+## Important Hackathon Positioning
+
+CueSpark is not just a mock interview chatbot.
+
+CueSpark is a benchmark-driven interview readiness engine. It compares a candidate against a role-specific benchmark set of stronger candidate profiles, finds the evidence gaps, and generates an interview focused on those gaps.
