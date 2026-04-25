@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-MOCK_EMBEDDING_DIMENSIONS = 8
+MOCK_EMBEDDING_DIMENSIONS = 1536
 
 
 def mock_text_response(prompt: str, *, prefix: str = "[mock]") -> str:

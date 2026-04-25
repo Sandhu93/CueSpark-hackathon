@@ -1,0 +1,184 @@
+[
+  {
+    "role_key": "project_manager",
+    "role_title": "Project Manager",
+    "seniority_level": "junior",
+    "domain": "software_delivery",
+    "profile_name": "PM Benchmark 01 — Strong Fresher",
+    "resume_text": "Recent MBA graduate with internship experience coordinating cross-functional sprints for a 12-person fintech startup. Managed backlog grooming, sprint planning, and stakeholder updates. Certified Scrum Master (CSM). Led a capstone project delivering a customer-facing dashboard six days ahead of schedule. Strong communicator with early-stage ownership across product, design, and QA tracks.",
+    "skills": [
+      "sprint planning",
+      "backlog grooming",
+      "stakeholder communication",
+      "risk identification",
+      "meeting facilitation",
+      "status reporting",
+      "requirement gathering"
+    ],
+    "tools": ["Jira", "Confluence", "Slack", "Google Workspace", "Trello"],
+    "project_signals": [
+      "Coordinated 3-week sprints for a 12-person cross-functional team",
+      "Delivered capstone dashboard project 6 days ahead of deadline",
+      "Maintained weekly stakeholder update cadence with zero missed reports"
+    ],
+    "impact_signals": [
+      "Sprint velocity improved by 18% over 8 weeks during internship",
+      "Reduced blocked-ticket backlog by 40% through daily standups"
+    ],
+    "ownership_signals": [
+      "Single-handedly ran sprint ceremonies when scrum master was on leave",
+      "Drafted and maintained the project charter without supervision"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 72
+  },
+  {
+    "role_key": "project_manager",
+    "role_title": "Project Manager",
+    "seniority_level": "mid",
+    "domain": "software_delivery",
+    "profile_name": "PM Benchmark 02 — Strong 2–3 Year",
+    "resume_text": "2.5 years managing software delivery for a B2B SaaS company. Led end-to-end delivery of three product releases, each involving 8–15 engineers, designers, and QA. Implemented OKR tracking that improved quarterly goal visibility. Coordinated vendor integrations and managed a $400K project budget. PMP-certified. Comfortable running post-mortems and translating technical debt into business risk for leadership.",
+    "skills": [
+      "OKR tracking",
+      "budget management",
+      "vendor coordination",
+      "release planning",
+      "risk management",
+      "post-mortem facilitation",
+      "cross-team dependency mapping"
+    ],
+    "tools": ["Jira", "Notion", "Confluence", "Asana", "Tableau", "Slack", "Zoom"],
+    "project_signals": [
+      "Delivered 3 product releases on time with teams of 8–15 people",
+      "Managed a $400K project budget with <2% variance",
+      "Coordinated two third-party API integrations across separate vendor timelines"
+    ],
+    "impact_signals": [
+      "OKR adoption led to 30% improvement in on-time delivery across the org",
+      "Release cycle time reduced from 6 weeks to 4 weeks",
+      "Post-mortem process cut repeat incidents by 55%"
+    ],
+    "ownership_signals": [
+      "Owned the project charter, RACI matrix, and release calendar without a PMO",
+      "Escalated and resolved a critical vendor delay that would have pushed the release by 3 weeks"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 84
+  },
+  {
+    "role_key": "project_manager",
+    "role_title": "Senior Project Manager",
+    "seniority_level": "senior",
+    "domain": "software_delivery",
+    "profile_name": "PM Benchmark 03 — Experienced",
+    "resume_text": "7 years of project management across e-commerce and enterprise SaaS. Led a platform re-architecture program involving 4 squads and 32 engineers over 18 months. Defined the PMO governance framework adopted company-wide. Managed P&L for a $1.2M delivery portfolio. Mentored 4 junior PMs. Regular executive presenter. Reduced time-to-market by 25% through process standardization.",
+    "skills": [
+      "program management",
+      "PMO governance",
+      "P&L ownership",
+      "executive stakeholder management",
+      "change management",
+      "workforce planning",
+      "dependency management",
+      "agile at scale"
+    ],
+    "tools": ["Jira", "Confluence", "Monday.com", "PowerBI", "MS Project", "Slack", "Salesforce"],
+    "project_signals": [
+      "Led 18-month platform re-architecture program across 4 squads (32 engineers)",
+      "Defined company-wide PMO governance framework from scratch",
+      "Managed delivery portfolio of $1.2M"
+    ],
+    "impact_signals": [
+      "Reduced time-to-market by 25% through standardized release processes",
+      "Zero critical SLA breaches across 18-month program",
+      "Mentored 4 junior PMs — all promoted within 18 months"
+    ],
+    "ownership_signals": [
+      "Sole accountable owner for program scope, schedule, and budget",
+      "Presented quarterly delivery health directly to C-suite",
+      "Defined and enforced change-control processes across all squads"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 92
+  },
+  {
+    "role_key": "project_manager",
+    "role_title": "Project Manager",
+    "seniority_level": "mid",
+    "domain": "construction_to_software",
+    "profile_name": "PM Benchmark 04 — Domain Switcher",
+    "resume_text": "Former construction project manager (5 years) transitioned to software delivery. Managed multi-contractor builds valued up to $3M, with strict safety compliance and permit tracking. Took a 12-week PMP bootcamp, earned PMP certification, and joined a mid-sized software firm as project manager 18 months ago. Applies rigorous schedule and risk management from construction to software sprints. Successfully delivered two ERP migration projects.",
+    "skills": [
+      "risk management",
+      "schedule management",
+      "stakeholder coordination",
+      "compliance tracking",
+      "ERP migrations",
+      "contract management",
+      "budget control"
+    ],
+    "tools": ["MS Project", "Jira", "Confluence", "Procore", "Excel", "Slack"],
+    "project_signals": [
+      "Delivered 2 ERP migration projects within budget and schedule after career switch",
+      "Managed construction projects valued up to $3M before transition",
+      "Completed PMP certification and onboarded to software PM in under 6 months"
+    ],
+    "impact_signals": [
+      "ERP go-live achieved with zero critical data-loss incidents",
+      "Applied construction-style risk register — reduced unplanned scope changes by 35%"
+    ],
+    "ownership_signals": [
+      "Owned full migration plan including data mapping, cutover schedule, and rollback procedures",
+      "Primary escalation point for both client and vendor throughout ERP projects"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 78
+  },
+  {
+    "role_key": "project_manager",
+    "role_title": "Senior Project Manager",
+    "seniority_level": "senior",
+    "domain": "digital_transformation",
+    "profile_name": "PM Benchmark 05 — High-Impact Portfolio",
+    "resume_text": "10 years of PM experience with a focus on digital transformation at scale. Delivered a $4M digital banking platform overhaul across 6 countries, coordinating 50+ stakeholders. Implemented SAFe Agile across 3 teams and brought all three to PI planning maturity within 8 months. Drove a cloud migration program that cut infrastructure costs by $800K annually. Published case study on hybrid delivery frameworks. Holds PMP, SAFe SA, and PRINCE2 certifications.",
+    "skills": [
+      "SAFe Agile",
+      "PI planning",
+      "cloud migration",
+      "digital transformation",
+      "multi-country delivery",
+      "cost optimisation",
+      "executive reporting",
+      "hybrid delivery frameworks"
+    ],
+    "tools": ["Jira Align", "Confluence", "Azure DevOps", "PowerBI", "ServiceNow", "MS Teams"],
+    "project_signals": [
+      "Delivered $4M digital banking overhaul across 6 countries",
+      "Led cloud migration program spanning 3 product lines",
+      "Brought 3 teams to SAFe PI planning maturity in 8 months"
+    ],
+    "impact_signals": [
+      "Cloud migration cut infrastructure costs by $800K annually",
+      "Digital banking platform launched on schedule across all 6 markets",
+      "Published hybrid delivery framework adopted by 2 other business units"
+    ],
+    "ownership_signals": [
+      "Accountable for full program P&L including vendor contracts and FTE allocation",
+      "Sole escalation path for 50+ stakeholders across 6 time zones",
+      "Authored and maintained the program governance charter"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 96
+  }
+]

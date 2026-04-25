@@ -1,0 +1,209 @@
+[
+  {
+    "role_key": "data_analyst",
+    "role_title": "Data Analyst",
+    "seniority_level": "junior",
+    "domain": "business_intelligence",
+    "profile_name": "DA Benchmark 01 — Strong Fresher",
+    "resume_text": "Statistics graduate with hands-on experience from two internships doing sales and marketing analytics. Built a customer churn dashboard in Tableau that became the primary tool for the retention team. Comfortable with SQL (joins, window functions, CTEs), Python (pandas, matplotlib), and Excel. Completed Google Data Analytics and Tableau Desktop Specialist certifications. Eager to work with large datasets and present findings clearly to non-technical audiences.",
+    "skills": [
+      "SQL",
+      "Python",
+      "pandas",
+      "Tableau",
+      "Excel",
+      "data visualisation",
+      "customer churn analysis",
+      "stakeholder reporting",
+      "window functions",
+      "CTEs"
+    ],
+    "tools": ["Tableau", "PostgreSQL", "Excel", "Python/pandas", "Google Sheets", "Looker Studio"],
+    "project_signals": [
+      "Built customer churn dashboard adopted as primary tool by retention team",
+      "Sales attribution analysis for 3-month internship covering 18 months of data",
+      "Marketing funnel visualisation reducing manual reporting effort by 5 hours/week"
+    ],
+    "impact_signals": [
+      "Churn dashboard enabled retention team to identify 3 high-risk cohorts",
+      "Marketing funnel report cycle reduced from 2 days to 20 minutes"
+    ],
+    "ownership_signals": [
+      "Owned churn dashboard design, data model, and stakeholder sign-off",
+      "Self-directed SQL query optimisation — reduced dashboard load time from 45s to 8s"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 71
+  },
+  {
+    "role_key": "data_analyst",
+    "role_title": "Data Analyst",
+    "seniority_level": "mid",
+    "domain": "product_analytics",
+    "profile_name": "DA Benchmark 02 — Strong 2–3 Year",
+    "resume_text": "2.5 years as a product analyst at a mid-sized SaaS company. Owns the product analytics stack including event tracking schema, funnel analysis, and A/B test evaluation. Designed and monitored 14 A/B tests, 9 of which informed product roadmap decisions. Reduced dashboard query costs by 35% via dbt model optimisation. Communicates insights weekly to the CPO. Comfortable in SQL, Python, and dbt. Working knowledge of statistical significance and experiment design.",
+    "skills": [
+      "product analytics",
+      "A/B testing",
+      "experiment design",
+      "statistical significance",
+      "event tracking",
+      "funnel analysis",
+      "dbt",
+      "SQL",
+      "Python",
+      "executive communication"
+    ],
+    "tools": ["Mixpanel", "BigQuery", "dbt", "Looker", "Python/pandas", "Amplitude", "Slack"],
+    "project_signals": [
+      "Designed 14 A/B tests — 9 directly influenced roadmap prioritisation",
+      "Rebuilt event tracking schema supporting 3 new product lines",
+      "Optimised dbt models reducing dashboard query costs by 35%"
+    ],
+    "impact_signals": [
+      "A/B test insights contributed to a feature that increased free-to-paid conversion by 12%",
+      "Weekly executive dashboard reduced ad-hoc data requests by 60%",
+      "Cost savings from query optimisation valued at $18K/year"
+    ],
+    "ownership_signals": [
+      "Sole owner of product analytics stack — schema design, maintenance, and access governance",
+      "Defined A/B test policy and minimum detectable effect standards for the product team",
+      "Weekly presenting to CPO without manager mediation"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 86
+  },
+  {
+    "role_key": "data_analyst",
+    "role_title": "Senior Data Analyst",
+    "seniority_level": "senior",
+    "domain": "revenue_and_growth",
+    "profile_name": "DA Benchmark 03 — Experienced",
+    "resume_text": "7 years in data analytics across e-commerce and subscription businesses. Led the analytics centre of excellence at a 500-person company, managing 3 junior analysts. Designed a multi-touch attribution model that reallocated $2M in marketing spend and lifted ROAS by 28%. Built an anomaly detection pipeline that flags revenue anomalies within 15 minutes of occurrence. Regularly presents to the board. Expert in SQL, Python, Spark, and Looker LookML.",
+    "skills": [
+      "multi-touch attribution",
+      "anomaly detection",
+      "revenue analytics",
+      "team leadership",
+      "LookML",
+      "Spark",
+      "Python",
+      "SQL",
+      "board-level communication",
+      "marketing mix modelling"
+    ],
+    "tools": [
+      "Looker",
+      "BigQuery",
+      "Apache Spark",
+      "dbt",
+      "Python",
+      "Tableau",
+      "Airflow",
+      "Salesforce"
+    ],
+    "project_signals": [
+      "Built multi-touch attribution model reallocating $2M marketing budget",
+      "Designed real-time anomaly detection pipeline for revenue signals",
+      "Led analytics centre of excellence — 3 direct reports"
+    ],
+    "impact_signals": [
+      "ROAS improved 28% after attribution model informed budget reallocation",
+      "Revenue anomalies now detected in <15 minutes vs. next-morning discovery",
+      "Junior analyst team delivered 4 major analytical projects independently in first year"
+    ],
+    "ownership_signals": [
+      "Accountable for all analytics SLAs and data quality standards company-wide",
+      "Presented analytics roadmap and quarterly results directly to board",
+      "Authored company data glossary and metric definitions used across all teams"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 94
+  },
+  {
+    "role_key": "data_analyst",
+    "role_title": "Data Analyst",
+    "seniority_level": "mid",
+    "domain": "finance_to_data",
+    "profile_name": "DA Benchmark 04 — Domain Switcher",
+    "resume_text": "Chartered Accountant (CA) with 4 years in financial reporting who transitioned to data analytics 2 years ago. Deep familiarity with P&L, balance sheet analysis, and variance reporting translates directly to business KPI ownership. Self-taught SQL, Python, and Power BI. Delivered a financial forecasting model that replaced a 200-tab Excel workbook, cutting monthly close time from 5 days to 1 day. Bridges the gap between finance and data teams naturally.",
+    "skills": [
+      "SQL",
+      "Python",
+      "Power BI",
+      "financial modelling",
+      "P&L analysis",
+      "variance reporting",
+      "forecasting",
+      "KPI definition",
+      "stakeholder communication",
+      "Excel advanced"
+    ],
+    "tools": ["Power BI", "SQL Server", "Python/pandas", "Excel", "Tableau", "SAP"],
+    "project_signals": [
+      "Built financial forecasting model replacing 200-tab Excel workbook",
+      "Automated monthly close reporting pipeline in Python",
+      "Migrated 3 finance reports to Power BI interactive dashboards"
+    ],
+    "impact_signals": [
+      "Monthly close time reduced from 5 days to 1 day after model rollout",
+      "Forecast accuracy improved from ±18% to ±6% variance",
+      "Finance team eliminated 15 hours/month of manual reconciliation"
+    ],
+    "ownership_signals": [
+      "Sole designer and maintainer of forecasting model used by CFO",
+      "Defined KPI taxonomy for finance-to-data integration project",
+      "Self-directed skilling — no external training budget used"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 79
+  },
+  {
+    "role_key": "data_analyst",
+    "role_title": "Senior Data Analyst",
+    "seniority_level": "senior",
+    "domain": "healthcare_analytics",
+    "profile_name": "DA Benchmark 05 — High-Impact Portfolio",
+    "resume_text": "9 years in healthcare data analytics spanning clinical trials, patient outcomes, and operational efficiency. Led a patient readmission prediction project that reduced 30-day readmissions by 19% across 4 hospitals. Designed HIPAA-compliant data pipelines processing 2M patient records daily. Published 2 peer-reviewed analytics papers. Holds certifications in clinical data management and health informatics. Presents at HIMSS annually. Known for translating complex clinical findings into board-ready narratives.",
+    "skills": [
+      "healthcare analytics",
+      "clinical trials analysis",
+      "patient outcome modelling",
+      "HIPAA compliance",
+      "predictive analytics",
+      "Python",
+      "R",
+      "SQL",
+      "peer-reviewed publishing",
+      "operational efficiency"
+    ],
+    "tools": ["Python/R", "PostgreSQL", "Tableau", "SAS", "REDCap", "Airflow", "Azure Health"],
+    "project_signals": [
+      "Led readmission prediction project across 4 hospitals",
+      "Designed HIPAA-compliant pipeline processing 2M patient records/day",
+      "Published 2 peer-reviewed analytics papers in clinical informatics journals"
+    ],
+    "impact_signals": [
+      "30-day readmission rate reduced by 19% post-model deployment",
+      "Operational efficiency model saved $1.1M annually in bed utilisation",
+      "Data pipeline reduced weekly reporting effort for clinical ops by 80%"
+    ],
+    "ownership_signals": [
+      "Sole analytics lead for readmission program — accountable to hospital CMOs",
+      "Defined data governance and HIPAA compliance standards for analytics team",
+      "Annual HIMSS presenter — represents organisation externally"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 95
+  }
+]

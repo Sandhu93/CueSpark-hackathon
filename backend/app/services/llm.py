@@ -30,8 +30,24 @@ def chat(messages: list[dict], model: str | None = None, **kwargs) -> str:
 
 
 def embed(texts: list[str], model: str | None = None) -> list[list[float]]:
-    """Return deterministic mock embeddings until a real embedding service is added."""
+    """Return embeddings for a list of texts.
+
+    Uses mock vectors when AI_MOCK_MODE=true or no API key is configured.
+    Real mode calls OpenAI embeddings API synchronously.
+    """
     selected_model = model or settings.openai_embedding_model
+
     if settings.ai_mock_mode:
-        logger.info("AI mock mode enabled; returning mock embeddings for {}", selected_model)
-    return mock_embedding(len(texts))
+        logger.info("AI mock mode; returning mock embeddings for {}", selected_model)
+        return mock_embedding(len(texts))
+
+    if not settings.openai_api_key:
+        logger.warning("No OpenAI API key configured; returning mock embeddings")
+        return mock_embedding(len(texts))
+
+    import openai  # lazy import — only needed in real mode
+
+    client = openai.OpenAI(api_key=settings.openai_api_key)
+    response = client.embeddings.create(input=texts, model=selected_model)
+    logger.info("Embedded {} text(s) with model {}", len(texts), selected_model)
+    return [item.embedding for item in response.data]

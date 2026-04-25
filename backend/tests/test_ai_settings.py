@@ -16,4 +16,4 @@ def test_ai_settings_default_to_safe_mock_mode():
 
 def test_ai_mock_helpers_are_deterministic():
     assert mock_text_response("hello") == "[mock] hello"
-    assert mock_embedding(2) == [[0.0] * 8, [0.0] * 8]
+    assert mock_embedding(2) == [[0.0] * 1536, [0.0] * 1536]

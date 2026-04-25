@@ -1,0 +1,230 @@
+[
+  {
+    "role_key": "backend_developer",
+    "role_title": "Backend Developer",
+    "seniority_level": "junior",
+    "domain": "web_services",
+    "profile_name": "Backend Benchmark 01 — Strong Fresher",
+    "resume_text": "CS graduate with strong fundamentals in Python and REST API design. Built a personal expense-tracking API using FastAPI, PostgreSQL, and Docker during a 3-month self-directed project. Completed two open-source contributions — a bug fix for a popular Flask plugin and a test suite for a Django utility. Understands HTTP, JWT authentication, basic indexing, and CI pipelines. Comfortable with Git workflows including rebasing and PR reviews.",
+    "skills": [
+      "Python",
+      "REST API design",
+      "FastAPI",
+      "PostgreSQL",
+      "Docker",
+      "JWT authentication",
+      "Git",
+      "unit testing",
+      "CI pipelines"
+    ],
+    "tools": ["FastAPI", "PostgreSQL", "Docker", "pytest", "GitHub Actions", "Postman"],
+    "project_signals": [
+      "Built full personal expense-tracking API with auth, CRUD, and Dockerised deployment",
+      "2 accepted open-source contributions to popular Python web libraries",
+      "CI pipeline with automated test gate on every PR"
+    ],
+    "impact_signals": [
+      "Open-source bug fix resolved an issue affecting 200+ downstream users",
+      "Personal project API handles 100 req/s on a single t2.micro"
+    ],
+    "ownership_signals": [
+      "Sole architect and developer of personal project from design to deployment",
+      "Authored API documentation and OpenAPI schema without prompting"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 70
+  },
+  {
+    "role_key": "backend_developer",
+    "role_title": "Backend Developer",
+    "seniority_level": "mid",
+    "domain": "web_services",
+    "profile_name": "Backend Benchmark 02 — Strong 2–3 Year",
+    "resume_text": "2.5 years as a backend engineer at a B2C travel-tech startup. Owns the booking microservice handling 15K daily transactions. Migrated legacy monolith endpoints to FastAPI with async SQLAlchemy, reducing average response time from 420ms to 95ms. Introduced structured logging and distributed tracing with OpenTelemetry. Writes thorough integration tests with testcontainers. Mentors two interns. On-call rotation participant.",
+    "skills": [
+      "Python",
+      "FastAPI",
+      "async SQLAlchemy",
+      "PostgreSQL",
+      "microservices",
+      "OpenTelemetry",
+      "distributed tracing",
+      "structured logging",
+      "integration testing",
+      "on-call operations"
+    ],
+    "tools": [
+      "FastAPI",
+      "SQLAlchemy",
+      "PostgreSQL",
+      "Redis",
+      "Docker",
+      "testcontainers",
+      "OpenTelemetry",
+      "Grafana",
+      "GitHub Actions"
+    ],
+    "project_signals": [
+      "Owns booking microservice — 15K daily transactions in production",
+      "Led monolith-to-microservice migration for 4 legacy endpoints",
+      "Introduced distributed tracing across 3 services"
+    ],
+    "impact_signals": [
+      "Average API response time reduced from 420ms to 95ms post-migration",
+      "On-call P1 incident rate dropped 60% after structured logging rollout",
+      "Test coverage on booking service increased from 38% to 87%"
+    ],
+    "ownership_signals": [
+      "Sole owner of booking microservice design, code, and runbook",
+      "Ran migration planning and rollout without senior oversight",
+      "Authored and presented architecture decision records (ADRs) for 3 design choices"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 85
+  },
+  {
+    "role_key": "backend_developer",
+    "role_title": "Senior Backend Developer",
+    "seniority_level": "senior",
+    "domain": "platform_engineering",
+    "profile_name": "Backend Benchmark 03 — Experienced",
+    "resume_text": "6 years backend engineering across fintech and edtech. Designed and delivered a multi-tenant API gateway serving 2M monthly active users. Led a database sharding initiative that scaled peak throughput from 3K to 22K req/s. Contributed to public RFC for async task queue design. Conducts system design interviews for mid-level hiring. Proficient in Python, Go, and TypeScript. Strong opinions on observability, incident response, and technical debt prioritisation.",
+    "skills": [
+      "Python",
+      "Go",
+      "TypeScript",
+      "API gateway design",
+      "database sharding",
+      "multi-tenancy",
+      "async task queues",
+      "observability",
+      "incident response",
+      "system design",
+      "technical debt management"
+    ],
+    "tools": [
+      "FastAPI",
+      "Go stdlib",
+      "PostgreSQL",
+      "Redis",
+      "Kafka",
+      "Kubernetes",
+      "Prometheus",
+      "Grafana",
+      "Datadog",
+      "Terraform"
+    ],
+    "project_signals": [
+      "Designed multi-tenant API gateway — 2M MAU in production",
+      "Led DB sharding initiative across 3 PostgreSQL clusters",
+      "Delivered async task queue RFC adopted by 2 internal teams"
+    ],
+    "impact_signals": [
+      "Peak throughput scaled from 3K to 22K req/s after sharding",
+      "P99 latency held below 150ms under 10× traffic spike",
+      "0 data-loss incidents across 6 years of on-call tenure"
+    ],
+    "ownership_signals": [
+      "Accountable for API gateway SLA, runbooks, and capacity planning",
+      "Defined team-wide coding standards and PR review process",
+      "Runs system design interviews — has assessed 40+ candidates"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 93
+  },
+  {
+    "role_key": "backend_developer",
+    "role_title": "Backend Developer",
+    "seniority_level": "mid",
+    "domain": "data_engineering_to_backend",
+    "profile_name": "Backend Benchmark 04 — Domain Switcher",
+    "resume_text": "Former data engineer (3 years, Python + Spark + Airflow) who transitioned to backend API development 18 months ago. Strong SQL and data-pipeline intuition translates well to query optimisation and ETL-adjacent microservices. Rebuilt a reporting API that replaced nightly batch jobs with real-time aggregations, cutting report generation from 8 hours to under 2 minutes. Learning FastAPI and async patterns; background in robust error handling and large-dataset edge cases.",
+    "skills": [
+      "Python",
+      "SQL",
+      "FastAPI",
+      "query optimisation",
+      "real-time aggregation",
+      "Apache Spark",
+      "Airflow",
+      "ETL pipelines",
+      "error handling",
+      "async programming"
+    ],
+    "tools": ["FastAPI", "PostgreSQL", "Redis", "Apache Spark", "Airflow", "Docker", "pytest"],
+    "project_signals": [
+      "Rebuilt reporting API replacing nightly batch jobs with real-time aggregations",
+      "Migrated 3 Airflow DAGs to event-driven microservices",
+      "Optimised 12 slow-query endpoints — average query time down 70%"
+    ],
+    "impact_signals": [
+      "Report generation reduced from 8 hours to under 2 minutes",
+      "Query optimisation freed 40% of DB CPU headroom",
+      "Zero data-quality regressions across migration"
+    ],
+    "ownership_signals": [
+      "Designed real-time aggregation architecture end-to-end",
+      "Authored migration runbook and trained two data engineers on API patterns"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 80
+  },
+  {
+    "role_key": "backend_developer",
+    "role_title": "Senior Backend Developer",
+    "seniority_level": "senior",
+    "domain": "open_source_and_products",
+    "profile_name": "Backend Benchmark 05 — High-Impact Portfolio",
+    "resume_text": "8 years building backend systems with a significant open-source footprint. Maintainer of a Python async job-queue library with 4.2K GitHub stars. Built and scaled the payments backend at a Series B startup from 0 to $50M ARR — 3 engineers, zero Stripe-level downtime. Designed the core auth service now used by 6 internal products. Authored 3 technical blog posts each with >10K reads. Regular conference speaker on distributed systems.",
+    "skills": [
+      "Python",
+      "distributed systems",
+      "payments backend",
+      "auth service design",
+      "async job queues",
+      "open-source maintenance",
+      "technical writing",
+      "conference presenting",
+      "API versioning",
+      "PCI compliance awareness"
+    ],
+    "tools": [
+      "FastAPI",
+      "PostgreSQL",
+      "Redis",
+      "RabbitMQ",
+      "Stripe",
+      "Kubernetes",
+      "Terraform",
+      "Prometheus",
+      "GitHub Actions"
+    ],
+    "project_signals": [
+      "Open-source async job-queue library — 4.2K GitHub stars, active maintenance",
+      "Payments backend from 0 to $50M ARR — 3-engineer team",
+      "Core auth service deployed across 6 internal products"
+    ],
+    "impact_signals": [
+      "Zero payment-processing downtime over 4 years",
+      "Auth service reduced integration time for new products from 3 weeks to 2 days",
+      "Open-source library cited in 3 industry blog posts and 1 conference talk"
+    ],
+    "ownership_signals": [
+      "Sole maintainer of open-source library — triage, releases, and roadmap",
+      "Defined payments architecture including PCI scope and tokenisation strategy",
+      "Authored ADRs and runbooks for all core backend services"
+    ],
+    "source_type": "curated",
+    "source_url": null,
+    "is_curated": true,
+    "quality_score": 97
+  }
+]

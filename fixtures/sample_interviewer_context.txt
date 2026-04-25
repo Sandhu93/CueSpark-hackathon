@@ -1,0 +1,11 @@
+Example user-provided interviewer context:
+
+Head of Engineering with experience in .NET Core, REST API design, Sitecore, DevOps, Agile delivery, CI/CD, architecture, mentoring, and delivery excellence.
+
+Likely focus areas:
+- architecture depth
+- API design
+- deployment risk
+- delivery ownership
+- mentoring and engineering process
+- production-quality software practices
