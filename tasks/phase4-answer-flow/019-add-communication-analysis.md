@@ -1,66 +1,48 @@
-# Task: Add Communication Signal Analysis
+# Deprecated Task: Add Communication Signal Analysis
 
-## Goal
+## Status
 
-Compute simple, defensible communication metrics from the candidate transcript and audio metadata.
+Deprecated for the current product roadmap.
 
-## Scope
+This older standalone task has been superseded by the multimodal audio-agent task:
 
-Implement only:
-
-- `communication_analysis.py` service.
-- Word count.
-- Estimated words per minute when duration is available.
-- Filler word count.
-- Basic hesitation marker count.
-- Store metrics on `candidate_answers.communication_metrics` and related fields.
-
-## Out of Scope
-
-Do not implement:
-
-- Emotion detection.
-- True confidence detection.
-- Personality detection.
-- Video analysis.
-- Answer evaluation.
-- Final report.
-
-## Files Likely Involved
-
-- `backend/app/services/communication_analysis.py`
-- `backend/app/tasks/`
-- `backend/app/models/`
-- `backend/tests/`
-
-## API Contract
-
-No new public endpoint is required in this task.
-
-## Data Model Changes
-
-Use existing candidate answer metrics fields.
-
-## Acceptance Criteria
-
-- [ ] Word count is computed.
-- [ ] Filler word count is computed using a documented list.
-- [ ] Words per minute is computed when duration exists.
-- [ ] Communication metrics are stored in structured form.
-- [ ] Service does not claim emotional or biometric inference.
-- [ ] No LLM call is required in this task.
-
-## Verification
-
-Run:
-
-```bash
-pytest backend/tests
+```txt
+tasks/phase4-multimodal-response/026-add-audio-transcription-agent.md
 ```
 
-Use `fixtures/sample_transcript.txt` for a simple test.
+## Why This Is Deprecated
 
-## Notes for Codex
+The old task computed communication metrics separately from transcription. The current product should treat these as part of the Audio Agent output so the final evaluation orchestrator can read a single structured agent result.
 
-- Use the term `communication signal`, not `true confidence`.
-- Keep metrics deterministic and explainable.
+The Audio Agent should produce:
+
+- transcript
+- word count
+- duration
+- speaking pace
+- filler words
+- hesitation markers
+- answer structure observations
+- communication signal score
+
+## Do Not Execute This Task
+
+Do not give this file to Codex for the current product implementation.
+
+Use:
+
+```txt
+tasks/phase4-multimodal-response/026-add-audio-transcription-agent.md
+```
+
+## Historical Scope
+
+The original intent was:
+
+- deterministic word count
+- estimated words per minute
+- filler word count
+- hesitation marker count
+- communication metrics storage
+
+This functionality remains necessary but belongs inside the active Audio Agent task.
