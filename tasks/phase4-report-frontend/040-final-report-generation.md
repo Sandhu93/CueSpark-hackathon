@@ -1,58 +1,45 @@
-# Task 040 — Final Report Generation
+# Deprecated Task: Final Report Generation
 
-## Goal
+## Status
 
-Generate a strict final interview report from match analysis, questions, transcripts, and answer evaluations.
+Deprecated for the current product roadmap.
 
-## Read First
+This older report-generation task has been superseded by the multimodal evaluation and product frontend phases:
 
-- `docs/00-project-overview.md`
-- `docs/04-ai-audio-rag-design.md`
-- `docs/06-api-contracts.md`
-
-## Requirements
-
-1. Add `backend/app/services/report_generator.py`.
-2. Add `backend/app/tasks/generate_report.py`.
-3. Register `generate_report` in `TASK_REGISTRY`.
-4. Add `POST /sessions/{session_id}/report`.
-5. Add `GET /sessions/{session_id}/report`.
-6. Save report in `interview_reports`.
-
-## Report Sections
-
-Final report must include:
-
-1. Overall readiness score.
-2. Hiring recommendation.
-3. JD-resume match summary.
-4. Interview performance summary.
-5. Answer-by-answer feedback.
-6. Skill gaps.
-7. Resume improvement suggestions.
-8. Preparation plan.
-
-## Hiring Recommendation Enum
-
-Use:
-
-```text
-strong_yes
-yes
-maybe
-no
-strong_no
+```txt
+tasks/phase5-multimodal-evaluation/033-add-multimodal-readiness-report.md
+tasks/phase6-product-frontend/039-add-multimodal-readiness-report-page.md
 ```
 
-## Acceptance Criteria
+## Why This Is Deprecated
 
-- Report generation works after at least one evaluated answer.
-- Report improves as more evaluated answers exist.
-- Report is strict and actionable.
-- Report endpoint returns structured JSON.
+The old task generates a strict final interview report from match analysis, questions, transcripts, and answer evaluations.
 
-## Out of Scope
+The current product report must be multimodal and benchmark-aware. It should aggregate:
 
-- PDF export.
-- Email report.
-- User account history.
+- benchmark comparison
+- benchmark gap coverage
+- audio communication results
+- written answer results if available
+- code evaluation results if available
+- safe visual signal summaries if available
+- final orchestrator answer evaluations
+- resume improvement suggestions
+- preparation plan
+
+## Do Not Execute This Task
+
+Do not give this file to Codex for the current product implementation.
+
+Use the active Phase 5 and Phase 6 tasks instead.
+
+## Historical Scope
+
+The original intent was:
+
+- add `backend/app/services/report_generator.py`
+- add `backend/app/tasks/generate_report.py`
+- add report endpoints
+- save report in `interview_reports`
+
+This functionality now belongs to the multimodal report pipeline.
