@@ -22,10 +22,14 @@ CREATE EXTENSION IF NOT EXISTS vector;
 ```text
 interview_sessions
   ├── documents
+  ├── benchmark_comparisons
   ├── interview_questions
   │     └── candidate_answers
   │             └── answer_evaluations
   ├── interview_reports
+  └── embedding_chunks
+
+benchmark_profiles
   └── embedding_chunks
 ```
 
@@ -33,18 +37,22 @@ interview_sessions
 
 ### interview_sessions
 
-Stores one interview attempt.
+Stores one benchmark-driven interview attempt.
 
 Fields:
 
 ```text
 id: string/uuid primary key
 role_title: string nullable
+role_key: string nullable
 company_name: string nullable
 job_description_text: text
 resume_text: text nullable
 match_score: integer nullable
-status: created | preparing | ready | in_progress | completed | failed
+benchmark_similarity_score: integer nullable
+resume_competitiveness_score: integer nullable
+evidence_strength_score: integer nullable
+status: draft | preparing | ready | in_progress | evaluating | report_ready | completed | failed
 current_question_index: integer default 0
 metadata: jsonb
 created_at: datetime
@@ -71,6 +79,59 @@ created_at: datetime
 updated_at: datetime
 ```
 
+### benchmark_profiles
+
+Stores curated/anonymized benchmark profiles used for comparison.
+
+```text
+id: string/uuid primary key
+role_key: string
+role_title: string
+seniority_level: fresher | junior | mid | senior | lead | mixed
+domain: string nullable
+profile_name: string
+resume_text: text
+skills: jsonb
+tools: jsonb
+project_signals: jsonb
+impact_signals: jsonb
+ownership_signals: jsonb
+source_type: curated | synthetic | public
+source_url: string nullable
+is_curated: boolean default true
+quality_score: integer nullable
+created_at: datetime
+updated_at: datetime
+```
+
+For the hackathon, use curated/synthetic fixtures. Do not store scraped personal resumes.
+
+### benchmark_comparisons
+
+Stores the benchmark gap analysis for a session.
+
+```text
+id: string/uuid primary key
+session_id: fk interview_sessions.id
+role_key: string
+benchmark_profile_ids: jsonb
+benchmark_similarity_score: integer 0-100
+resume_competitiveness_score: integer 0-100
+evidence_strength_score: integer 0-100
+missing_skills: jsonb
+weak_skills: jsonb
+missing_metrics: jsonb
+weak_ownership_signals: jsonb
+missing_project_depth: jsonb nullable
+interview_risk_areas: jsonb
+recommended_resume_fixes: jsonb
+question_targets: jsonb
+created_at: datetime
+updated_at: datetime
+```
+
+This is the main novelty table. It should feed question generation and final report generation.
+
 ### interview_questions
 
 Stores planned and adaptive questions.
@@ -79,10 +140,12 @@ Stores planned and adaptive questions.
 id: string/uuid primary key
 session_id: fk interview_sessions.id
 question_number: integer
-category: technical | project_experience | behavioral | hr | resume_gap | jd_skill_validation
+category: technical | project_experience | behavioral | hr | resume_gap | jd_skill_validation | benchmark_gap_validation
 question_text: text
 expected_signal: text
-source: base_plan | adaptive_followup | manual
+source: base_plan | adaptive_followup | manual | benchmark_gap
+benchmark_gap_refs: jsonb nullable
+why_this_was_asked: text nullable
 provenance: jsonb
 difficulty: easy | medium | hard
 tts_object_key: string nullable
@@ -95,7 +158,8 @@ updated_at: datetime
 
 ```json
 {
-  "based_on": ["jd_required_skill", "resume_claim"],
+  "based_on": ["benchmark_gap", "jd_required_skill", "resume_claim"],
+  "benchmark_gap_refs": ["missing_metric", "weak_project_ownership"],
   "jd_terms": ["stakeholder management", "risk reporting"],
   "resume_terms": ["project coordination"],
   "risk_area": "candidate claims coordination but lacks measurable outcomes"
@@ -124,7 +188,7 @@ updated_at: datetime
 
 ### answer_evaluations
 
-Stores strict evaluation for one answer.
+Stores strict benchmark-aware evaluation for one answer.
 
 ```text
 id: string/uuid primary key
@@ -134,6 +198,7 @@ role_depth_score: integer 0-10
 evidence_score: integer 0-10
 structure_score: integer 0-10
 jd_alignment_score: integer 0-10
+benchmark_gap_coverage_score: integer 0-10
 communication_signal_score: integer 0-10
 overall_score: integer 0-10
 strengths: jsonb
@@ -147,7 +212,7 @@ updated_at: datetime
 
 ### interview_reports
 
-Stores final aggregate report.
+Stores final aggregate benchmark-aware report.
 
 ```text
 id: string/uuid primary key
@@ -156,6 +221,11 @@ readiness_score: integer 0-100
 hiring_recommendation: strong_yes | yes | maybe | no | strong_no
 summary: text
 jd_resume_match_summary: text
+benchmark_similarity_score: integer nullable
+resume_competitiveness_score: integer nullable
+evidence_strength_score: integer nullable
+benchmark_gaps: jsonb
+interview_risk_areas: jsonb
 interview_performance_summary: text
 skill_gaps: jsonb
 answer_feedback: jsonb
@@ -167,14 +237,14 @@ updated_at: datetime
 
 ### embedding_chunks
 
-Stores vector chunks for JD, resume, answers, rubrics, and question bank.
+Stores vector chunks for JD, resume, benchmark profiles, answers, rubrics, and question bank.
 
 ```text
 id: string/uuid primary key
 session_id: fk interview_sessions.id nullable
-owner_type: job_description | resume | answer | rubric | question_bank
+owner_type: job_description | resume | benchmark_profile | answer | rubric | question_bank
 owner_id: string nullable
-chunk_type: jd | resume | answer | rubric | question_bank
+chunk_type: jd | resume | benchmark_profile | answer | rubric | question_bank
 content: text
 embedding: vector(1536)
 metadata: jsonb
@@ -189,6 +259,10 @@ Suggested indexes:
 
 ```text
 interview_sessions.status
+interview_sessions.role_key
+benchmark_profiles.role_key
+benchmark_profiles.quality_score
+benchmark_comparisons.session_id
 interview_questions.session_id
 interview_questions.session_id + question_number
 candidate_answers.question_id
@@ -196,10 +270,19 @@ answer_evaluations.answer_id
 embedding_chunks.session_id
 embedding_chunks.chunk_type
 embedding_chunks.owner_type
+embedding_chunks.owner_id
 embedding_chunks.embedding vector index
 ```
 
 Vector index can be added after basic functionality works. Do not block early development on index tuning.
+
+## Benchmark Data Rules
+
+- Use curated/anonymized fixtures for hackathon demo.
+- Do not store scraped personal resumes.
+- Do not claim `source_type=public` means hired/selected unless verified.
+- Prefer synthetic/curated benchmark archetypes for initial demo.
+- Store source attribution if a public source is later used.
 
 ## Migration Note
 

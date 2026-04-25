@@ -4,6 +4,8 @@
 
 Add the first product API endpoints for creating and reading an interview session.
 
+This task creates the API foundation only. It must not prepare the session, run AI analysis, or generate benchmark comparisons.
+
 ## Scope
 
 Implement only:
@@ -12,6 +14,7 @@ Implement only:
 - `GET /api/sessions/{session_id}`
 - Request/response schemas for those endpoints.
 - Minimal validation for empty job descriptions.
+- Optional storage of pasted resume text if supplied during session creation.
 - Route registration in the FastAPI app.
 
 ## Out of Scope
@@ -21,6 +24,8 @@ Do not implement:
 - Resume file upload.
 - Session preparation jobs.
 - AI match scoring.
+- Benchmark retrieval.
+- Benchmark comparison.
 - Question generation.
 - Frontend pages.
 
@@ -42,7 +47,7 @@ Creates a session with status `draft`.
 
 ### GET `/api/sessions/{session_id}`
 
-Returns session state.
+Returns session state, including benchmark summary fields if they exist and are currently null/empty.
 
 ## Data Model Changes
 
@@ -54,8 +59,10 @@ None beyond models created in the previous task.
 - [ ] Empty or whitespace-only JD returns a validation error.
 - [ ] Session starts with status `draft`.
 - [ ] `GET /api/sessions/{session_id}` returns the session.
+- [ ] Response is compatible with the benchmark-aware session contract in `docs/09-api-contracts-detailed.md`.
 - [ ] Unknown session returns 404.
 - [ ] No AI call happens in this task.
+- [ ] No benchmark retrieval or comparison happens in this task.
 - [ ] No frontend change is required in this task.
 
 ## Verification
@@ -79,3 +86,4 @@ pytest backend/tests
 
 - Keep route handlers thin.
 - Put DB operations in a small service if the existing project style supports it.
+- Preparation and benchmark analysis begin in later tasks, not here.

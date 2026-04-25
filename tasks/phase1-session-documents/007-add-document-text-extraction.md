@@ -2,7 +2,7 @@
 
 ## Goal
 
-Extract text from uploaded resume files and store the extracted text for later AI processing.
+Extract text from uploaded resume files and store the extracted text for later AI processing, embeddings, and benchmark comparison.
 
 ## Scope
 
@@ -21,6 +21,8 @@ Do not implement:
 - OCR.
 - AI analysis.
 - Embeddings.
+- Benchmark retrieval.
+- Benchmark comparison.
 - Question generation.
 - Advanced resume structuring.
 
@@ -49,6 +51,8 @@ Use existing `documents.extracted_text` and `documents.parse_status`.
 - [ ] Failed extraction sets `parse_status=failed` with safe metadata.
 - [ ] Extracted text is stored in the document row.
 - [ ] No OCR implementation is added.
+- [ ] No AI, embedding, or benchmark comparison is added.
+- [ ] Full resume text is not logged.
 
 ## Verification
 
@@ -65,3 +69,4 @@ If no tests exist, add a minimal parser test using fixture files or simple temp 
 - Keep extraction deterministic and local.
 - Do not call OpenAI in this task.
 - Do not log full resume text.
+- Benchmark analysis will consume extracted text in later phases.

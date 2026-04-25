@@ -4,6 +4,8 @@
 
 Allow a session to receive resume content either as pasted text or as an uploaded file stored in MinIO.
 
+This task only prepares resume data for later parsing, embedding, and benchmark comparison.
+
 ## Scope
 
 Implement only:
@@ -21,6 +23,8 @@ Do not implement:
 - Full OCR.
 - AI analysis.
 - Embeddings.
+- Benchmark retrieval.
+- Benchmark comparison.
 - Question generation.
 - Frontend upload UI unless explicitly small and necessary.
 
@@ -54,6 +58,7 @@ Use the existing `documents` table.
 - [ ] Unsupported file type returns validation error.
 - [ ] Unknown session returns 404.
 - [ ] No OCR is implemented.
+- [ ] No AI, embedding, or benchmark logic is implemented.
 
 ## Verification
 
@@ -69,3 +74,4 @@ Then upload a sample TXT/PDF/DOCX file through the API docs or curl.
 
 - Do not store raw files in Postgres.
 - Do not expose permanent MinIO credentials or unsigned private object URLs.
+- Benchmark comparison will use extracted resume text in later phases, not this task.
