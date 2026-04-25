@@ -27,6 +27,11 @@ class SessionCreateResponse(BaseModel):
     status: InterviewSessionStatus
 
 
+class SessionPrepareResponse(BaseModel):
+    job_id: str
+    status: str
+
+
 class SessionRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

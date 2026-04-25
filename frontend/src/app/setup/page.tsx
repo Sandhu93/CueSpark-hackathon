@@ -18,6 +18,7 @@ export default function SetupPage() {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [state, setState] = useState<SubmitState>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [prepareNotice, setPrepareNotice] = useState<string | null>(null);
   const [createdSessionId, setCreatedSessionId] = useState<string | null>(null);
 
   const canSubmit =
@@ -28,6 +29,7 @@ export default function SetupPage() {
     if (!canSubmit || state !== "idle") return;
 
     setError(null);
+    setPrepareNotice(null);
     setCreatedSessionId(null);
 
     try {
@@ -46,7 +48,17 @@ export default function SetupPage() {
       }
 
       setState("preparing");
-      await api.prepareSession(session.session_id);
+      try {
+        await api.prepareSession(session.session_id);
+      } catch (prepareErr) {
+        const message = prepareErr instanceof Error ? prepareErr.message : "Preparation failed";
+        setPrepareNotice(
+          `Session was created, but preparation is not available yet from this backend: ${message}`,
+        );
+        setState("idle");
+        return;
+      }
+
       setState("done");
       router.push(`/session/${session.session_id}/match`);
     } catch (err) {
@@ -137,9 +149,29 @@ export default function SetupPage() {
           {createdSessionId && (
             <div className="rounded border border-[var(--border)] p-4 text-sm">
               <div className="text-[var(--muted)]">Session</div>
-              <Link href={`/session/${createdSessionId}/match`} className="break-all">
+              <Link href={`/session/${createdSessionId}/match`} className="break-all text-[var(--accent)]">
                 {createdSessionId}
               </Link>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Link
+                  href={`/session/${createdSessionId}/match`}
+                  className="rounded bg-[var(--accent)] px-3 py-2 text-xs font-semibold text-black"
+                >
+                  Open match status
+                </Link>
+                <Link
+                  href={`/session/${createdSessionId}/benchmark`}
+                  className="rounded border border-[var(--border)] px-3 py-2 text-xs"
+                >
+                  Open benchmark
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {prepareNotice && (
+            <div className="rounded border border-yellow-400/40 bg-yellow-400/10 p-4 text-sm leading-6 text-yellow-100">
+              {prepareNotice}
             </div>
           )}
 

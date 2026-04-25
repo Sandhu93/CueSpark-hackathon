@@ -113,3 +113,32 @@ def test_get_unknown_session_returns_404(client: TestClient):
     response = client.get("/api/sessions/00000000-0000-0000-0000-000000000000")
 
     assert response.status_code == 404
+
+
+def test_prepare_session_enqueues_job(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    enqueued: list[tuple[str, str]] = []
+
+    def fake_enqueue(task_path: str, *args, **kwargs):
+        enqueued.append((task_path, kwargs.get("job_id") or args[0]))
+
+    monkeypatch.setattr("app.api.sessions.default_queue.enqueue", fake_enqueue)
+    created = client.post(
+        "/api/sessions",
+        json={"job_description": "Sample JD", "resume_text": "Sample resume"},
+    ).json()
+
+    response = client.post(f"/api/sessions/{created['session_id']}/prepare")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["job_id"]
+    assert body["status"] == "queued"
+    assert enqueued == [("app.tasks.prepare_session.run", body["job_id"])]
+
+
+def test_prepare_unknown_session_returns_404(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr("app.api.sessions.default_queue.enqueue", lambda *args, **kwargs: None)
+
+    response = client.post("/api/sessions/missing-session/prepare")
+
+    assert response.status_code == 404

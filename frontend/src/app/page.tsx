@@ -1,96 +1,88 @@
-"use client";
+import Link from "next/link";
 
-import { useState } from "react";
-import { api, putToPresigned } from "@/lib/api";
-import { useJob } from "@/hooks/useJob";
+const capabilities = [
+  "Create a single interview session from a pasted job description.",
+  "Paste resume text or upload a PDF, DOCX, or TXT resume.",
+  "Show session status, match fields, and role signals returned by the API.",
+  "Display the benchmark gap dashboard when comparison data exists.",
+];
+
+const pending = [
+  "Full preparation job endpoint",
+  "Interview question playback",
+  "Candidate audio recording",
+  "Answer evaluation and final report",
+];
 
 export default function Home() {
-  const [uploadUrl, setUploadUrl] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [jobId, setJobId] = useState<string | null>(null);
-
-  const { job } = useJob(jobId);
-
-  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    try {
-      const init = await api.initUpload(file.name, file.type);
-      await putToPresigned(init.upload_url, file);
-      setUploadUrl(init.public_url);
-    } catch (err) {
-      alert(`Upload failed: ${err}`);
-    } finally {
-      setUploading(false);
-    }
-  }
-
-  async function startDummyJob() {
-    const j = await api.createJob("dummy", { note: "kicked from web" });
-    setJobId(j.id);
-  }
-
   return (
-    <main className="mx-auto max-w-2xl px-6 py-16 font-mono">
-      <header className="mb-12">
-        <h1 className="text-3xl font-bold tracking-tight">CueSpark Interview Coach</h1>
-        <p className="mt-2 text-[var(--muted)]">
-          Benchmark-driven AI interview readiness built on FastAPI, Next.js, Postgres,
-          Redis, MinIO, and workers.
-        </p>
-      </header>
+    <main className="min-h-screen">
+      <section className="border-b border-[var(--border)]">
+        <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 py-14 lg:grid-cols-[1fr_380px] lg:py-20">
+          <div>
+            <p className="text-sm font-medium text-[var(--accent)]">CueSpark Interview Coach</p>
+            <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
+              Benchmark-driven interview readiness from JD and resume evidence.
+            </h1>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-[var(--muted)]">
+              This demo focuses on what the backend has already built: session intake,
+              document ingestion, match status fields, and benchmark comparison output.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/setup"
+                className="rounded bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-black"
+              >
+                Start demo
+              </Link>
+              <a
+                href="http://localhost:8000/health"
+                className="rounded border border-[var(--border)] px-5 py-3 text-sm"
+              >
+                Check API health
+              </a>
+            </div>
+          </div>
 
-      <section className="mb-10 rounded border border-[var(--border)] p-6">
-        <h2 className="mb-4 text-lg">1 - File upload check</h2>
-        <input
-          type="file"
-          onChange={handleFile}
-          disabled={uploading}
-          className="block w-full text-sm file:mr-4 file:rounded file:border-0 file:bg-[var(--accent)] file:px-4 file:py-2 file:text-black"
-        />
-        {uploading && <p className="mt-3 text-[var(--muted)]">Uploading…</p>}
-        {uploadUrl && (
-          <p className="mt-3 break-all text-sm">
-            <span className="text-[var(--muted)]">stored at:</span>{" "}
-            <a href={uploadUrl} target="_blank" rel="noreferrer">{uploadUrl}</a>
-          </p>
-        )}
+          <aside className="rounded border border-[var(--border)] bg-black/20 p-5">
+            <h2 className="text-sm font-semibold">Current demo path</h2>
+            <ol className="mt-4 space-y-3 text-sm leading-6 text-[var(--muted)]">
+              <li>1. Paste JD and resume evidence.</li>
+              <li>2. Create a session and optionally upload a resume file.</li>
+              <li>3. Review match/session status.</li>
+              <li>4. Open benchmark gaps when the backend has written them.</li>
+            </ol>
+          </aside>
+        </div>
       </section>
 
-      <section className="rounded border border-[var(--border)] p-6">
-        <h2 className="mb-4 text-lg">2 - Worker queue check</h2>
-        <button
-          onClick={startDummyJob}
-          className="rounded bg-[var(--accent)] px-4 py-2 text-sm text-black"
-        >
-          enqueue demo job
-        </button>
-
-        {job && (
-          <div className="mt-6 space-y-1 text-sm">
-            <div><span className="text-[var(--muted)]">id:</span> {job.id}</div>
-            <div><span className="text-[var(--muted)]">status:</span> <Status value={job.status} /></div>
-            {job.error && (
-              <div className="text-red-400">error: {job.error}</div>
-            )}
-            {job.status === "succeeded" && (
-              <pre className="mt-3 overflow-x-auto rounded bg-black/40 p-3 text-xs">
-{JSON.stringify(job.result, null, 2)}
-              </pre>
-            )}
-          </div>
-        )}
+      <section className="mx-auto grid w-full max-w-6xl gap-5 px-6 py-10 lg:grid-cols-2">
+        <InfoPanel title="Built backend surface" items={capabilities} />
+        <InfoPanel title="Not in this demo yet" items={pending} muted />
       </section>
     </main>
   );
 }
 
-function Status({ value }: { value: string }) {
-  const color =
-    value === "succeeded" ? "text-emerald-400" :
-    value === "failed"    ? "text-red-400" :
-    value === "running"   ? "text-yellow-300" :
-                            "text-[var(--muted)]";
-  return <span className={color}>{value}</span>;
+function InfoPanel({
+  title,
+  items,
+  muted,
+}: {
+  title: string;
+  items: string[];
+  muted?: boolean;
+}) {
+  return (
+    <section className="rounded border border-[var(--border)] bg-black/20 p-5">
+      <h2 className="text-sm font-semibold">{title}</h2>
+      <ul className="mt-4 space-y-2 text-sm leading-6">
+        {items.map((item) => (
+          <li key={item} className={muted ? "text-[var(--muted)]" : ""}>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
 }

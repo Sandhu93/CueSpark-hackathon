@@ -14,6 +14,7 @@ router = APIRouter()
 # Add new task kinds here as you build features.
 TASK_REGISTRY: dict[str, str] = {
     "dummy": "app.tasks.dummy.run",
+    "prepare_session": "app.tasks.prepare_session.run",
     # "transcribe": "app.tasks.transcribe.run",
     # "score_answer": "app.tasks.score_answer.run",
 }
