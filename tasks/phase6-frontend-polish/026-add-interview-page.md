@@ -1,8 +1,8 @@
-# Task: Add Turn-Based Interview Page
+# Task: Add Turn-Based Benchmark-Driven Interview Page
 
 ## Goal
 
-Build the frontend page where the candidate hears one AI interviewer question at a time and records an answer.
+Build the frontend page where the candidate hears one benchmark-driven AI interviewer question at a time and records an answer.
 
 ## Scope
 
@@ -11,11 +11,14 @@ Implement only:
 - `/session/[sessionId]/interview` page.
 - Fetch question list.
 - Display current question.
+- Display why this question was asked.
+- Display benchmark gap being tested where available.
 - Request/generate TTS audio for current question.
 - Play interviewer audio.
 - Use browser recording component.
 - Upload answer audio.
 - Fetch answer result after processing.
+- Display transcript/evaluation when available.
 - Move to next question.
 
 ## Out of Scope
@@ -28,6 +31,7 @@ Do not implement:
 - Video recording.
 - Monaco editor.
 - Code compiler.
+- Benchmark dashboard.
 
 ## Files Likely Involved
 
@@ -52,10 +56,13 @@ None.
 ## Acceptance Criteria
 
 - [ ] User can see one question at a time.
+- [ ] User can see why the question was asked when available.
+- [ ] User can see benchmark gap references when available.
 - [ ] User can play interviewer audio.
 - [ ] User can record an answer.
 - [ ] User can upload the answer.
 - [ ] UI shows transcript/evaluation when available.
+- [ ] Evaluation display includes benchmark gap coverage score when available.
 - [ ] User can move to the next question.
 - [ ] Loading and error states are handled.
 - [ ] No video or realtime conversation is implemented.
@@ -76,3 +83,4 @@ Manual browser verification is required.
 
 - Keep state local and simple.
 - Do not introduce global state libraries unless explicitly needed.
+- The interview page should make it clear that questions come from benchmark gaps, not generic AI prompts.

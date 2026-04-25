@@ -2,7 +2,7 @@
 
 ## Goal
 
-Create a typed frontend API client for CueSpark backend calls.
+Create a typed frontend API client for CueSpark backend calls, including benchmark-aware endpoints and response types.
 
 ## Scope
 
@@ -10,7 +10,7 @@ Implement only:
 
 - Centralized API client in `frontend/src/lib`.
 - TypeScript request/response types for current endpoints.
-- Helpers for session creation, preparation, questions, TTS, answer upload, answer read, and report read.
+- Helpers for session creation, preparation, benchmark read, questions, TTS, answer upload, answer read, and report read.
 - Basic error handling.
 
 ## Out of Scope
@@ -39,6 +39,9 @@ None.
 
 - [ ] API client uses `NEXT_PUBLIC_API_BASE_URL`.
 - [ ] API response types match backend contracts.
+- [ ] API client includes session create/read/prepare helpers.
+- [ ] API client includes benchmark comparison read helper.
+- [ ] API client includes question/TTS/answer/report helpers.
 - [ ] File/audio upload helpers support multipart form data.
 - [ ] No React component contains raw fetch logic for product APIs.
 - [ ] No authentication logic is added.
@@ -57,3 +60,4 @@ npm run build
 
 - Avoid `any` unless justified with a comment.
 - Keep the client small and explicit.
+- Benchmark response types should include benchmark similarity, resume competitiveness, evidence strength, gaps, risks, and question targets.
