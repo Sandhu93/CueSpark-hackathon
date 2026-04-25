@@ -1,300 +1,262 @@
 import Link from "next/link";
 
 import {
+  DashboardCard,
+  EvidenceDistribution,
+  MetricCard,
+  ProgressBar,
+  ScoreGauge,
+} from "@/components/demo/dashboard-widgets";
+import {
   mockBenchmarkComparison,
+  mockDashboardData,
   mockFinalReport,
   mockSession,
 } from "@/lib/demo/mock-data";
-
-const scoreCards = [
-  {
-    label: "JD-resume match",
-    value: mockFinalReport.jdResumeMatchScore,
-    detail: "How directly the resume maps to the posted role requirements.",
-  },
-  {
-    label: "Benchmark similarity",
-    value: mockFinalReport.benchmarkSimilarityScore,
-    detail: "How closely the evidence matches the role benchmark corpus.",
-  },
-  {
-    label: "Resume competitiveness",
-    value: mockFinalReport.resumeCompetitivenessScore,
-    detail: "How strong the resume looks against curated top-candidate archetypes.",
-  },
-  {
-    label: "Evidence strength",
-    value: mockFinalReport.evidenceStrengthScore,
-    detail: "How concrete the proof is across metrics, scale, ownership, and impact.",
-  },
-];
-
-const secondaryScores = [
-  ["Role-specific depth", mockFinalReport.roleSpecificDepthScore],
-  ["Communication clarity", mockFinalReport.communicationClarityScore],
-  ["Benchmark gap coverage", mockFinalReport.benchmarkGapCoverageScore],
-] satisfies Array<[string, number]>;
 
 const strongestAnswer = [...mockFinalReport.answerFeedback].sort((a, b) => b.score - a.score)[0];
 const weakestAnswer = [...mockFinalReport.answerFeedback].sort((a, b) => a.score - b.score)[0];
 
 export default function DemoReportPage() {
   return (
-    <main className="min-h-screen">
-      <section className="border-b border-[var(--border)]">
-        <div className="mx-auto w-full max-w-6xl px-6 py-8">
-          <nav className="mb-8 flex flex-wrap items-center gap-4 text-sm">
-            <Link href="/demo/interview" className="text-[var(--muted)]">
-              Interview room
-            </Link>
-            <Link href="/demo" className="text-[var(--muted)]">
-              Demo
-            </Link>
-            <Link href="/setup" className="text-[var(--muted)]">
-              Real setup
-            </Link>
-          </nav>
-
-          <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-            <div>
-              <div className="inline-flex rounded border border-[var(--border)] bg-black/30 px-3 py-1 text-xs font-medium text-[var(--accent)]">
-                {mockSession.demoModeLabel}
-              </div>
-              <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
-                Final Readiness Report
-              </h1>
-              <p className="mt-5 max-w-3xl text-base leading-7 text-[var(--muted)]">
-                {mockFinalReport.summary}
-              </p>
-            </div>
-
-            <aside className="rounded border border-[var(--border)] bg-black/20 p-5">
-              <div className="text-xs uppercase text-[var(--muted)]">Overall readiness score</div>
-              <div className="mt-2 text-6xl font-semibold">{mockFinalReport.readinessScore}</div>
-              <div className="mt-1 text-sm text-[var(--muted)]">out of 100</div>
-              <div className="mt-5 rounded border border-[var(--border)] bg-black/20 p-4">
-                <div className="text-xs uppercase text-[var(--muted)]">Hiring recommendation</div>
-                <div className="mt-2 text-2xl font-semibold">
-                  {formatRecommendation(mockFinalReport.hiringRecommendation)}
-                </div>
-                <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
-                  Mock readiness signal only. This is a strict preparation diagnostic, not a
-                  hiring guarantee.
-                </p>
-              </div>
-            </aside>
+    <main className="min-h-screen px-4 py-6 lg:px-8">
+      <section className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-wide text-blue-700">
+            {mockSession.demoModeLabel}
           </div>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 lg:text-4xl">
+            Final Benchmark-Aware Readiness Report
+          </h1>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--muted)]">
+            Strict interviewer-style output: benchmark-driven, evidence-focused, and designed to
+            close the most important readiness gaps before applying.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/demo/interview" className="rounded-md border border-[var(--border)] bg-white px-4 py-2 text-sm font-semibold text-slate-700">
+            Back to interview
+          </Link>
+          <Link href="/setup" className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white">
+            Real setup
+          </Link>
         </div>
       </section>
 
-      <section className="mx-auto grid w-full max-w-6xl gap-4 px-6 py-8 sm:grid-cols-2 lg:grid-cols-4">
-        {scoreCards.map((card) => (
-          <ScoreCard key={card.label} {...card} />
-        ))}
+      <section className="mb-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <DashboardCard>
+          <h2 className="text-sm font-semibold text-slate-900">Readiness Score</h2>
+          <ScoreGauge value={mockFinalReport.readinessScore} tone="amber" />
+          <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+            Needs stronger proof before strong-hire readiness.
+          </p>
+          <span className="mt-3 inline-flex rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+            Borderline
+          </span>
+        </DashboardCard>
+        <MetricCard
+          title="Benchmark Similarity"
+          value={mockFinalReport.benchmarkSimilarityScore}
+          detail="Below benchmark profile average for senior backend ownership."
+          trend={mockDashboardData.scoreTrends[0].values}
+          tone="purple"
+        />
+        <MetricCard
+          title="Evidence Strength"
+          value={mockFinalReport.evidenceStrengthScore}
+          detail="High-priority gap: measurable impact and ownership evidence."
+          trend={mockDashboardData.scoreTrends[2].values}
+          tone="red"
+        />
+        <DashboardCard className="bg-amber-50">
+          <div className="text-sm font-semibold text-slate-900">Hiring Recommendation</div>
+          <div className="mt-5 text-4xl font-semibold text-amber-600">
+            {formatRecommendation(mockFinalReport.hiringRecommendation)}
+          </div>
+          <p className="mt-4 text-sm leading-6 text-amber-900">
+            Borderline signal. Close key gaps in ownership and measurable impact.
+          </p>
+          <p className="mt-4 text-xs leading-5 text-amber-800">
+            Mock readiness signal only, not a hiring guarantee.
+          </p>
+        </DashboardCard>
       </section>
 
-      <section className="mx-auto grid w-full max-w-6xl gap-5 px-6 pb-8 lg:grid-cols-[1fr_360px]">
-        <section className="rounded border border-[var(--border)] bg-black/20 p-5">
-          <h2 className="text-lg font-semibold">Interview risk areas</h2>
-          <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-            These risks matter because a strict interviewer will look for benchmark-level proof:
-            clear ownership, measurable impact, and role-specific judgment under constraints.
-          </p>
-          <ul className="mt-5 space-y-3">
-            {mockFinalReport.interviewRiskAreas.map((risk) => (
-              <li key={risk} className="rounded border border-[var(--border)] bg-black/20 p-4">
-                <div className="text-xs uppercase text-red-200">Risk</div>
-                <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{risk}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <aside className="rounded border border-[var(--border)] bg-black/20 p-5">
-          <h2 className="text-lg font-semibold">Benchmark depth checks</h2>
-          <dl className="mt-4 space-y-3">
-            {secondaryScores.map(([label, value]) => (
-              <div key={label} className="rounded border border-[var(--border)] p-3">
-                <dt className="text-xs uppercase text-[var(--muted)]">{label}</dt>
-                <dd className="mt-2 text-2xl font-semibold">{value}/100</dd>
+      <section className="mb-5 grid gap-4 xl:grid-cols-[1.25fr_0.9fr_0.9fr]">
+        <DashboardCard>
+          <h2 className="text-base font-semibold text-slate-900">Benchmark gap summary</h2>
+          <p className="mt-1 text-sm text-[var(--muted)]">Candidate score against benchmark average.</p>
+          <div className="mt-5 space-y-4">
+            {mockDashboardData.benchmarkCoverage.map((item) => (
+              <div key={item.label} className="grid gap-2 md:grid-cols-[130px_1fr_52px] md:items-center">
+                <div className="text-sm font-medium text-slate-700">{item.label}</div>
+                <div className="space-y-1.5">
+                  <ProgressBar value={item.benchmarkScore} tone="purple" />
+                  <ProgressBar value={item.candidateScore} tone="blue" />
+                </div>
+                <div className="text-right text-sm font-semibold text-blue-700">{item.candidateScore}</div>
               </div>
             ))}
-          </dl>
-          <p className="mt-4 text-sm leading-6 text-[var(--muted)]">
-            Hiring bar gap:{" "}
-            <span className="font-semibold text-red-200">
-              {mockBenchmarkComparison.hiringBarGap.toUpperCase()}
-            </span>
-          </p>
-        </aside>
-      </section>
-
-      <section className="mx-auto grid w-full max-w-6xl gap-5 px-6 pb-8 lg:grid-cols-2">
-        <AnswerSummary title="Strongest answer" feedback={strongestAnswer} tone="strong" />
-        <AnswerSummary title="Weakest answer" feedback={weakestAnswer} tone="risk" />
-      </section>
-
-      <section className="mx-auto w-full max-w-6xl px-6 pb-8">
-        <div className="rounded border border-[var(--border)] bg-black/20 p-5">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold">Answer-by-answer feedback preview</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">
-                Each answer is scored against the question target and the benchmark gap it was
-                meant to validate.
-              </p>
-            </div>
-            <Link
-              href="/setup"
-              className="rounded bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-black"
-            >
-              Try real setup flow
-            </Link>
           </div>
+          <div className="mt-5 rounded-md bg-blue-50 px-3 py-2 text-sm text-blue-700">
+            Largest gaps: ownership, business impact, and architecture trade-offs.
+          </div>
+        </DashboardCard>
 
-          <div className="mt-5 grid gap-4 lg:grid-cols-3">
-            {mockFinalReport.answerFeedback.map((feedback) => (
-              <article key={feedback.questionId} className="rounded border border-[var(--border)] p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="text-sm font-medium">Question {feedback.questionNumber}</div>
-                  <div className="rounded border border-[var(--border)] px-2 py-1 text-xs">
-                    {feedback.score}/100
-                  </div>
+        <DashboardCard>
+          <h2 className="text-base font-semibold text-slate-900">Interview risk areas</h2>
+          <div className="mt-5 space-y-3">
+            {mockFinalReport.interviewRiskAreas.map((risk, index) => (
+              <div key={risk} className="rounded-md border border-[var(--border)] p-3">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className={index < 2 ? "rounded-full bg-red-50 px-2 py-1 text-xs font-semibold text-red-700" : "rounded-full bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700"}>
+                    {index < 2 ? "High" : "Medium"}
+                  </span>
+                  <span className="text-xs text-[var(--muted)]">Impact</span>
                 </div>
-                <div className="mt-3 text-xs uppercase text-[var(--muted)]">
-                  {formatLabel(feedback.category)}
-                </div>
-                <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
-                  {feedback.strictFeedback}
-                </p>
-                <div className="mt-4 rounded border border-[var(--border)] bg-black/20 p-3">
-                  <div className="text-xs uppercase text-[var(--muted)]">Benchmark gap coverage</div>
-                  <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-                    {feedback.benchmarkGapCoverage}
-                  </p>
-                </div>
-              </article>
+                <p className="text-sm leading-6 text-[var(--muted)]">{risk}</p>
+              </div>
             ))}
           </div>
-        </div>
-      </section>
+        </DashboardCard>
 
-      <section className="mx-auto grid w-full max-w-6xl gap-5 px-6 pb-8 lg:grid-cols-[1fr_360px]">
-        <section className="rounded border border-[var(--border)] bg-black/20 p-5">
-          <h2 className="text-lg font-semibold">Resume improvement suggestions</h2>
-          <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-            The resume needs stronger benchmark-style evidence before applying: metrics, scope,
-            ownership, and impact.
-          </p>
-
-          <div className="mt-5 grid gap-4">
-            <ResumeBulletCard label="Weak resume bullet" value={mockFinalReport.resumeBulletUpgrade.weakBullet} />
-            <ResumeBulletCard
-              label="Benchmark-style improved bullet"
-              value={mockFinalReport.resumeBulletUpgrade.improvedBullet}
-              accented
-            />
-            <ResumeBulletCard
-              label="Missing evidence or metric"
+        <DashboardCard>
+          <h2 className="text-base font-semibold text-slate-900">Evidence upgrade suggestions</h2>
+          <div className="mt-5 space-y-3">
+            <EvidenceStep label="Before" value={mockFinalReport.resumeBulletUpgrade.weakBullet} tone="purple" />
+            <EvidenceStep label="After" value={mockFinalReport.resumeBulletUpgrade.improvedBullet} tone="green" />
+            <EvidenceStep
+              label="Prepare"
               value={mockFinalReport.resumeBulletUpgrade.missingEvidenceExplanation}
+              tone="blue"
             />
           </div>
-        </section>
+        </DashboardCard>
+      </section>
 
-        <aside className="rounded border border-[var(--border)] bg-black/20 p-5">
-          <h2 className="text-lg font-semibold">Top improvement priorities</h2>
-          <ul className="mt-4 space-y-3">
-            {mockFinalReport.topImprovementPriorities.map((priority) => (
-              <li key={priority} className="rounded border border-[var(--border)] bg-black/20 p-3 text-sm leading-6">
-                {priority}
+      <section className="mb-5 grid gap-4 xl:grid-cols-[1fr_0.85fr_0.85fr_0.85fr]">
+        <DashboardCard>
+          <div className="flex items-center justify-between gap-4">
+            <h2 className="text-base font-semibold text-slate-900">Answer-by-answer performance</h2>
+            <Link href="/demo/interview" className="text-sm font-semibold text-blue-700">
+              View interview
+            </Link>
+          </div>
+          <div className="mt-5 space-y-4">
+            {mockFinalReport.answerFeedback.map((feedback) => (
+              <div key={feedback.questionId}>
+                <div className="mb-2 flex items-center justify-between gap-4 text-sm">
+                  <span className="text-slate-700">
+                    Q{feedback.questionNumber}. {formatLabel(feedback.category)}
+                  </span>
+                  <span className="font-semibold text-slate-900">{feedback.score}/100</span>
+                </div>
+                <ProgressBar value={feedback.score} tone={feedback.score >= 75 ? "green" : feedback.score >= 60 ? "amber" : "red"} />
+              </div>
+            ))}
+          </div>
+          <div className="mt-5 grid gap-3 md:grid-cols-2">
+            <AnswerCallout title="Strongest answer" score={strongestAnswer.score} body={strongestAnswer.benchmarkGapCoverage} />
+            <AnswerCallout title="Weakest answer" score={weakestAnswer.score} body={weakestAnswer.benchmarkGapCoverage} />
+          </div>
+        </DashboardCard>
+
+        <DashboardCard>
+          <h2 className="text-base font-semibold text-slate-900">Evidence distribution</h2>
+          <div className="mt-6">
+            <EvidenceDistribution items={mockDashboardData.evidenceDistribution} />
+          </div>
+          <p className="mt-5 text-sm leading-6 text-[var(--muted)]">
+            Missing and weak evidence dominate the diagnostic.
+          </p>
+        </DashboardCard>
+
+        <DashboardCard>
+          <h2 className="text-base font-semibold text-slate-900">Resume rewrite priorities</h2>
+          <ul className="mt-5 space-y-3">
+            {mockFinalReport.resumeFeedback.map((item) => (
+              <li key={item} className="rounded-md bg-blue-50 px-3 py-2 text-sm leading-6 text-blue-800">
+                {item}
               </li>
             ))}
           </ul>
-        </aside>
-      </section>
+          <Link href="/demo/benchmark" className="mt-5 inline-flex text-sm font-semibold text-blue-700">
+            See benchmark gaps
+          </Link>
+        </DashboardCard>
 
-      <section className="mx-auto w-full max-w-6xl px-6 pb-14">
-        <div className="rounded border border-[var(--border)] bg-black/20 p-5">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold">7-day preparation plan</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">
-                Practice before applying by closing the highest-risk benchmark gaps first.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Link href="/demo/interview" className="rounded border border-[var(--border)] px-4 py-2 text-sm">
-                Back to interview
-              </Link>
-              <Link href="/demo" className="rounded border border-[var(--border)] px-4 py-2 text-sm">
-                Back to demo
-              </Link>
-            </div>
-          </div>
-
-          <ol className="mt-5 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-            {mockFinalReport.preparationPlan.map((item, index) => (
-              <li key={item} className="rounded border border-[var(--border)] bg-black/20 p-4">
-                <div className="text-xs uppercase text-[var(--accent)]">Day {index + 1}</div>
-                <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{item}</p>
+        <DashboardCard>
+          <h2 className="text-base font-semibold text-slate-900">Preparation plan</h2>
+          <ol id="prep-plan" className="mt-5 space-y-3">
+            {mockFinalReport.preparationPlan.slice(0, 4).map((item, index) => (
+              <li key={item} className="flex gap-3 text-sm leading-6">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white">
+                  {index + 1}
+                </span>
+                <span className="text-[var(--muted)]">{item}</span>
               </li>
             ))}
           </ol>
-        </div>
+          <p className="mt-5 rounded-md bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700">
+            Strengthen evidence to close the gap.
+          </p>
+        </DashboardCard>
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-[1fr_1fr]">
+        <DashboardCard>
+          <h2 className="text-base font-semibold text-slate-900">Strict summary</h2>
+          <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{mockFinalReport.summary}</p>
+        </DashboardCard>
+
+        <DashboardCard>
+          <h2 className="text-base font-semibold text-slate-900">Benchmark context</h2>
+          <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+            Hiring bar gap:{" "}
+            <span className="font-semibold text-red-600">
+              {mockBenchmarkComparison.hiringBarGap.toUpperCase()}
+            </span>
+            . The report is based on mock benchmark profiles and role benchmark corpus gaps for
+            presentation only.
+          </p>
+        </DashboardCard>
       </section>
     </main>
   );
 }
 
-function ScoreCard({ label, value, detail }: { label: string; value: number; detail: string }) {
-  return (
-    <section className="rounded border border-[var(--border)] bg-black/20 p-5">
-      <div className="text-xs uppercase text-[var(--muted)]">{label}</div>
-      <div className="mt-2 text-3xl font-semibold">{value}/100</div>
-      <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{detail}</p>
-    </section>
-  );
-}
-
-function AnswerSummary({
-  title,
-  feedback,
-  tone,
-}: {
-  title: string;
-  feedback: (typeof mockFinalReport.answerFeedback)[number];
-  tone: "strong" | "risk";
-}) {
-  const toneClass = tone === "strong" ? "text-[var(--accent)]" : "text-red-200";
-
-  return (
-    <section className="rounded border border-[var(--border)] bg-black/20 p-5">
-      <div className="text-xs uppercase text-[var(--muted)]">{title}</div>
-      <div className={`mt-2 text-3xl font-semibold ${toneClass}`}>{feedback.score}/100</div>
-      <div className="mt-2 text-sm">Question {feedback.questionNumber}</div>
-      <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{feedback.strictFeedback}</p>
-      <p className="mt-3 rounded border border-[var(--border)] bg-black/20 p-3 text-sm leading-6 text-[var(--muted)]">
-        {feedback.benchmarkGapCoverage}
-      </p>
-    </section>
-  );
-}
-
-function ResumeBulletCard({
+function EvidenceStep({
   label,
   value,
-  accented,
+  tone,
 }: {
   label: string;
   value: string;
-  accented?: boolean;
+  tone: "purple" | "green" | "blue";
 }) {
+  const className =
+    tone === "green"
+      ? "bg-emerald-50 text-emerald-800"
+      : tone === "purple"
+        ? "bg-violet-50 text-violet-800"
+        : "bg-blue-50 text-blue-800";
+
   return (
-    <div className="rounded border border-[var(--border)] bg-black/20 p-4">
-      <div className={`text-xs uppercase ${accented ? "text-[var(--accent)]" : "text-[var(--muted)]"}`}>
-        {label}
+    <div className={`rounded-md px-3 py-3 ${className}`}>
+      <div className="text-xs font-semibold uppercase">{label}</div>
+      <p className="mt-2 text-sm leading-6">{value}</p>
+    </div>
+  );
+}
+
+function AnswerCallout({ title, score, body }: { title: string; score: number; body: string }) {
+  return (
+    <div className="rounded-md border border-[var(--border)] p-3">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-sm font-semibold text-slate-800">{title}</span>
+        <span className="text-sm font-semibold text-blue-700">{score}/100</span>
       </div>
-      <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{value}</p>
+      <p className="mt-2 text-xs leading-5 text-[var(--muted)]">{body}</p>
     </div>
   );
 }

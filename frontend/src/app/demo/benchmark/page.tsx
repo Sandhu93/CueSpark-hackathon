@@ -1,258 +1,237 @@
 import Link from "next/link";
 
-import { mockBenchmarkComparison, mockSession } from "@/lib/demo/mock-data";
+import {
+  DashboardCard,
+  EvidenceDistribution,
+  MetricCard,
+  ProgressBar,
+} from "@/components/demo/dashboard-widgets";
+import {
+  mockBenchmarkComparison,
+  mockDashboardData,
+  mockSession,
+} from "@/lib/demo/mock-data";
 
-const scoreCards = [
+const metricCards = [
   {
-    label: "Benchmark Similarity",
-    value: `${mockBenchmarkComparison.benchmarkSimilarityScore}/100`,
-    detail: "How closely the resume evidence maps to the role benchmark corpus.",
+    title: "Benchmark Similarity",
+    value: mockBenchmarkComparison.benchmarkSimilarityScore,
+    detail: "Below the role benchmark corpus average, mostly due to weak proof of scale and ownership.",
+    trend: mockDashboardData.scoreTrends[0].values,
+    tone: "purple" as const,
   },
   {
-    label: "Resume Competitiveness",
-    value: `${mockBenchmarkComparison.resumeCompetitivenessScore}/100`,
-    detail: "How strong the candidate proof looks against curated top-candidate archetypes.",
+    title: "Resume Competitiveness",
+    value: mockBenchmarkComparison.resumeCompetitivenessScore,
+    detail: "Weak proof compared to curated top-candidate archetypes for this role.",
+    trend: mockDashboardData.scoreTrends[1].values,
+    tone: "blue" as const,
   },
   {
-    label: "Evidence Strength",
-    value: `${mockBenchmarkComparison.evidenceStrengthScore}/100`,
-    detail: "How much concrete proof, metrics, project scale, and ownership evidence is present.",
+    title: "Evidence Strength",
+    value: mockBenchmarkComparison.evidenceStrengthScore,
+    detail: "Metrics and ownership are under-evidenced for a senior backend role.",
+    trend: mockDashboardData.scoreTrends[2].values,
+    tone: "red" as const,
   },
   {
-    label: "Hiring Bar Gap",
-    value: mockBenchmarkComparison.hiringBarGap.toUpperCase(),
-    detail: "The gap between current evidence and the expected benchmark signal for this role.",
-    tone: "risk",
-  },
-] satisfies Array<{
-  label: string;
-  value: string;
-  detail: string;
-  tone?: "risk";
-}>;
-
-const gapSections = [
-  {
-    title: "Missing skills",
-    description: "Role-specific capabilities the benchmark corpus expects to see.",
-    items: mockBenchmarkComparison.missingSkills,
-  },
-  {
-    title: "Weak evidence",
-    description: "Claims that need stronger proof, depth, or examples.",
-    items: mockBenchmarkComparison.weakSkills,
-  },
-  {
-    title: "Missing metrics",
-    description: "Measurable outcomes a strict interviewer will ask for.",
-    items: mockBenchmarkComparison.missingMetrics,
-  },
-  {
-    title: "Weak ownership signals",
-    description: "Places where final responsibility and post-launch ownership are unclear.",
-    items: mockBenchmarkComparison.weakOwnershipSignals,
-  },
-  {
-    title: "Interview risk areas",
-    description: "Likely doubt areas after comparing the resume to benchmark profiles.",
-    items: mockBenchmarkComparison.interviewRiskAreas,
-  },
-  {
-    title: "Recommended resume fixes",
-    description: "Targeted edits that would close evidence gaps before applying.",
-    items: mockBenchmarkComparison.recommendedResumeFixes,
+    title: "Hiring Bar Gap",
+    value: 42,
+    detail: "Significant gap to the expected senior benchmark signal.",
+    trend: mockDashboardData.scoreTrends[3].values,
+    tone: "amber" as const,
   },
 ];
 
 export default function DemoBenchmarkPage() {
   return (
-    <main className="min-h-screen">
-      <section className="border-b border-[var(--border)]">
-        <div className="mx-auto w-full max-w-6xl px-6 py-10">
-          <nav className="mb-8 flex flex-wrap items-center gap-4 text-sm">
-            <Link href="/demo" className="text-[var(--muted)]">
-              Demo
-            </Link>
-            <Link href="/setup" className="text-[var(--muted)]">
-              Real setup
-            </Link>
-          </nav>
-
-          <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-            <div>
-              <div className="inline-flex rounded border border-[var(--border)] bg-black/30 px-3 py-1 text-xs font-medium text-[var(--accent)]">
-                {mockSession.demoModeLabel}
-              </div>
-              <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
-                Candidate vs Hiring Benchmark
-              </h1>
-              <p className="mt-5 max-w-3xl text-base leading-7 text-[var(--muted)]">
-                CueSpark compares candidate evidence against a role benchmark corpus, identifies
-                evidence gaps, then turns those gaps into strict interviewer question targets.
-              </p>
-            </div>
-
-            <aside className="rounded border border-[var(--border)] bg-black/20 p-5">
-              <h2 className="text-sm font-semibold">Demo candidate context</h2>
-              <dl className="mt-4 space-y-3 text-sm">
-                <Info label="Role" value={mockSession.roleTitle} />
-                <Info label="Company" value={mockSession.companyName} />
-                <Info label="Role key" value={mockSession.roleKey} />
-              </dl>
-            </aside>
+    <main className="min-h-screen px-4 py-6 lg:px-8">
+      <section className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-wide text-blue-700">
+            {mockSession.demoModeLabel}
           </div>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 lg:text-4xl">
+            CueSpark Benchmark Gap Dashboard
+          </h1>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--muted)]">
+            Candidate vs job description vs curated benchmark profiles. CueSpark turns evidence
+            gaps into targeted interview strategy and question targets.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/demo/interview" className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white">
+            Start demo interview
+          </Link>
+          <Link href="/setup" className="rounded-md border border-[var(--border)] bg-white px-4 py-2 text-sm font-semibold text-slate-700">
+            Real setup
+          </Link>
         </div>
       </section>
 
-      <section className="mx-auto grid w-full max-w-6xl gap-4 px-6 py-8 sm:grid-cols-2 lg:grid-cols-4">
-        {scoreCards.map((card) => (
-          <ScoreCard key={card.label} {...card} />
+      <section className="mb-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {metricCards.map((card) => (
+          <MetricCard key={card.title} {...card} />
         ))}
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-6 pb-8">
-        <div className="rounded border border-[var(--border)] bg-black/20 p-5">
-          <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
+      <section className="mb-5 grid gap-4 xl:grid-cols-[1.15fr_1fr_1fr]">
+        <DashboardCard className="xl:col-span-1">
+          <div className="flex items-start justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold">This is not a generic mock interview</h2>
-              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
-                {mockBenchmarkComparison.benchmarkExplanation}
-              </p>
-              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
-                The interview strategy is built from benchmark-driven evidence gaps: missing
-                skills, weak proof, missing metrics, ownership risk, and role-specific question
-                targets.
-              </p>
+              <h2 className="text-base font-semibold text-slate-900">Benchmark coverage by competency</h2>
+              <p className="mt-1 text-sm text-[var(--muted)]">Candidate evidence compared with benchmark average.</p>
             </div>
-            <div className="rounded border border-[var(--border)] p-4">
-              <div className="text-xs uppercase text-[var(--muted)]">Hiring bar gap</div>
-              <div className="mt-2 text-3xl font-semibold text-red-200">
-                {mockBenchmarkComparison.hiringBarGap.toUpperCase()}
-              </div>
-              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
-                The candidate has credible backend experience, but the proof is below the
-                senior benchmark on metrics, ownership, and scale.
-              </p>
-            </div>
+            <span className="rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700">
+              role corpus
+            </span>
           </div>
-        </div>
+          <div className="mt-5 space-y-4">
+            {mockDashboardData.benchmarkCoverage.map((item) => (
+              <div key={item.label}>
+                <div className="mb-2 flex items-center justify-between text-sm">
+                  <span className="font-medium text-slate-700">{item.label}</span>
+                  <span className="text-xs text-slate-500">
+                    {item.candidateScore} vs {item.benchmarkScore}
+                  </span>
+                </div>
+                <div className="space-y-1.5">
+                  <ProgressBar value={item.benchmarkScore} tone="purple" />
+                  <ProgressBar value={item.candidateScore} tone="blue" />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-5 flex gap-4 text-xs text-slate-500">
+            <span>Benchmark average</span>
+            <span>Candidate evidence</span>
+          </div>
+        </DashboardCard>
+
+        <DashboardCard>
+          <div className="flex items-center gap-2">
+            <h2 className="text-base font-semibold text-slate-900">Top benchmark gaps</h2>
+            <span className="rounded-full bg-red-50 px-2 py-1 text-xs font-semibold text-red-700">
+              High Priority
+            </span>
+          </div>
+          <div className="mt-5 space-y-4">
+            {mockDashboardData.topBenchmarkGaps.map((gap) => (
+              <div key={gap.label}>
+                <div className="mb-2 flex items-center justify-between gap-3 text-sm">
+                  <div>
+                    <div className="font-medium text-slate-800">{gap.label}</div>
+                    <div className="text-xs text-[var(--muted)]">{gap.detail}</div>
+                  </div>
+                  <span className={severityClass(gap.severity)}>{gap.impactScore}</span>
+                </div>
+                <ProgressBar value={gap.impactScore} tone={gap.severity === "high" ? "red" : "amber"} />
+              </div>
+            ))}
+          </div>
+        </DashboardCard>
+
+        <DashboardCard>
+          <h2 className="text-base font-semibold text-slate-900">Evidence distribution</h2>
+          <p className="mt-1 text-sm text-[var(--muted)]">Resume and interview proof quality in the demo corpus.</p>
+          <div className="mt-6">
+            <EvidenceDistribution items={mockDashboardData.evidenceDistribution} />
+          </div>
+          <div className="mt-6 rounded-md bg-red-50 p-3 text-sm font-medium text-red-700">
+            Missing or weak evidence is the main hiring bar gap.
+          </div>
+        </DashboardCard>
       </section>
 
-      <section className="mx-auto grid w-full max-w-6xl gap-4 px-6 pb-8 lg:grid-cols-2">
-        {gapSections.map((section) => (
-          <ListPanel key={section.title} {...section} />
-        ))}
+      <section className="mb-5 grid gap-4 xl:grid-cols-[1fr_1fr_1fr]">
+        <DashboardCard>
+          <h2 className="text-base font-semibold text-slate-900">Benchmark profile match</h2>
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            Safe demo profiles and curated top-candidate archetypes, not hired resumes.
+          </p>
+          <div className="mt-5 space-y-4">
+            {mockDashboardData.benchmarkProfileMatches.map((profile) => (
+              <div key={profile.profileName} className="rounded-md border border-[var(--border)] p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-semibold text-slate-900">{profile.profileName}</div>
+                    <div className="text-xs text-[var(--muted)]">{profile.profileSummary}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-semibold text-violet-700">{profile.matchScore}%</div>
+                    <div className="text-xs text-[var(--muted)]">{profile.matchLabel}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </DashboardCard>
+
+        <DashboardCard>
+          <h2 className="text-base font-semibold text-slate-900">Generated question targets</h2>
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            Question pressure points generated from benchmark gaps.
+          </p>
+          <div className="mt-5 space-y-3">
+            {mockDashboardData.questionTargetCounts.map((target) => (
+              <div key={target.label} className="flex items-center justify-between rounded-md border border-[var(--border)] px-3 py-2 text-sm">
+                <span className="text-slate-700">{target.label}</span>
+                <span className="rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700">
+                  {target.count}
+                </span>
+              </div>
+            ))}
+          </div>
+        </DashboardCard>
+
+        <DashboardCard>
+          <h2 className="text-base font-semibold text-slate-900">Actionable recommendations</h2>
+          <div className="mt-5 space-y-3">
+            {mockBenchmarkComparison.recommendedResumeFixes.map((fix) => (
+              <div key={fix} className="rounded-md border border-emerald-100 bg-emerald-50 px-3 py-2 text-sm leading-6 text-emerald-800">
+                {fix}
+              </div>
+            ))}
+          </div>
+        </DashboardCard>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-6 pb-8">
-        <div className="rounded border border-[var(--border)] bg-black/20 p-5">
+      <section className="grid gap-4 xl:grid-cols-[1fr_1fr]">
+        <DashboardCard>
+          <h2 className="text-base font-semibold text-slate-900">Interview strategy</h2>
+          <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
+            {mockBenchmarkComparison.benchmarkExplanation}
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {mockDashboardData.interviewStrategyChips.map((chip) => (
+              <span key={chip} className="rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700">
+                {chip}
+              </span>
+            ))}
+          </div>
+        </DashboardCard>
+
+        <DashboardCard>
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold">Question targets from benchmark gaps</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">
-                These targets show how CueSpark turns hiring-bar evidence gaps into a strict,
-                benchmark-driven interview.
+              <h2 className="text-base font-semibold text-slate-900">Next step</h2>
+              <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
+                Run the mock interview to validate ownership, metrics, production depth, and
+                architecture trade-off evidence.
               </p>
             </div>
-            <Link
-              href="/demo/interview"
-              className="rounded bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-black"
-            >
-              Continue to demo interview
+            <Link href="/demo/interview" className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white">
+              Continue to interview
             </Link>
           </div>
-          <ol className="mt-5 grid gap-3 lg:grid-cols-2">
-            {mockBenchmarkComparison.questionTargets.map((target, index) => (
-              <li
-                key={target}
-                className="rounded border border-[var(--border)] bg-black/20 p-4 text-sm leading-6"
-              >
-                <span className="mr-2 text-[var(--accent)]">{index + 1}.</span>
-                {target}
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <section className="mx-auto w-full max-w-6xl px-6 pb-14">
-        <div className="rounded border border-[var(--border)] bg-black/20 p-5">
-          <h2 className="text-lg font-semibold">Curated benchmark profile summaries</h2>
-          <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-            Safe demo wording: these are benchmark profiles and curated top-candidate
-            archetypes, not hired resumes or scraped personal profiles.
-          </p>
-          <div className="mt-5 grid gap-3 md:grid-cols-3">
-            {mockBenchmarkComparison.benchmarkProfiles.map((profile) => (
-              <article key={profile.id} className="rounded border border-[var(--border)] p-4">
-                <div className="text-sm font-medium">{profile.profileName}</div>
-                <div className="mt-1 text-xs text-[var(--muted)]">
-                  {profile.roleTitle} - {profile.seniorityLevel}
-                </div>
-                <div className="mt-3 text-sm">Quality score: {profile.qualityScore}/100</div>
-                <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
-                  {profile.archetypeSummary}
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
+        </DashboardCard>
       </section>
     </main>
   );
 }
 
-function ScoreCard({
-  label,
-  value,
-  detail,
-  tone,
-}: {
-  label: string;
-  value: string;
-  detail: string;
-  tone?: "risk";
-}) {
-  return (
-    <section className="rounded border border-[var(--border)] bg-black/20 p-5">
-      <div className="text-xs uppercase text-[var(--muted)]">{label}</div>
-      <div className={`mt-2 text-3xl font-semibold ${tone === "risk" ? "text-red-200" : ""}`}>
-        {value}
-      </div>
-      <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{detail}</p>
-    </section>
-  );
-}
-
-function ListPanel({
-  title,
-  description,
-  items,
-}: {
-  title: string;
-  description: string;
-  items: string[];
-}) {
-  return (
-    <section className="rounded border border-[var(--border)] bg-black/20 p-5">
-      <h2 className="text-sm font-semibold">{title}</h2>
-      <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{description}</p>
-      <ul className="mt-4 space-y-2 text-sm leading-6">
-        {items.map((item) => (
-          <li key={item} className="rounded border border-[var(--border)] bg-black/20 px-3 py-2">
-            {item}
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
-function Info({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <dt className="text-[var(--muted)]">{label}</dt>
-      <dd className="mt-1 break-words">{value}</dd>
-    </div>
-  );
+function severityClass(severity: "high" | "medium" | "low") {
+  if (severity === "high") return "rounded-full bg-red-50 px-2 py-1 text-xs font-semibold text-red-700";
+  if (severity === "medium") return "rounded-full bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700";
+  return "rounded-full bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700";
 }

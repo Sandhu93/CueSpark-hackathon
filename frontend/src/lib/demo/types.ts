@@ -52,6 +52,67 @@ export interface DemoBenchmarkComparison {
   benchmarkExplanation: string;
 }
 
+export interface DemoScoreTrend {
+  label: string;
+  values: number[];
+}
+
+export interface DemoBenchmarkCoverageItem {
+  label: string;
+  candidateScore: number;
+  benchmarkScore: number;
+}
+
+export interface DemoBenchmarkGapItem {
+  label: string;
+  impactScore: number;
+  severity: "high" | "medium" | "low";
+  detail: string;
+}
+
+export interface DemoEvidenceDistributionItem {
+  label: string;
+  count: number;
+  percent: number;
+  tone: "strong" | "weak" | "missing";
+}
+
+export interface DemoBenchmarkProfileMatch {
+  profileName: string;
+  profileSummary: string;
+  matchScore: number;
+  matchLabel: string;
+}
+
+export interface DemoQuestionTargetCount {
+  label: string;
+  count: number;
+}
+
+export interface DemoDashboardData {
+  scoreTrends: DemoScoreTrend[];
+  benchmarkCoverage: DemoBenchmarkCoverageItem[];
+  topBenchmarkGaps: DemoBenchmarkGapItem[];
+  evidenceDistribution: DemoEvidenceDistributionItem[];
+  benchmarkProfileMatches: DemoBenchmarkProfileMatch[];
+  questionTargetCounts: DemoQuestionTargetCount[];
+  interviewStrategyChips: string[];
+}
+
+export interface DemoWorkflowStep {
+  label: string;
+  description: string;
+}
+
+export interface DemoSetupPreview {
+  workflowSteps: DemoWorkflowStep[];
+  jdPreview: string;
+  resumePreview: string;
+  interviewerLensPreview: string;
+  preparationChecklist: string[];
+  interviewerLensChips: string[];
+}
+
 export interface DemoInterviewQuestion {
   id: string;
   questionNumber: number;
@@ -68,6 +129,30 @@ export interface DemoAnswerTranscript {
   transcript: string;
   evaluationPreview: string;
   addressedBenchmarkGap: boolean;
+}
+
+export interface DemoTranscriptLine {
+  time: string;
+  text: string;
+}
+
+export interface DemoInterviewControl {
+  label: string;
+  token: string;
+}
+
+export interface DemoInterviewRoomData {
+  mockTimer: string;
+  currentQuestionNumber: number;
+  totalQuestions: number;
+  interviewerPanel: string;
+  likelyFollowUp: string;
+  transcriptLines: DemoTranscriptLine[];
+  workspaceTitle: string;
+  workspaceMode: string;
+  workspaceLanguage: string;
+  workspaceContent: string;
+  bottomControls: DemoInterviewControl[];
 }
 
 export interface DemoCommunicationSignals {

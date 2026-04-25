@@ -2,9 +2,12 @@ import type {
   DemoAnswerTranscript,
   DemoBenchmarkComparison,
   DemoCommunicationSignals,
+  DemoDashboardData,
   DemoFinalReport,
+  DemoInterviewRoomData,
   DemoInterviewQuestion,
   DemoSession,
+  DemoSetupPreview,
 } from "./types";
 
 export const mockSession: DemoSession = {
@@ -95,6 +98,156 @@ export const mockBenchmarkComparison: DemoBenchmarkComparison = {
     "Test observability depth and SLO reasoning.",
     "Check ability to explain architecture trade-offs to stakeholders.",
     "Assess incident response maturity under pressure.",
+  ],
+};
+
+export const mockDashboardData: DemoDashboardData = {
+  scoreTrends: [
+    { label: "Benchmark Similarity", values: [50, 53, 56, 61, 58, 54] },
+    { label: "Resume Competitiveness", values: [42, 45, 51, 49, 52, 48] },
+    { label: "Evidence Strength", values: [44, 43, 46, 41, 37, 39] },
+    { label: "Hiring Bar Gap", values: [65, 62, 58, 49, 45, 42] },
+  ],
+  benchmarkCoverage: [
+    { label: "Ownership", candidateScore: 42, benchmarkScore: 78 },
+    { label: "Business Impact", candidateScore: 38, benchmarkScore: 72 },
+    { label: "System Design", candidateScore: 60, benchmarkScore: 68 },
+    { label: "Trade-offs", candidateScore: 45, benchmarkScore: 65 },
+    { label: "Production Depth", candidateScore: 46, benchmarkScore: 70 },
+    { label: "Communication", candidateScore: 65, benchmarkScore: 75 },
+  ],
+  topBenchmarkGaps: [
+    {
+      label: "Missing metrics",
+      impactScore: 86,
+      severity: "high",
+      detail: "No latency, throughput, availability, or error-rate proof.",
+    },
+    {
+      label: "Weak ownership proof",
+      impactScore: 78,
+      severity: "high",
+      detail: "Resume states delivery but not decision rights or post-launch accountability.",
+    },
+    {
+      label: "Architecture trade-offs",
+      impactScore: 64,
+      severity: "medium",
+      detail: "Limited explanation of alternatives, constraints, and operating cost.",
+    },
+    {
+      label: "Production evidence missing",
+      impactScore: 60,
+      severity: "medium",
+      detail: "Few examples of incidents, debugging, SLOs, or on-call follow-through.",
+    },
+  ],
+  evidenceDistribution: [
+    { label: "Strong Evidence", count: 32, percent: 25, tone: "strong" },
+    { label: "Weak Evidence", count: 51, percent: 40, tone: "weak" },
+    { label: "Missing Evidence", count: 45, percent: 35, tone: "missing" },
+  ],
+  benchmarkProfileMatches: [
+    {
+      profileName: "Backend Eng. 01",
+      profileSummary: "Mid-level API owner",
+      matchScore: 62,
+      matchLabel: "Best Match",
+    },
+    {
+      profileName: "Backend Eng. 02",
+      profileSummary: "Product-facing API builder",
+      matchScore: 58,
+      matchLabel: "Close Match",
+    },
+    {
+      profileName: "Backend Eng. 03",
+      profileSummary: "Platform reliability owner",
+      matchScore: 45,
+      matchLabel: "Possible Match",
+    },
+    {
+      profileName: "Backend Eng. 04",
+      profileSummary: "Data infrastructure engineer",
+      matchScore: 31,
+      matchLabel: "Low Match",
+    },
+  ],
+  questionTargetCounts: [
+    { label: "Ownership and accountability", count: 8 },
+    { label: "System design depth", count: 7 },
+    { label: "Production debugging", count: 6 },
+    { label: "Metrics and impact", count: 6 },
+    { label: "Cross-functional leadership", count: 5 },
+  ],
+  interviewStrategyChips: [
+    "ownership proof",
+    "metrics",
+    "production depth",
+    "business impact",
+    "architecture decisions",
+  ],
+};
+
+export const mockSetupPreview: DemoSetupPreview = {
+  workflowSteps: [
+    { label: "Setup", description: "Provide inputs" },
+    { label: "Match", description: "Resume alignment" },
+    { label: "Benchmark", description: "Gap analysis" },
+    { label: "Interview", description: "AI-powered session" },
+    { label: "Report", description: "Readiness output" },
+  ],
+  jdPreview:
+    "We are hiring a Senior Backend Engineer with FastAPI, PostgreSQL, scalable APIs, debugging, ownership, and production systems experience.",
+  resumePreview:
+    "Candidate has built APIs, worked with PostgreSQL, supported backend services, and contributed to reliability improvements across product teams.",
+  interviewerLensPreview:
+    "Panel emphasis: ownership, architecture trade-offs, production debugging, stakeholder communication, and measurable backend impact.",
+  preparationChecklist: [
+    "Benchmark gap analysis",
+    "Targeted interview questions",
+    "Resume signal review",
+    "Role-specific risk areas",
+  ],
+  interviewerLensChips: ["User-provided context", "Likely focus areas", "Panel emphasis"],
+};
+
+export const mockInterviewRoomData: DemoInterviewRoomData = {
+  mockTimer: "28:47",
+  currentQuestionNumber: 3,
+  totalQuestions: 8,
+  interviewerPanel: "Engineering Manager Panel",
+  likelyFollowUp: "Impact metrics, trade-offs, failures, stakeholder management",
+  transcriptLines: [
+    {
+      time: "00:24",
+      text: "I led the scaling of our ingestion platform to handle a large increase in data volume.",
+    },
+    {
+      time: "00:32",
+      text: "The key challenge was maintaining reliability while improving latency.",
+    },
+    {
+      time: "00:45",
+      text: "I introduced event-driven processing and added tracing around the slow path.",
+    },
+    {
+      time: "01:02",
+      text: "We improved processing speed and reduced timeout errors after rollout.",
+    },
+  ],
+  workspaceTitle: "Response Workspace",
+  workspaceMode: "Text Response",
+  workspaceLanguage: "Structured notes",
+  workspaceContent:
+    "Context: payments API reliability work\nAction: tracing, slow-query isolation, cache, SLO dashboard\nImpact: p95 latency reduced, timeout errors lowered\nTrade-off: added cache invalidation complexity and monitoring guardrails",
+  bottomControls: [
+    { label: "Mute", token: "Mic" },
+    { label: "Stop Video", token: "Cam" },
+    { label: "Share Screen", token: "Scr" },
+    { label: "Notes", token: "N" },
+    { label: "Pause", token: "II" },
+    { label: "Settings", token: "Set" },
   ],
 };
 
