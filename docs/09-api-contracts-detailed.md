@@ -43,6 +43,9 @@ Response:
   "role_title": "string | null",
   "company_name": "string | null",
   "match_score": 0,
+  "benchmark_similarity_score": 0,
+  "resume_competitiveness_score": 0,
+  "evidence_strength_score": 0,
   "created_at": "datetime"
 }
 ```
@@ -52,6 +55,8 @@ Response:
 ### POST `/api/sessions/{session_id}/prepare`
 
 Starts background preparation.
+
+Preparation includes parsing, chunking, embeddings, JD-resume match analysis, benchmark retrieval, benchmark comparison, and benchmark-driven question generation.
 
 Response:
 
@@ -87,11 +92,49 @@ Response:
 
 ---
 
+## Benchmark
+
+### GET `/api/sessions/{session_id}/benchmark`
+
+Get benchmark comparison for a prepared session.
+
+Response:
+
+```json
+{
+  "session_id": "uuid",
+  "role_key": "backend_developer",
+  "benchmark_similarity_score": 54,
+  "resume_competitiveness_score": 48,
+  "evidence_strength_score": 39,
+  "benchmark_profiles": [
+    {
+      "id": "uuid",
+      "profile_name": "Backend Benchmark 01",
+      "role_title": "Backend Developer",
+      "seniority_level": "mid",
+      "quality_score": 88
+    }
+  ],
+  "missing_skills": [],
+  "weak_skills": [],
+  "missing_metrics": [],
+  "weak_ownership_signals": [],
+  "interview_risk_areas": [],
+  "recommended_resume_fixes": [],
+  "question_targets": []
+}
+```
+
+This endpoint is read-only. It should not trigger benchmark generation.
+
+---
+
 ## Questions
 
 ### GET `/api/sessions/{session_id}/questions`
 
-List generated questions.
+List generated benchmark-driven questions.
 
 Response:
 
@@ -101,10 +144,13 @@ Response:
     {
       "id": "uuid",
       "question_number": 1,
-      "category": "technical",
+      "category": "benchmark_gap_validation",
       "difficulty": "medium",
       "question_text": "string",
       "expected_signal": "string",
+      "source": "benchmark_gap",
+      "benchmark_gap_refs": [],
+      "why_this_was_asked": "string",
       "tts_audio_url": "string | null"
     }
   ]
@@ -172,6 +218,7 @@ Response:
     "role_depth_score": 0,
     "evidence_score": 0,
     "clarity_score": 0,
+    "benchmark_gap_coverage_score": 0,
     "strict_feedback": "string"
   }
 }
@@ -198,7 +245,7 @@ Response:
 
 ### GET `/api/sessions/{session_id}/report`
 
-Get final report.
+Get final benchmark-aware report.
 
 Response:
 
@@ -207,7 +254,12 @@ Response:
   "readiness_score": 0,
   "hiring_recommendation": "strong_yes | yes | maybe | no",
   "summary": "string",
+  "benchmark_similarity_score": 0,
+  "resume_competitiveness_score": 0,
+  "evidence_strength_score": 0,
   "skill_gaps": [],
+  "benchmark_gaps": [],
+  "interview_risk_areas": [],
   "answer_feedback": [],
   "resume_feedback": [],
   "improvement_plan": []
