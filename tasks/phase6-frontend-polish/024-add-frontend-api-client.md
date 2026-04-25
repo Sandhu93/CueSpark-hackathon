@@ -1,63 +1,51 @@
-# Task: Add Frontend API Client
+# Deprecated Task: Add Frontend API Client
 
-## Goal
+## Status
 
-Create a typed frontend API client for CueSpark backend calls, including benchmark-aware endpoints and response types.
+Deprecated for the current product roadmap.
 
-## Scope
+This older frontend-polish task has been superseded by the active product frontend task:
 
-Implement only:
+```txt
+tasks/phase6-product-frontend/034-update-frontend-api-client-for-multimodal.md
+```
 
-- Centralized API client in `frontend/src/lib`.
+## Why This Is Deprecated
+
+The old task was written for a simpler benchmark-aware flow and mentions the previous frontend-polish phase. The current product direction is now:
+
+```txt
+benchmark-driven + multimodal AI interview readiness platform
+```
+
+The frontend API client must now support:
+
+- response modes: `spoken_answer`, `written_answer`, `code_answer`, `mixed_answer`
+- multimodal answer submission
+- agent results
+- final orchestrator evaluation
+- multimodal readiness report
+- communication, visual, text, and code summaries where available
+
+The active replacement task already covers this broader API contract.
+
+## Do Not Execute This Task
+
+Do not give this file to Codex for the current product implementation.
+
+Use:
+
+```txt
+tasks/phase6-product-frontend/034-update-frontend-api-client-for-multimodal.md
+```
+
+## Historical Scope
+
+The original intent was:
+
+- Centralized frontend API client.
 - TypeScript request/response types for current endpoints.
 - Helpers for session creation, preparation, benchmark read, questions, TTS, answer upload, answer read, and report read.
 - Basic error handling.
 
-## Out of Scope
-
-Do not implement:
-
-- Full UI pages.
-- Audio recording component if already separate.
-- State management libraries.
-- Authentication.
-
-## Files Likely Involved
-
-- `frontend/src/lib/api.ts`
-- `frontend/src/lib/types.ts`
-
-## API Contract
-
-Use `docs/09-api-contracts-detailed.md`.
-
-## Data Model Changes
-
-None.
-
-## Acceptance Criteria
-
-- [ ] API client uses `NEXT_PUBLIC_API_BASE_URL`.
-- [ ] API response types match backend contracts.
-- [ ] API client includes session create/read/prepare helpers.
-- [ ] API client includes benchmark comparison read helper.
-- [ ] API client includes question/TTS/answer/report helpers.
-- [ ] File/audio upload helpers support multipart form data.
-- [ ] No React component contains raw fetch logic for product APIs.
-- [ ] No authentication logic is added.
-
-## Verification
-
-Run:
-
-```bash
-cd frontend
-npm run lint
-npm run build
-```
-
-## Notes for Codex
-
-- Avoid `any` unless justified with a comment.
-- Keep the client small and explicit.
-- Benchmark response types should include benchmark similarity, resume competitiveness, evidence strength, gaps, risks, and question targets.
+This functionality remains necessary, but it belongs inside the active multimodal API client task.
