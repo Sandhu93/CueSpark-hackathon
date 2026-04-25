@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="880" viewBox="0 0 1400 880" role="img" aria-label="CueSpark multimodal evaluation orchestrator flow">
+  <defs>
+    <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity="0.12"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M2,2 L10,6 L2,10 Z" fill="#334155"/></marker>
+    <style>
+      .bg{fill:#f8fafc}.title{font:700 32px Inter,Arial,sans-serif;fill:#0f172a}.subtitle{font:500 15px Inter,Arial,sans-serif;fill:#64748b}.group{font:700 13px Inter,Arial,sans-serif;fill:#475569;letter-spacing:.08em}.box{fill:#fff;stroke:#cbd5e1;stroke-width:2;filter:url(#shadow)}.blue{fill:#eef2ff;stroke:#6366f1}.cyan{fill:#ecfeff;stroke:#06b6d4}.green{fill:#f0fdf4;stroke:#22c55e}.orange{fill:#fff7ed;stroke:#f97316}.red{fill:#fef2f2;stroke:#ef4444}.purple{fill:#faf5ff;stroke:#a855f7}.label{font:700 17px Inter,Arial,sans-serif;fill:#0f172a}.small{font:500 12.5px Inter,Arial,sans-serif;fill:#475569}.tiny{font:600 11px Inter,Arial,sans-serif;fill:#64748b}.line{stroke:#334155;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke-dasharray:7 7}.warn{font:700 12px Inter,Arial,sans-serif;fill:#92400e}
+    </style>
+  </defs>
+  <rect class="bg" width="1400" height="880"/>
+  <text x="55" y="56" class="title">Multimodal Evaluation Orchestrator</text>
+  <text x="55" y="86" class="subtitle">Each question declares a response mode; specialized agents evaluate only the relevant signals; the orchestrator combines them into a benchmark-aware score.</text>
+
+  <text x="80" y="132" class="group">QUESTION CONTEXT</text>
+  <rect x="55" y="155" width="270" height="160" rx="24" class="box purple"/>
+  <text x="85" y="195" class="label">Benchmark-Driven Question</text>
+  <text x="85" y="225" class="small">Question text</text>
+  <text x="85" y="249" class="small">Expected signal</text>
+  <text x="85" y="273" class="small">Benchmark gap refs</text>
+  <text x="85" y="297" class="small">Response mode</text>
+
+  <text x="435" y="132" class="group">RESPONSE CAPTURE</text>
+  <rect x="390" y="155" width="270" height="160" rx="24" class="box blue"/>
+  <text x="420" y="195" class="label">Candidate Response</text>
+  <text x="420" y="225" class="small">Audio recording</text>
+  <text x="420" y="249" class="small">Written answer</text>
+  <text x="420" y="273" class="small">Code answer</text>
+  <text x="420" y="297" class="small">Optional visual metadata</text>
+
+  <text x="810" y="132" class="group">SPECIALIZED AGENTS</text>
+  <rect x="735" y="130" width="265" height="96" rx="20" class="box orange"/>
+  <text x="765" y="165" class="label">Audio Agent</text><text x="765" y="192" class="small">Transcript, pace, fillers, clarity</text>
+  <rect x="1030" y="130" width="265" height="96" rx="20" class="box orange"/>
+  <text x="1060" y="165" class="label">Text Agent</text><text x="1060" y="192" class="small">Relevance, structure, specificity</text>
+
+  <rect x="735" y="260" width="265" height="96" rx="20" class="box orange"/>
+  <text x="765" y="295" class="label">Code Agent</text><text x="765" y="322" class="small">Correctness, edge cases, complexity</text>
+  <rect x="1030" y="260" width="265" height="96" rx="20" class="box orange"/>
+  <text x="1060" y="295" class="label">Video Signal Agent</text><text x="1060" y="322" class="small">Face frame, lighting, posture</text>
+
+  <rect x="885" y="395" width="265" height="96" rx="20" class="box red"/>
+  <text x="915" y="430" class="label">Benchmark Gap Agent</text><text x="915" y="457" class="small">Did the answer prove the gap?</text>
+
+  <text x="455" y="445" class="group">ORCHESTRATION</text>
+  <rect x="390" y="470" width="270" height="170" rx="24" class="box green"/>
+  <text x="420" y="510" class="label">Final Evaluation Orchestrator</text>
+  <text x="420" y="540" class="small">Reads available agent results</text>
+  <text x="420" y="564" class="small">Applies response-mode weights</text>
+  <text x="420" y="588" class="small">Stores answer evaluation</text>
+  <text x="420" y="612" class="small">Generates strict feedback</text>
+
+  <text x="80" y="445" class="group">OUTPUT</text>
+  <rect x="55" y="470" width="270" height="170" rx="24" class="box green"/>
+  <text x="85" y="510" class="label">Readiness Report</text>
+  <text x="85" y="540" class="small">Answer-by-answer scoring</text>
+  <text x="85" y="564" class="small">Benchmark gap coverage</text>
+  <text x="85" y="588" class="small">Communication summary</text>
+  <text x="85" y="612" class="small">Resume fixes + prep plan</text>
+
+  <rect x="735" y="585" width="560" height="120" rx="24" class="box red"/>
+  <text x="765" y="625" class="label">Safety Boundary</text>
+  <text x="765" y="654" class="small">Reports observable communication and visual presence signals only.</text>
+  <text x="765" y="680" class="warn">No emotion detection · no true-confidence detection · no personality scoring · no hiring guarantee</text>
+
+  <path class="line" d="M325 235 H390"/><text x="343" y="222" class="tiny">defines mode</text>
+  <path class="line" d="M660 235 H735"/><path class="line" d="M660 235 C735 170 955 170 1030 178"/>
+  <path class="line" d="M660 235 C735 290 735 300 735 308"/><path class="line" d="M660 235 C790 310 950 308 1030 308"/>
+  <path class="line" d="M1000 178 C1050 215 1060 350 1030 395"/>
+  <path class="line" d="M1000 308 C1030 340 1040 370 1030 395"/>
+  <path class="line" d="M1150 443 C1090 510 810 565 660 555"/>
+  <path class="line" d="M390 555 H325"/>
+  <path class="line dash" d="M525 315 V470"/>
+</svg>
