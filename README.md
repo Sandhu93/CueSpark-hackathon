@@ -1,80 +1,90 @@
 # CueSpark Interview Coach
 
-**CueSpark Interview Coach** is a benchmark-driven AI interview readiness platform.
+**CueSpark Interview Coach** is a benchmark-driven, multimodal AI interview readiness platform.
 
-It helps candidates prepare for a target job by comparing their resume against the job description and a curated role-specific benchmark corpus, finding evidence gaps, and generating a strict interviewer-style mock interview from those gaps.
+CueSpark helps candidates prepare for a target role by comparing their resume against the job description and a curated role-specific benchmark corpus, generating strict benchmark-driven interview questions, capturing candidate responses across relevant modalities, and producing a readiness report based on evidence, communication, code/text quality, and benchmark-gap coverage.
 
-> Practice against the hiring bar, not just an AI chatbot.
+> Practice against the hiring benchmark — not just against an AI chatbot.
 
 ---
 
-## Why This Project Exists
+## Product Thesis
 
-A basic AI mock interview can be done with one good prompt.
+Most interview preparation tools stop at question generation.
 
-CueSpark adds the missing layer: **benchmark comparison**.
-
-Instead of only asking generic questions from a job description, CueSpark compares:
+A candidate can paste a job description and resume into an AI model and get useful practice questions. But that still does not answer the deeper question:
 
 ```txt
-Candidate Resume ↔ Job Description ↔ Curated Benchmark Profiles ↔ Interview Performance
+How far am I from the actual hiring bar for this role?
 ```
 
-The system answers:
+CueSpark adds two product layers that generic mock-interview tools do not provide:
 
-- What do stronger candidates show that this resume does not?
-- Which claims are weakly evidenced?
-- Where are metrics, ownership, business impact, tool depth, or project scale missing?
-- What would a strict interviewer doubt after reading this resume?
-- Which interview questions should be asked to test those weak areas?
+1. **Benchmark intelligence** — compare the candidate against curated strong-profile archetypes for the role.
+2. **Multimodal evaluation** — evaluate how the candidate responds through audio, written text, code, and safe visual presence signals when relevant.
 
----
-
-## Current Implementation Target
-
-This repository is being implemented as a **single-session, benchmark-driven, turn-based interview demo**.
-
-The first stable milestone is:
+The product is built around this core loop:
 
 ```txt
-Candidate pastes JD
-  → uploads or pastes resume
-  → system parses and embeds JD/resume
-  → system creates JD-resume match analysis
-  → system retrieves curated benchmark profiles
-  → system compares candidate vs benchmark profiles
-  → system shows benchmark gaps
-  → system generates benchmark-driven interview questions
-  → AI interviewer asks questions by voice
-  → candidate records answers
-  → system transcribes and evaluates answers
-  → final benchmark-aware readiness report is generated
+JD + Resume + Benchmark Profiles
+  → Benchmark Gaps
+  → Gap-Driven Interview Questions
+  → Multimodal Candidate Response
+  → Specialized Evaluation Agents
+  → Benchmark-Aware Readiness Report
 ```
-
-This is not a full SaaS product yet. The goal is to build a strong, controlled hackathon implementation with a clear novelty layer.
 
 ---
 
-## Demo Flow
+## What CueSpark Does
 
-![Candidate Flow](docs/assets/candidate-flow.svg)
+CueSpark answers five practical questions for a candidate:
 
-The intended user journey is:
+- What does this job actually require?
+- What does my resume prove well?
+- What do stronger candidates usually show that I do not?
+- What will a strict interviewer likely challenge?
+- How well did I answer, explain, write, code, and communicate against those gaps?
 
-1. Candidate enters the job description.
-2. Candidate uploads or pastes the resume.
-3. Backend creates an interview session.
-4. Backend parses, chunks, and embeds the JD/resume.
-5. Backend produces a basic JD-resume match analysis and role key.
-6. Backend retrieves curated benchmark profiles for the role.
-7. Backend compares candidate resume against benchmark profiles.
-8. Frontend shows the **Benchmark Gap Dashboard**.
-9. Backend generates questions from benchmark gaps.
-10. Candidate completes a turn-based voice interview.
-11. Backend transcribes and evaluates each answer.
-12. Frontend shows the benchmark-aware final report.
+It identifies:
 
-The key demo screen is the benchmark dashboard, not the voice interview alone.
+```txt
+missing skills
+weak evidence
+missing metrics
+weak ownership signals
+shallow project depth
+interview risk areas
+communication gaps
+written-answer gaps
+code-quality gaps
+benchmark-gap coverage
+```
+
+The output is not just a score. The output is a **preparation strategy**.
+
+---
+
+## Product Flow
+
+![CueSpark Product Flow](docs/assets/candidate-flow.svg)
+
+The intended product journey:
+
+1. Candidate enters a job description.
+2. Candidate uploads or pastes a resume.
+3. Optional interviewer context can be provided later as user-supplied text/PDF.
+4. Backend parses, chunks, and embeds the JD and resume.
+5. Backend generates JD-resume match analysis and role key.
+6. Benchmark engine retrieves relevant curated role benchmark profiles.
+7. Candidate is compared against the role benchmark corpus.
+8. Benchmark dashboard shows similarity, evidence strength, gaps, and risk areas.
+9. CueSpark generates benchmark-driven interview questions.
+10. Each question declares its expected response mode: spoken, written, code, or mixed.
+11. Candidate responds through the required modality.
+12. Specialized agents evaluate the response.
+13. Final orchestrator combines agent outputs into answer scores.
+14. Readiness report summarizes benchmark gap coverage, answer quality, communication signals, code/text quality, resume fixes, and preparation plan.
 
 ---
 
@@ -84,12 +94,24 @@ The key demo screen is the benchmark dashboard, not the voice interview alone.
 
 | Layer | Responsibility |
 | --- | --- |
-| Next.js frontend | Setup, match page, benchmark dashboard, interview room, final report |
-| FastAPI backend | Session APIs, upload APIs, benchmark read API, question/answer/report APIs |
-| Redis + RQ worker | Parsing, embedding, match analysis, benchmark comparison, TTS, transcription, evaluation, reports |
-| Postgres + pgvector | Sessions, documents, benchmark profiles, benchmark comparisons, questions, answers, evaluations, reports, embeddings |
-| MinIO | Resume uploads, generated interviewer audio, candidate answer recordings |
-| OpenAI services | Embeddings, TTS, transcription, structured LLM analysis, question generation, report generation |
+| Next.js frontend | Setup, benchmark dashboard, interview room, response capture, final report |
+| FastAPI backend | Session APIs, upload APIs, benchmark APIs, question APIs, answer APIs, report APIs |
+| Redis + RQ workers | Session preparation, TTS, transcription, modality-agent analysis, evaluation orchestration, reports |
+| Postgres + pgvector | Sessions, documents, benchmark profiles, comparisons, answers, agent results, evaluations, reports, embeddings |
+| MinIO | Resume uploads, generated interviewer audio, candidate answer audio, optional artifacts |
+| OpenAI gateway | Embeddings, TTS, transcription, structured LLM analysis, text/code evaluation support |
+| Benchmark engine | Role corpus retrieval, candidate-vs-benchmark comparison, gap analysis, question targets |
+| Multimodal agents | Audio, text, code, video-signal, benchmark-gap, and final orchestration agents |
+
+Architecture rules:
+
+- Keep FastAPI routes thin.
+- Put business logic in services.
+- Put slow work in RQ tasks.
+- Do not call OpenAI directly from frontend.
+- Keep prompts centralized and versioned.
+- Keep LLM outputs structured with Pydantic schemas.
+- Store large binary artifacts in MinIO, not Postgres.
 
 ---
 
@@ -97,29 +119,15 @@ The key demo screen is the benchmark dashboard, not the voice interview alone.
 
 ![Benchmark Engine Flow](docs/assets/benchmark-engine-flow.svg)
 
-The benchmark engine is the novelty layer.
+The benchmark engine is the product’s first differentiator.
 
-For the hackathon version, CueSpark uses **curated/anonymized benchmark profiles** stored as local fixtures. It does **not** scrape LinkedIn, Naukri, job boards, or personal resumes.
-
-Initial benchmark roles:
+Instead of generating generic questions, CueSpark compares:
 
 ```txt
-project_manager
-backend_developer
-data_analyst
+Candidate Resume ↔ Job Description ↔ Curated Benchmark Profiles
 ```
 
-Each role should have 5 benchmark profiles:
-
-```txt
-1. Strong fresher / entry-level profile
-2. Strong 2-3 year profile
-3. Strong experienced profile
-4. Domain-switcher profile
-5. High-impact portfolio profile
-```
-
-Benchmark analysis produces:
+It produces:
 
 ```txt
 benchmark_similarity_score
@@ -134,9 +142,120 @@ recommended_resume_fixes
 question_targets
 ```
 
-These outputs feed the benchmark dashboard, question generation, answer evaluation, and final report.
+These outputs feed:
+
+- benchmark dashboard
+- question generation
+- benchmark-gap scoring
+- final readiness report
+- resume improvement suggestions
+
+Benchmark profiles are curated/anonymized role archetypes. CueSpark should not default to scraping LinkedIn, Naukri, job boards, or personal resumes. If interviewer or public-profile context is used later, it should be user-provided by upload or paste.
 
 Detailed design: [`docs/13-benchmark-engine-design.md`](docs/13-benchmark-engine-design.md)
+
+---
+
+## Multimodal Evaluation Orchestrator
+
+![Multimodal Evaluation Flow](docs/assets/multimodal-evaluation-flow.svg)
+
+The second product differentiator is multimodal evaluation.
+
+Each question can define an expected response mode:
+
+```txt
+spoken_answer
+written_answer
+code_answer
+mixed_answer
+```
+
+CueSpark then runs only the relevant evaluators.
+
+### Audio Agent
+
+Used for spoken and mixed answers.
+
+Evaluates:
+
+- transcript
+- speaking pace
+- filler words
+- pause/hesitation markers
+- clarity
+- answer structure
+- communication signal score
+
+### Text Answer Agent
+
+Used for written responses, pseudocode explanations, stakeholder communication tasks, case answers, and non-technical written questions.
+
+Evaluates:
+
+- relevance
+- structure
+- specificity
+- evidence
+- completeness
+- clarity
+
+### Code Evaluation Agent
+
+Used for coding or technical implementation questions.
+
+Evaluates:
+
+- correctness
+- edge cases
+- complexity
+- readability
+- testability
+- explanation quality
+
+The first production version should use safe static analysis and optional sample test reasoning. Arbitrary code should not be executed on the main backend.
+
+### Video Signal Agent MVP
+
+Used only for safe observable signals.
+
+Evaluates:
+
+- face in frame
+- lighting quality
+- camera presence
+- eye contact proxy
+- posture stability
+- distraction markers
+
+CueSpark must not claim emotion detection, personality detection, truthfulness detection, or true confidence detection.
+
+### Benchmark Gap Agent
+
+Evaluates whether the answer actually addresses the benchmark gap that caused the question to be asked.
+
+This remains the central scoring idea:
+
+```txt
+Did the candidate prove the gap CueSpark identified?
+```
+
+### Final Evaluation Orchestrator
+
+Combines available agent outputs using dynamic scoring based on response mode.
+
+Example spoken-answer scoring:
+
+```txt
+benchmark gap coverage: 30%
+answer relevance: 20%
+evidence/examples: 20%
+communication clarity: 15%
+role-specific depth: 10%
+visual/audio professionalism: 5%
+```
+
+Detailed design: [`docs/16-multimodal-evaluation-orchestrator.md`](docs/16-multimodal-evaluation-orchestrator.md)
 
 ---
 
@@ -153,9 +272,17 @@ benchmark_profiles
 benchmark_comparisons
 interview_questions
 candidate_answers
+agent_results
 answer_evaluations
 interview_reports
 embedding_chunks
+jobs
+```
+
+Optional/future context table:
+
+```txt
+interviewer_contexts
 ```
 
 Object storage paths:
@@ -171,64 +298,18 @@ Rules:
 
 - Store structured data in Postgres.
 - Store vectors in pgvector using `embedding_chunks`.
+- Store modality-agent outputs in `agent_results`.
+- Store final answer-level evaluation in `answer_evaluations`.
+- Store final session report in `interview_reports`.
 - Store binary files in MinIO.
 - Store object keys in the database, not file bytes.
-- Use local curated benchmark fixtures for the hackathon version.
+- Prefer storing video-signal summaries over full video files in the MVP.
 
 ---
 
-## AI Voice and Transcription Pipeline
+## Interview Question Types
 
-![AI Audio Pipeline](docs/assets/ai-audio-pipeline.svg)
-
-The first version uses a reliable turn-based audio flow:
-
-```txt
-Benchmark-driven question text
-  → OpenAI TTS
-  → store interviewer audio in MinIO
-  → frontend plays question audio
-  → candidate records answer
-  → upload answer audio
-  → transcription
-  → communication signal analysis
-  → benchmark-aware answer evaluation
-  → save scores and feedback
-```
-
-This avoids realtime WebRTC complexity while still giving a polished voice-interview experience.
-
----
-
-## What Is In Scope
-
-Version 1 includes:
-
-- Single-session demo without login.
-- Manual job description input.
-- Resume upload and paste fallback.
-- PDF/DOCX/TXT text extraction.
-- OCR-ready parse status, but no OCR implementation.
-- JD/resume chunking.
-- OpenAI/mock embeddings.
-- Postgres + pgvector vector storage.
-- Basic JD-resume match analysis.
-- Curated benchmark profile fixtures.
-- Benchmark profile seeding.
-- Benchmark profile embedding and retrieval.
-- Candidate-vs-benchmark analysis.
-- Benchmark read API for dashboard.
-- Benchmark gap dashboard.
-- Benchmark-driven interview question generation.
-- On-demand interviewer TTS.
-- Browser audio recording.
-- Candidate audio upload.
-- Transcription.
-- Communication signal analysis.
-- Benchmark-aware answer evaluation.
-- Benchmark-aware final report.
-
-Interview categories:
+CueSpark supports mixed interview categories:
 
 ```txt
 technical
@@ -242,44 +323,80 @@ benchmark_gap_validation
 
 For non-software jobs, `technical` means role-specific competency, not programming.
 
+Each generated question should include:
+
+```txt
+question_text
+category
+difficulty
+expected_signal
+source/provenance
+why_this_was_asked
+benchmark_gap_refs
+response_mode
+required_modalities
+```
+
+Example:
+
+```json
+{
+  "category": "benchmark_gap_validation",
+  "response_mode": "spoken_answer",
+  "requires_audio": true,
+  "requires_video": false,
+  "requires_text": false,
+  "requires_code": false,
+  "benchmark_gap_refs": ["weak_project_ownership", "missing_metric"]
+}
+```
+
 ---
 
-## What Is Out of Scope
+## Safety and Product Boundaries
 
-Do not build these in version 1 unless explicitly moved into scope:
+CueSpark should use careful language.
 
-- User login.
-- Multi-user accounts.
-- Payments or subscriptions.
-- Recruiter/admin dashboard.
-- Full WebRTC video interview.
-- Realtime AI conversation.
-- Monaco editor.
-- Code compiler.
-- Full OCR pipeline.
-- Live scraping of LinkedIn/Naukri/job-board/personal resumes.
-- Claims that benchmark profiles are verified hired-candidate resumes.
-- Video confidence analysis.
-- Emotion detection.
-- Personality detection.
-- Voice cloning.
-
-Use safe wording:
+Use:
 
 ```txt
 benchmark profiles
 curated top-candidate archetypes
 role benchmark corpus
+observable communication signals
+visual presence signals
+eye contact proxy
+posture stability
+speech pace
+filler words
+answer structure
+readiness recommendation
+interview risk areas
 ```
 
-Avoid unsupported wording:
+Avoid:
 
 ```txt
 hired resumes
 selected resumes
-LinkedIn selected profiles
+LinkedIn-selected profiles
 true confidence detection
 emotion detection
+personality detection
+truthfulness detection
+selection guarantee
+```
+
+The product can say:
+
+```txt
+This answer shows weak evidence of ownership.
+```
+
+It should not say:
+
+```txt
+The candidate lacks confidence or has a poor personality.
 ```
 
 ---
@@ -294,9 +411,10 @@ emotion detection
 | Vector Search | pgvector |
 | Queue | Redis + RQ |
 | Object Storage | MinIO |
-| AI Provider | OpenAI, with mock mode for local development |
+| AI Provider | OpenAI through backend gateway, with mock mode for development |
 | Interviewer Voice | OpenAI TTS |
 | Transcription | OpenAI transcription / Whisper-compatible flow |
+| Code Editor | Monaco editor later, after core answer flow is stable |
 | Local Runtime | Docker Compose |
 
 ---
@@ -327,7 +445,7 @@ minioadmin / minioadmin
 
 ## Required Environment Variables
 
-The exact `.env.example` is the source of truth. The core variables are:
+The exact `.env.example` is the source of truth. Core variables:
 
 ```env
 AI_PROVIDER=openai
@@ -355,7 +473,7 @@ MINIO_USE_SSL=false
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-Keep `AI_MOCK_MODE=true` during most local development so the full flow can be built without real AI calls.
+Keep `AI_MOCK_MODE=true` during local development so features can be built without depending on paid AI calls.
 
 ---
 
@@ -384,21 +502,15 @@ backend/app/services/
 ├── question_generator.py
 ├── tts.py
 ├── transcription.py
-├── communication_analysis.py
-├── answer_evaluator.py
+├── audio_agent.py
+├── text_answer_agent.py
+├── code_evaluation_agent.py
+├── video_signal_agent.py
+├── benchmark_gap_agent.py
+├── final_evaluation_orchestrator.py
 ├── report_generator.py
 ├── prompts.py
 ```
-
-Rules:
-
-- Keep FastAPI routes thin.
-- Put business logic in services.
-- Put slow work in RQ tasks.
-- Do not call OpenAI from frontend.
-- Do not call OpenAI directly from route handlers.
-- Store AI prompts in a prompt registry.
-- Keep LLM outputs structured with Pydantic schemas.
 
 ---
 
@@ -420,144 +532,109 @@ Expected frontend routes:
   Benchmark gap dashboard
 
 /session/[sessionId]/interview
-  Turn-based benchmark-driven interview
+  Turn-based interview room with response-mode-aware capture
 
 /session/[sessionId]/report
-  Benchmark-aware readiness report
+  Multimodal benchmark-aware readiness report
 ```
 
-The benchmark dashboard should be treated as the main novelty screen.
+The benchmark dashboard and final report are the two most important product screens.
 
 ---
 
-## Task Execution Order
+## Implementation Roadmap
 
-Implementation tasks live in `tasks/` and should be executed one at a time.
+The project has evolved beyond the hackathon demo. Continue implementation as a product in thin, verifiable layers.
 
-Phase 0 is the foundation layer. After Phase 0, use this order:
+### Completed / Existing Direction
 
 ```txt
-PHASE 1 — Session + Documents
-004 core session/document models
-005 session API
-006 resume upload/paste
-007 document text extraction
-
-PHASE 2 — Embeddings + Match
-008 question/answer/evaluation/report/embedding models
-009 chunking service
-010 embedding service
-011 match analysis service
-
-PHASE 2.5 — Benchmark Engine
-012 benchmark models
-013 benchmark fixtures
-014 benchmark seeding
-015 benchmark embedding/retrieval
-016 candidate-vs-benchmark analysis
-017 benchmark read API
-018 update question generation with benchmark gaps
-
-PHASE 3 — Interview Engine
-012 session preparation job
-013 question generation service
-014 question list API
-015 on-demand TTS
-
-PHASE 4 — Answer Flow
-016 browser recording UI
-017 answer upload API
-018 transcription service
-019 communication analysis
-
-PHASE 5 — Evaluation + Report Backend
-020 answer evaluation service
-021 answer read API
-022 final report service
-023 report API
-
-PHASE 6 — Frontend
-024 frontend API client
-025 setup and match pages
-026 benchmark dashboard page
-027 interview page
-028 report page
-029 loading/error/demo polish
+Phase 0 — Foundation
+Phase 1 — Session + Documents
+Phase 2 — Embeddings + Match
+Phase 2.5 — Benchmark Engine
+Phase 3 — Interview Engine through on-demand TTS
 ```
 
-When using Codex:
+### Next Product Phases
 
 ```txt
-Read AGENTS.md, docs/00-project-overview.md, docs/01-architecture.md,
-docs/08-implementation-sequence.md, docs/13-benchmark-engine-design.md,
+PHASE 4 — Multimodal Response Capture + Modality Agents
+024 response modality model
+025 multimodal answer upload
+026 audio transcription + fluency agent
+027 text answer agent
+028 code evaluation agent
+029 video signal agent MVP
+
+PHASE 5 — Multimodal Evaluation + Report
+030 agent result storage
+031 benchmark gap coverage agent
+032 final evaluation orchestrator
+033 multimodal readiness report
+```
+
+Recommended execution order for a stable product:
+
+```txt
+1. response modality model
+2. multimodal answer upload
+3. audio transcription + fluency agent
+4. agent result storage
+5. benchmark gap coverage agent
+6. final evaluation orchestrator
+7. multimodal readiness report
+8. text answer agent
+9. code evaluation agent
+10. video signal agent MVP
+```
+
+Why this order:
+
+```txt
+spoken answer → transcription → communication signals → benchmark gap coverage → final evaluation → report
+```
+
+This creates a usable product before adding advanced text/code/video modalities.
+
+---
+
+## Codex / Agent Development Rule
+
+When using a coding agent, give it one task file at a time.
+
+Recommended prompt pattern:
+
+```txt
+Read AGENTS.md, README.md, docs/00-project-overview.md, docs/01-architecture.md,
+docs/13-benchmark-engine-design.md, docs/16-multimodal-evaluation-orchestrator.md,
 and only the selected task file.
 
 Implement only the selected task.
 Do not add out-of-scope features.
+Do not refactor unrelated files.
 Report changed files and verification steps.
 ```
 
 ---
 
-## Scoring and Report Direction
+## Current Product Principle
 
-The final report should include:
+CueSpark should not become a generic chatbot, a surveillance-style interview proctor, or a vague AI scoring tool.
+
+The product principle is:
 
 ```txt
-1. Overall readiness score
-2. JD-resume match score
-3. Benchmark similarity score
-4. Resume competitiveness score
-5. Evidence strength score
-6. Missing benchmark signals
-7. Interview risk areas
-8. Answer-by-answer performance
-9. Resume fixes based on benchmark gaps
-10. Preparation plan
+Every question should have a reason.
+Every response should be evaluated against that reason.
+Every report should tell the candidate what evidence is missing and how to improve.
 ```
 
-Each answer should be evaluated using:
-
-| Metric | Description |
-| --- | --- |
-| Relevance | Did the answer address the question directly? |
-| Role-specific depth | Did the candidate demonstrate actual competency? |
-| Evidence/examples | Did the candidate provide concrete proof, examples, metrics, or ownership? |
-| Benchmark gap coverage | Did the answer address the benchmark gap being tested? |
-| JD alignment | Did the answer connect to the job requirements? |
-| Clarity and structure | Was the answer organized and easy to follow? |
-| Communication signal | Was the speech clear, concise, and low in avoidable hesitation? |
-
----
-
-## Development Commands
-
-```bash
-make dev
-make logs
-make shell-api
-make worker-restart
-```
-
-If Makefile commands are unavailable:
-
-```bash
-docker compose up --build
-docker compose logs -f
-docker compose restart worker
-```
-
----
-
-## Current Build Principle
-
-Build the product in thin, verifiable layers.
-
-Do not jump directly to the frontend or voice interview before the benchmark backend is working. The judge-facing value is:
+The strongest product loop is:
 
 ```txt
 Benchmark Gap Dashboard
-  → Benchmark-driven questions
-  → Benchmark-aware evaluation
-  → Benchmark-aware final report
+  → Gap-Driven Interview
+  → Multimodal Response Evaluation
+  → Benchmark-Aware Readiness Report
 ```
