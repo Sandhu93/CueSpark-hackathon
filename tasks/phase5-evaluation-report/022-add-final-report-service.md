@@ -1,88 +1,46 @@
-# Task: Add Benchmark-Aware Final Report Service
+# Deprecated Task: Add Benchmark-Aware Final Report Service
 
-## Goal
+## Status
 
-Generate a strict interviewer-style final readiness report for a completed benchmark-driven interview session.
+Deprecated for the current product roadmap.
 
-## Scope
+This older report service task has been superseded by the multimodal readiness report task:
 
-Implement only:
-
-- `report_generator.py` service.
-- Prompt registry entry for benchmark-aware final report.
-- Pydantic output schema for final report.
-- Mock report generation when `AI_MOCK_MODE=true`.
-- Worker task for report generation.
-- Store report in `interview_reports`.
-- Include benchmark comparison outputs in the report.
-
-## Out of Scope
-
-Do not implement:
-
-- Frontend report page.
-- PDF export.
-- Emailing reports.
-- Recruiter dashboard.
-- Login or accounts.
-- Benchmark comparison generation.
-
-## Files Likely Involved
-
-- `backend/app/services/report_generator.py`
-- `backend/app/services/prompts.py`
-- `backend/app/tasks/generate_report.py`
-- `backend/app/models/`
-- `backend/app/schemas/`
-- `backend/tests/`
-
-## API Contract
-
-No public report endpoint is required unless implemented in the next task.
-
-## Data Model Changes
-
-Use existing `interview_reports` table.
-
-## Report Inputs
-
-Use available context:
-
-- session details
-- JD-resume match analysis
-- benchmark comparison
-- retrieved benchmark profile summaries
-- interview questions
-- candidate answers
-- answer evaluations
-- communication metrics
-
-## Acceptance Criteria
-
-- [ ] Final report output is structured and typed.
-- [ ] Report includes readiness score and hiring recommendation.
-- [ ] Report includes JD-resume match summary.
-- [ ] Report includes benchmark similarity score.
-- [ ] Report includes resume competitiveness score.
-- [ ] Report includes evidence strength score.
-- [ ] Report includes benchmark gaps and interview risk areas.
-- [ ] Report includes answer-by-answer feedback summary.
-- [ ] Report includes resume feedback based on benchmark gaps.
-- [ ] Report includes skill gaps and preparation plan.
-- [ ] Mock mode works without OpenAI API key.
-- [ ] Stored report is linked to session.
-
-## Verification
-
-Run:
-
-```bash
-pytest backend/tests
+```txt
+tasks/phase5-multimodal-evaluation/033-add-multimodal-readiness-report.md
 ```
 
-## Notes for Codex
+## Why This Is Deprecated
 
-- Tone should be strict but professional.
-- Do not make unsupported legal hiring claims.
-- Do not claim benchmark profiles are verified hired-candidate resumes.
-- The final report must make the benchmark gap visible, not hide it inside generic feedback.
+The old task generates a report from match analysis, benchmark comparison, questions, answers, evaluations, and communication metrics.
+
+The current product report must additionally aggregate:
+
+- modality-agent outputs
+- benchmark-gap coverage across the session
+- audio communication summary
+- written-answer summary if available
+- code-quality summary if available
+- safe visual-signal summary if available
+- final orchestrator evaluations
+
+## Do Not Execute This Task
+
+Do not give this file to Codex for the current product implementation.
+
+Use:
+
+```txt
+tasks/phase5-multimodal-evaluation/033-add-multimodal-readiness-report.md
+```
+
+## Historical Scope
+
+The original intent was:
+
+- `report_generator.py`
+- final benchmark-aware report prompt
+- report generation worker task
+- store report in `interview_reports`
+
+This now belongs to the multimodal readiness report task.
