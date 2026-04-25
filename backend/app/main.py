@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
-from app.api import jobs, uploads
+from app.api import documents, jobs, sessions, uploads
 from app.core.config import settings
 from app.core.db import init_db
 from app.core.storage import ensure_bucket
@@ -41,3 +41,5 @@ async def health():
 
 app.include_router(uploads.router, prefix="/uploads", tags=["uploads"])
 app.include_router(jobs.router, prefix="/jobs", tags=["jobs"])
+app.include_router(sessions.router, prefix="/api/sessions", tags=["sessions"])
+app.include_router(documents.router, prefix="/api", tags=["documents"])

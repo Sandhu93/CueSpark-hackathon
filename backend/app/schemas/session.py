@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.models.session import InterviewSessionStatus
 
@@ -12,6 +12,14 @@ class SessionCreate(BaseModel):
     resume_text: str | None = None
     role_title: str | None = None
     company_name: str | None = None
+
+    @field_validator("job_description")
+    @classmethod
+    def validate_job_description(cls, value: str) -> str:
+        stripped = value.strip()
+        if not stripped:
+            raise ValueError("Job description is required")
+        return stripped
 
 
 class SessionCreateResponse(BaseModel):
