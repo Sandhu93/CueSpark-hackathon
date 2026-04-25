@@ -1,77 +1,90 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="820" viewBox="0 0 1280 820" role="img" aria-label="CueSpark benchmark-driven system architecture">
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-label="CueSpark full product architecture">
   <defs>
     <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity="0.12"/></filter>
     <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M2,2 L10,6 L2,10 Z" fill="#334155"/></marker>
     <style>
-      .bg{fill:#f8fafc}.title{font:700 30px Inter,Arial,sans-serif;fill:#0f172a}.subtitle{font:500 15px Inter,Arial,sans-serif;fill:#64748b}
-      .box{fill:#fff;stroke:#cbd5e1;stroke-width:2;filter:url(#shadow)}.blue{fill:#eef2ff;stroke:#6366f1}.cyan{fill:#ecfeff;stroke:#06b6d4}.green{fill:#f0fdf4;stroke:#22c55e}.orange{fill:#fff7ed;stroke:#f97316}.red{fill:#fef2f2;stroke:#ef4444}.purple{fill:#faf5ff;stroke:#a855f7}
-      .label{font:700 18px Inter,Arial,sans-serif;fill:#0f172a}.small{font:500 13px Inter,Arial,sans-serif;fill:#475569}.tiny{font:500 12px Inter,Arial,sans-serif;fill:#64748b}.group{font:700 13px Inter,Arial,sans-serif;fill:#475569;letter-spacing:.08em}
-      .line{stroke:#334155;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke-dasharray:7 7}.note{font:700 13px Inter,Arial,sans-serif;fill:#7c2d12}
+      .bg{fill:#f8fafc}.title{font:700 32px Inter,Arial,sans-serif;fill:#0f172a}.subtitle{font:500 15px Inter,Arial,sans-serif;fill:#64748b}.group{font:700 13px Inter,Arial,sans-serif;fill:#475569;letter-spacing:.08em}.box{fill:#fff;stroke:#cbd5e1;stroke-width:2;filter:url(#shadow)}.blue{fill:#eef2ff;stroke:#6366f1}.cyan{fill:#ecfeff;stroke:#06b6d4}.green{fill:#f0fdf4;stroke:#22c55e}.orange{fill:#fff7ed;stroke:#f97316}.red{fill:#fef2f2;stroke:#ef4444}.purple{fill:#faf5ff;stroke:#a855f7}.label{font:700 18px Inter,Arial,sans-serif;fill:#0f172a}.small{font:500 13px Inter,Arial,sans-serif;fill:#475569}.tiny{font:500 12px Inter,Arial,sans-serif;fill:#64748b}.line{stroke:#334155;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke-dasharray:7 7}.warn{font:700 12px Inter,Arial,sans-serif;fill:#92400e}
     </style>
   </defs>
-  <rect class="bg" width="1280" height="820"/>
-  <text x="55" y="56" class="title">CueSpark — Benchmark-Driven Architecture</text>
-  <text x="55" y="84" class="subtitle">Single-session demo: JD + resume + curated benchmarks → benchmark gaps → voice interview → readiness report.</text>
+  <rect class="bg" width="1400" height="900"/>
+  <text x="55" y="56" class="title">CueSpark — Benchmark-Driven Multimodal Interview Platform</text>
+  <text x="55" y="86" class="subtitle">JD + resume + benchmark profiles drive questions; audio, text, code, and safe visual signals are evaluated by specialized agents.</text>
 
-  <text x="80" y="128" class="group">USER EXPERIENCE</text>
-  <rect x="55" y="145" width="260" height="150" rx="22" class="box blue"/>
-  <text x="85" y="185" class="label">Next.js Frontend</text>
-  <text x="85" y="214" class="small">Setup, match, benchmark dashboard</text>
-  <text x="85" y="238" class="small">Turn-based interview room</text>
-  <text x="85" y="262" class="small">Final benchmark-aware report</text>
+  <text x="80" y="132" class="group">PRODUCT EXPERIENCE</text>
+  <rect x="55" y="150" width="285" height="170" rx="24" class="box blue"/>
+  <text x="85" y="190" class="label">Next.js Frontend</text>
+  <text x="85" y="220" class="small">Setup, benchmark dashboard</text>
+  <text x="85" y="244" class="small">Interview room: audio/text/code</text>
+  <text x="85" y="268" class="small">Optional visual signal capture</text>
+  <text x="85" y="292" class="small">Readiness report</text>
 
-  <text x="432" y="128" class="group">API + ORCHESTRATION</text>
-  <rect x="385" y="145" width="280" height="150" rx="22" class="box cyan"/>
-  <text x="415" y="185" class="label">FastAPI Backend</text>
-  <text x="415" y="214" class="small">Sessions, uploads, questions</text>
-  <text x="415" y="238" class="small">Benchmark read API</text>
-  <text x="415" y="262" class="small">Job orchestration</text>
+  <text x="425" y="132" class="group">API + ORCHESTRATION</text>
+  <rect x="395" y="150" width="290" height="170" rx="24" class="box cyan"/>
+  <text x="425" y="190" class="label">FastAPI Product API</text>
+  <text x="425" y="220" class="small">Sessions, documents, questions</text>
+  <text x="425" y="244" class="small">Answers: audio, text, code</text>
+  <text x="425" y="268" class="small">Benchmark/report endpoints</text>
+  <text x="425" y="292" class="small">Job orchestration</text>
 
-  <rect x="385" y="390" width="280" height="185" rx="22" class="box red"/>
-  <text x="415" y="430" class="label">Redis + RQ Worker</text>
-  <text x="415" y="459" class="small">Parse, chunk, embed</text>
-  <text x="415" y="483" class="small">Match + benchmark comparison</text>
-  <text x="415" y="507" class="small">TTS, transcription, evaluation</text>
-  <text x="415" y="531" class="small">Final report generation</text>
+  <rect x="395" y="395" width="290" height="205" rx="24" class="box red"/>
+  <text x="425" y="435" class="label">Redis + RQ Workers</text>
+  <text x="425" y="465" class="small">Prepare session pipeline</text>
+  <text x="425" y="489" class="small">TTS + transcription jobs</text>
+  <text x="425" y="513" class="small">Audio/text/code/video agents</text>
+  <text x="425" y="537" class="small">Final evaluation orchestrator</text>
+  <text x="425" y="561" class="small">Readiness report generation</text>
 
-  <text x="800" y="128" class="group">AI + BENCHMARK INTELLIGENCE</text>
-  <rect x="745" y="145" width="270" height="150" rx="22" class="box orange"/>
-  <text x="775" y="185" class="label">OpenAI Services</text>
-  <text x="775" y="214" class="small">Embeddings, TTS, transcription</text>
-  <text x="775" y="238" class="small">Structured LLM analysis</text>
-  <text x="775" y="262" class="small">Question and report generation</text>
+  <text x="787" y="132" class="group">INTELLIGENCE LAYER</text>
+  <rect x="745" y="150" width="280" height="170" rx="24" class="box purple"/>
+  <text x="775" y="190" class="label">Benchmark Engine</text>
+  <text x="775" y="220" class="small">Role benchmark retrieval</text>
+  <text x="775" y="244" class="small">Candidate-vs-benchmark gap</text>
+  <text x="775" y="268" class="small">Question targets</text>
+  <text x="775" y="292" class="small">Gap coverage scoring</text>
 
-  <rect x="745" y="390" width="270" height="185" rx="22" class="box purple"/>
-  <text x="775" y="430" class="label">Benchmark Engine</text>
-  <text x="775" y="459" class="small">Curated profile retrieval</text>
-  <text x="775" y="483" class="small">Candidate vs benchmark gap</text>
-  <text x="775" y="507" class="small">Missing metrics, ownership</text>
-  <text x="775" y="531" class="small">Risk areas and question targets</text>
+  <rect x="745" y="395" width="280" height="205" rx="24" class="box orange"/>
+  <text x="775" y="435" class="label">Multimodal Agents</text>
+  <text x="775" y="465" class="small">Audio fluency agent</text>
+  <text x="775" y="489" class="small">Text answer agent</text>
+  <text x="775" y="513" class="small">Code evaluation agent</text>
+  <text x="775" y="537" class="small">Video signal agent MVP</text>
+  <text x="775" y="561" class="small">Benchmark gap agent</text>
 
-  <text x="115" y="630" class="group">STORAGE</text>
-  <rect x="55" y="650" width="410" height="115" rx="22" class="box green"/>
-  <text x="85" y="690" class="label">Postgres + pgvector</text>
-  <text x="85" y="719" class="small">Sessions, documents, benchmark profiles/comparisons</text>
-  <text x="85" y="743" class="small">Questions, answers, evaluations, reports, embeddings</text>
+  <text x="1112" y="132" class="group">AI PROVIDER</text>
+  <rect x="1080" y="150" width="260" height="170" rx="24" class="box orange"/>
+  <text x="1110" y="190" class="label">OpenAI Gateway</text>
+  <text x="1110" y="220" class="small">Embeddings</text>
+  <text x="1110" y="244" class="small">TTS interviewer voice</text>
+  <text x="1110" y="268" class="small">Transcription</text>
+  <text x="1110" y="292" class="small">Structured LLM analysis</text>
 
-  <rect x="575" y="650" width="300" height="115" rx="22" class="box green"/>
-  <text x="605" y="690" class="label">MinIO</text>
-  <text x="605" y="719" class="small">Resume uploads</text>
-  <text x="605" y="743" class="small">Question audio and answer recordings</text>
+  <text x="98" y="665" class="group">STORAGE</text>
+  <rect x="55" y="690" width="420" height="130" rx="24" class="box green"/>
+  <text x="85" y="730" class="label">Postgres + pgvector</text>
+  <text x="85" y="760" class="small">Sessions, profiles, comparisons</text>
+  <text x="85" y="784" class="small">Answers, agent results, evaluations</text>
+  <text x="85" y="808" class="small">Reports and semantic chunks</text>
 
-  <rect x="965" y="650" width="250" height="115" rx="22" class="box purple"/>
-  <text x="995" y="690" class="label">Fixtures</text>
-  <text x="995" y="719" class="small">Curated benchmark profiles</text>
-  <text x="995" y="743" class="small">No live personal-resume scraping</text>
+  <rect x="530" y="690" width="330" height="130" rx="24" class="box green"/>
+  <text x="560" y="730" class="label">MinIO Object Storage</text>
+  <text x="560" y="760" class="small">Resume uploads</text>
+  <text x="560" y="784" class="small">Question audio</text>
+  <text x="560" y="808" class="small">Candidate answer audio</text>
 
-  <path class="line" d="M315 220 H385"/><text x="327" y="207" class="tiny">REST</text>
-  <path class="line" d="M525 295 V390"/><text x="542" y="347" class="tiny">enqueue jobs</text>
-  <path class="line" d="M665 220 H745"/><text x="682" y="207" class="tiny">AI calls</text>
-  <path class="line" d="M665 482 H745"/><text x="678" y="469" class="tiny">benchmark context</text>
-  <path class="line" d="M880 295 V390"/><text x="895" y="347" class="tiny">structured outputs</text>
-  <path class="line" d="M525 575 C470 610 390 640 300 650"/>
-  <path class="line" d="M525 575 C585 610 650 630 710 650"/>
-  <path class="line" d="M880 575 C950 610 1010 630 1070 650"/>
-  <path class="line dash" d="M965 705 C910 665 870 610 860 575"/>
-  <text x="745" y="612" class="note">benchmark corpus feeds retrieval</text>
+  <rect x="915" y="690" width="390" height="130" rx="24" class="box purple"/>
+  <text x="945" y="730" class="label">Benchmark Corpus</text>
+  <text x="945" y="760" class="small">Curated/anonymized role archetypes</text>
+  <text x="945" y="784" class="small">Seeded profiles, embedded for retrieval</text>
+  <text x="945" y="808" class="warn">No live personal-resume scraping by default</text>
+
+  <path class="line" d="M340 235 H395"/><text x="350" y="222" class="tiny">REST</text>
+  <path class="line" d="M540 320 V395"/><text x="555" y="360" class="tiny">enqueue</text>
+  <path class="line" d="M685 235 H745"/><text x="697" y="222" class="tiny">context</text>
+  <path class="line" d="M685 498 H745"/><text x="697" y="485" class="tiny">agent jobs</text>
+  <path class="line" d="M1025 235 H1080"/><text x="1037" y="222" class="tiny">AI calls</text>
+  <path class="line" d="M885 320 V395"/><text x="900" y="360" class="tiny">gap context</text>
+  <path class="line" d="M540 600 C470 635 360 665 260 690"/>
+  <path class="line" d="M540 600 C590 635 640 665 690 690"/>
+  <path class="line" d="M885 600 C950 640 1020 665 1110 690"/>
+  <path class="line dash" d="M1110 690 C1030 640 955 605 900 600"/>
 </svg>
