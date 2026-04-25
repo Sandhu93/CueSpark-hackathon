@@ -514,6 +514,33 @@ Report changed files and verification steps.
 
 ---
 
+# CueSpark Codex Guardrails Pack
+
+## Contents
+
+```txt
+docs/
+  08-implementation-sequence.md
+  09-api-contracts-detailed.md
+  10-data-model-contract.md
+  11-prompt-registry.md
+  12-codex-working-method.md
+
+tasks/
+  TASK_TEMPLATE.md
+
+fixtures/
+  sample_job_description.txt
+  sample_resume.txt
+  sample_transcript.txt
+```
+
+## Purpose
+
+These files help Codex implement the project phase by phase without drifting into out-of-scope work.
+
+Use one task file at a time and keep Codex focused on the current phase only.
+
 ## Current Milestone
 
 The first stable milestone is:

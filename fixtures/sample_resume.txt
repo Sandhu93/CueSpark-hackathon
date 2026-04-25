@@ -1,0 +1,16 @@
+Candidate has 5 years of experience coordinating software and operations projects.
+
+Experience:
+- Managed sprint delivery for internal software teams.
+- Prepared client-facing status reports and project documentation.
+- Coordinated between developers, designers, clients, and vendors.
+- Tracked delivery timelines, risks, and dependencies.
+- Helped improve communication between business stakeholders and engineering teams.
+
+Skills:
+- Agile project coordination
+- Documentation
+- Stakeholder communication
+- Vendor coordination
+- Risk tracking
+- Jira and project reporting
