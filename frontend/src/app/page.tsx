@@ -35,6 +35,12 @@ export default function Home() {
               >
                 Start demo
               </Link>
+              <Link
+                href="/demo"
+                className="rounded border border-[var(--border)] px-5 py-3 text-sm"
+              >
+                Demo Preview
+              </Link>
               <a
                 href="http://localhost:8000/health"
                 className="rounded border border-[var(--border)] px-5 py-3 text-sm"
