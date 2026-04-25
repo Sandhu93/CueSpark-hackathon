@@ -30,6 +30,8 @@ class Settings(BaseSettings):
     minio_use_ssl: bool = False
 
     # AI providers
+    ai_provider: str = "openai"
+    ai_mock_mode: bool = True
     openai_api_key: str = ""
     openai_chat_model: str = "gpt-4o-mini"
     openai_tts_model: str = "gpt-4o-mini-tts"

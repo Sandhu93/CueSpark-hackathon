@@ -316,6 +316,8 @@ API_CORS_ORIGINS=http://localhost:3000
 WEB_PORT=3000
 NEXT_PUBLIC_API_URL=http://localhost:8000
 
+AI_PROVIDER=openai
+AI_MOCK_MODE=true
 OPENAI_API_KEY=
 OPENAI_CHAT_MODEL=gpt-4o-mini
 OPENAI_TTS_MODEL=gpt-4o-mini-tts
