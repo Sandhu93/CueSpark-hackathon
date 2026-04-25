@@ -17,7 +17,7 @@ SessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=
 
 async def init_db() -> None:
     # Import models so they register on Base.metadata
-    from app.models import job  # noqa: F401
+    import app.models  # noqa: F401
 
     async with engine.begin() as conn:
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
