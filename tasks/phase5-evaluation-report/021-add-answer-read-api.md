@@ -1,71 +1,36 @@
-# Task: Add Answer Read API
+# Deprecated Task: Add Answer Read API
 
-## Goal
+## Status
 
-Expose candidate answer transcript, communication metrics, and benchmark-aware evaluation result to the frontend.
+Deprecated as a standalone task for the current product roadmap.
 
-## Scope
+The read API is still needed, but it must now expose multimodal answer data and agent results. That work should be handled under the active product frontend/backend integration path and API contracts:
 
-Implement only:
-
-- `GET /api/answers/{answer_id}`.
-- Response schema for answer details.
-- Include evaluation if available.
-- Include benchmark gap coverage score if available.
-- 404 handling for unknown answer.
-
-## Out of Scope
-
-Do not implement:
-
-- New evaluation logic.
-- Final report generation.
-- Frontend UI.
-- Reprocessing endpoints.
-- Benchmark comparison generation.
-
-## Files Likely Involved
-
-- `backend/app/api/interview.py`
-- `backend/app/schemas/`
-- `backend/app/models/`
-- Router registration file
-- `backend/tests/`
-
-## API Contract
-
-Follow `docs/09-api-contracts-detailed.md`.
-
-## Data Model Changes
-
-None.
-
-## Acceptance Criteria
-
-- [ ] Endpoint returns transcript when available.
-- [ ] Endpoint returns communication metrics when available.
-- [ ] Endpoint returns evaluation when available.
-- [ ] Evaluation response includes benchmark gap coverage score when available.
-- [ ] Unknown answer returns 404.
-- [ ] Endpoint does not trigger transcription or evaluation.
-- [ ] No AI call happens in this task.
-
-## Verification
-
-Run:
-
-```bash
-pytest backend/tests
+```txt
+docs/09-api-contracts-detailed.md
+tasks/phase5-multimodal-evaluation/030-add-agent-result-storage.md
+tasks/phase5-multimodal-evaluation/032-add-final-evaluation-orchestrator.md
+tasks/phase6-product-frontend/034-update-frontend-api-client-for-multimodal.md
 ```
 
-Manual:
+## Why This Is Deprecated
 
-```bash
-curl http://localhost:8000/api/answers/{answer_id}
-```
+The old task only returns transcript, communication metrics, and a simple benchmark-aware evaluation.
 
-## Notes for Codex
+The current answer read response should include:
 
-- This endpoint is read-only.
-- Keep response stable for frontend integration.
-- Do not generate or modify benchmark comparison data here.
+- answer mode
+- transcript
+- text answer
+- code answer metadata
+- communication metadata
+- visual signal metadata
+- agent results
+- final answer evaluation
+- modality breakdown
+
+## Do Not Execute This Task
+
+Do not give this file to Codex for the current product implementation.
+
+Follow `docs/09-api-contracts-detailed.md` and active multimodal tasks instead.
