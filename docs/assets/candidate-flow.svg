@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img">
+  <defs>
+    <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity="0.13"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M2,2 L10,6 L2,10 Z" fill="#334155"/></marker>
+    <style>
+      .bg{fill:#f8fafc} .title{font:700 28px Inter,Arial,sans-serif;fill:#0f172a} .subtitle{font:500 14px Inter,Arial,sans-serif;fill:#64748b}
+      .box{fill:#fff;stroke:#cbd5e1;stroke-width:2;filter:url(#shadow)} .blue{fill:#eef2ff;stroke:#6366f1} .cyan{fill:#ecfeff;stroke:#06b6d4} .green{fill:#f0fdf4;stroke:#22c55e} .orange{fill:#fff7ed;stroke:#f97316} .red{fill:#fef2f2;stroke:#ef4444}
+      .label{font:700 18px Inter,Arial,sans-serif;fill:#0f172a} .small{font:500 13px Inter,Arial,sans-serif;fill:#475569} .tiny{font:500 12px Inter,Arial,sans-serif;fill:#64748b}
+      .group{font:700 13px Inter,Arial,sans-serif;fill:#475569;letter-spacing:.08em} .num{font:800 18px Inter,Arial,sans-serif;fill:#4f46e5}
+      .line{stroke:#334155;stroke-width:2.4;fill:none;marker-end:url(#arrow)} .dash{stroke-dasharray:7 7}
+    </style>
+  </defs>
+  <rect class="bg" width="1200" height="760"/>
+  <text x="60" y="58" class="title">Candidate Journey</text>
+  <text x="60" y="86" class="subtitle">Single-session, turn-based interview experience.</text>
+  <rect x="60" y="140" width="250" height="110" class="box blue" rx="22"/>
+  <text x="90" y="175" class="num">01</text><text x="90" y="205" class="label">Enter JD</text><text x="90" y="229" class="small">Paste job description manually</text>
+  <rect x="475" y="140" width="250" height="110" class="box blue" rx="22"/>
+  <text x="505" y="175" class="num">02</text><text x="505" y="205" class="label">Add Resume</text><text x="505" y="229" class="small">Upload PDF/DOCX or paste text</text>
+  <rect x="890" y="140" width="250" height="110" class="box cyan" rx="22"/>
+  <text x="920" y="175" class="num">03</text><text x="920" y="205" class="label">Prepare Session</text><text x="920" y="229" class="small">Parse, chunk, embed, analyze</text>
+  <rect x="890" y="335" width="250" height="110" class="box green" rx="22"/>
+  <text x="920" y="370" class="num">04</text><text x="920" y="400" class="label">View Match</text><text x="920" y="424" class="small">Score, gaps, readiness preview</text>
+  <rect x="475" y="335" width="250" height="110" class="box orange" rx="22"/>
+  <text x="505" y="370" class="num">05</text><text x="505" y="400" class="label">Mock Interview</text><text x="505" y="424" class="small">Hear question, record answer</text>
+  <rect x="60" y="335" width="250" height="110" class="box orange" rx="22"/>
+  <text x="90" y="370" class="num">06</text><text x="90" y="400" class="label">Evaluate Answer</text><text x="90" y="424" class="small">Transcribe and score response</text>
+  <rect x="60" y="545" width="250" height="110" class="box red" rx="22"/>
+  <text x="90" y="580" class="num">07</text><text x="90" y="610" class="label">Adaptive Follow-up</text><text x="90" y="634" class="small">Only when answer is weak/vague</text>
+  <rect x="475" y="545" width="250" height="110" class="box green" rx="22"/>
+  <text x="505" y="580" class="num">08</text><text x="505" y="610" class="label">Final Report</text><text x="505" y="634" class="small">Strict readiness assessment</text>
+  <path class="line" d="M310 195 H475"/><path class="line" d="M725 195 H890"/>
+  <path class="line" d="M1015 250 V335"/><path class="line" d="M890 390 H725"/>
+  <path class="line" d="M475 390 H310"/><path class="line" d="M185 445 V545"/>
+  <path class="line" d="M310 600 H475"/><path class="line" d="M600 545 C710 500 715 450 690 445"/>
+</svg>
