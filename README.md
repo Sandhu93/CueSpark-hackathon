@@ -1,91 +1,105 @@
 # CueSpark Interview Coach
 
-**CueSpark Interview Coach** is a benchmark-driven AI interview readiness platform for job seekers and experienced professionals preparing for role transitions.
+**CueSpark Interview Coach** is a benchmark-driven AI interview readiness platform.
 
-Instead of only generating mock interview questions from a job description and resume, CueSpark compares the candidate against a role-specific benchmark set of stronger candidate profiles. It identifies missing skills, weak evidence, missing metrics, weak ownership signals, and interview risk areas, then generates a strict interviewer-style mock interview focused on those gaps.
+It helps candidates prepare for a target job by comparing their resume against the job description and a curated role-specific benchmark corpus, finding evidence gaps, and generating a strict interviewer-style mock interview from those gaps.
 
 > Practice against the hiring bar, not just an AI chatbot.
 
-This project uses a production-friendly architecture based on **FastAPI**, **Next.js**, **Postgres + pgvector**, **Redis/RQ workers**, **MinIO**, and **OpenAI audio/LLM services**.
-
 ---
 
-## Core Product Goal
+## Why This Project Exists
 
-CueSpark helps candidates understand how far they are from the hiring bar for a target role.
+A basic AI mock interview can be done with one good prompt.
 
-The first version is a **single-session, benchmark-driven, turn-based interview demo**. It does not include accounts, payments, recruiter dashboards, realtime video rooms, live scraping, or WebRTC conversation.
+CueSpark adds the missing layer: **benchmark comparison**.
 
----
-
-## What Makes This Different
-
-A normal LLM prompt can generate interview questions from a JD and resume. CueSpark adds a benchmark layer:
+Instead of only asking generic questions from a job description, CueSpark compares:
 
 ```txt
-Candidate Resume ↔ Job Description ↔ Benchmark Profiles ↔ Interview Performance
+Candidate Resume ↔ Job Description ↔ Curated Benchmark Profiles ↔ Interview Performance
 ```
 
 The system answers:
 
 - What do stronger candidates show that this resume does not?
-- Which skills are present but weakly evidenced?
-- Where are metrics, ownership, business impact, or project depth missing?
+- Which claims are weakly evidenced?
+- Where are metrics, ownership, business impact, tool depth, or project scale missing?
 - What would a strict interviewer doubt after reading this resume?
-- Which questions should be asked to test those weak areas?
+- Which interview questions should be asked to test those weak areas?
 
 ---
 
-## Architecture Overview
+## Current Implementation Target
+
+This repository is being implemented as a **single-session, benchmark-driven, turn-based interview demo**.
+
+The first stable milestone is:
+
+```txt
+Candidate pastes JD
+  → uploads or pastes resume
+  → system parses and embeds JD/resume
+  → system creates JD-resume match analysis
+  → system retrieves curated benchmark profiles
+  → system compares candidate vs benchmark profiles
+  → system shows benchmark gaps
+  → system generates benchmark-driven interview questions
+  → AI interviewer asks questions by voice
+  → candidate records answers
+  → system transcribes and evaluates answers
+  → final benchmark-aware readiness report is generated
+```
+
+This is not a full SaaS product yet. The goal is to build a strong, controlled hackathon implementation with a clear novelty layer.
+
+---
+
+## Demo Flow
+
+![Candidate Flow](docs/assets/candidate-flow.svg)
+
+The intended user journey is:
+
+1. Candidate enters the job description.
+2. Candidate uploads or pastes the resume.
+3. Backend creates an interview session.
+4. Backend parses, chunks, and embeds the JD/resume.
+5. Backend produces a basic JD-resume match analysis and role key.
+6. Backend retrieves curated benchmark profiles for the role.
+7. Backend compares candidate resume against benchmark profiles.
+8. Frontend shows the **Benchmark Gap Dashboard**.
+9. Backend generates questions from benchmark gaps.
+10. Candidate completes a turn-based voice interview.
+11. Backend transcribes and evaluates each answer.
+12. Frontend shows the benchmark-aware final report.
+
+The key demo screen is the benchmark dashboard, not the voice interview alone.
+
+---
+
+## System Architecture
 
 ![System Architecture](docs/assets/system-architecture.svg)
 
 | Layer | Responsibility |
 | --- | --- |
-| Next.js frontend | Setup flow, benchmark dashboard, interview UI, audio recording, report UI |
-| FastAPI backend | Session APIs, upload APIs, job orchestration, AI service coordination |
-| Redis + RQ worker | Parsing, embedding, benchmark comparison, transcription, evaluation, report generation |
-| Postgres + pgvector | Structured data, interview state, benchmark profiles, embeddings, reports |
-| MinIO | Resume files, generated interviewer audio, candidate answer recordings |
-| OpenAI services | TTS, transcription, embeddings, benchmark analysis, question generation, answer evaluation |
-
----
-
-## Candidate Flow
-
-![Candidate Flow](docs/assets/candidate-flow.svg)
-
-The first release should support this flow:
-
-1. Candidate pastes a job description.
-2. Candidate uploads or pastes a resume.
-3. Backend creates an interview session.
-4. Resume and JD are parsed, chunked, and embedded.
-5. System generates basic JD-resume match analysis.
-6. System retrieves curated benchmark profiles for the inferred role.
-7. System compares:
-   - JD vs candidate resume
-   - JD vs benchmark profiles
-   - candidate resume vs benchmark profiles
-8. System finds benchmark gaps:
-   - missing skills
-   - weak evidence
-   - missing metrics
-   - weak ownership signals
-   - interview risk areas
-9. System generates benchmark-driven interview questions.
-10. AI interviewer asks one question at a time using generated voice.
-11. Candidate records an answer.
-12. Backend transcribes and evaluates the answer.
-13. Final benchmark-aware readiness report is generated.
+| Next.js frontend | Setup, match page, benchmark dashboard, interview room, final report |
+| FastAPI backend | Session APIs, upload APIs, benchmark read API, question/answer/report APIs |
+| Redis + RQ worker | Parsing, embedding, match analysis, benchmark comparison, TTS, transcription, evaluation, reports |
+| Postgres + pgvector | Sessions, documents, benchmark profiles, benchmark comparisons, questions, answers, evaluations, reports, embeddings |
+| MinIO | Resume uploads, generated interviewer audio, candidate answer recordings |
+| OpenAI services | Embeddings, TTS, transcription, structured LLM analysis, question generation, report generation |
 
 ---
 
 ## Benchmark Engine
 
+![Benchmark Engine Flow](docs/assets/benchmark-engine-flow.svg)
+
 The benchmark engine is the novelty layer.
 
-For the hackathon version, CueSpark uses curated/anonymized benchmark profiles stored in the repository. It does **not** live-scrape personal resumes from LinkedIn, Naukri, or similar platforms.
+For the hackathon version, CueSpark uses **curated/anonymized benchmark profiles** stored as local fixtures. It does **not** scrape LinkedIn, Naukri, job boards, or personal resumes.
 
 Initial benchmark roles:
 
@@ -105,7 +119,7 @@ Each role should have 5 benchmark profiles:
 5. High-impact portfolio profile
 ```
 
-Benchmark outputs include:
+Benchmark analysis produces:
 
 ```txt
 benchmark_similarity_score
@@ -117,33 +131,12 @@ missing_metrics
 weak_ownership_signals
 interview_risk_areas
 recommended_resume_fixes
-benchmark_driven_question_targets
+question_targets
 ```
+
+These outputs feed the benchmark dashboard, question generation, answer evaluation, and final report.
 
 Detailed design: [`docs/13-benchmark-engine-design.md`](docs/13-benchmark-engine-design.md)
-
----
-
-## AI Voice and Transcription Pipeline
-
-![AI Audio Pipeline](docs/assets/ai-audio-pipeline.svg)
-
-The first version uses a reliable turn-based audio pipeline:
-
-```txt
-Benchmark-driven question text
-  → OpenAI TTS
-  → store interviewer audio in MinIO
-  → frontend plays question audio
-  → candidate records answer
-  → upload answer audio
-  → OpenAI transcription
-  → communication signal analysis
-  → benchmark-aware answer evaluation
-  → save scores and feedback
-```
-
-This avoids realtime WebRTC complexity while still giving a polished voice-interview experience.
 
 ---
 
@@ -151,9 +144,7 @@ This avoids realtime WebRTC complexity while still giving a polished voice-inter
 
 ![Data Storage Model](docs/assets/data-storage-model.svg)
 
-Use Postgres for structured application data and MinIO for large binary artifacts.
-
-### Core Tables
+Core tables:
 
 ```txt
 interview_sessions
@@ -167,7 +158,7 @@ interview_reports
 embedding_chunks
 ```
 
-### Object Storage Paths
+Object storage paths:
 
 ```txt
 resumes/original/{session_id}/{filename}
@@ -176,38 +167,68 @@ audio/answers/{answer_id}.webm
 reports/{session_id}.json
 ```
 
-The database should store object keys, not raw files.
+Rules:
+
+- Store structured data in Postgres.
+- Store vectors in pgvector using `embedding_chunks`.
+- Store binary files in MinIO.
+- Store object keys in the database, not file bytes.
+- Use local curated benchmark fixtures for the hackathon version.
 
 ---
 
-## Product Scope
+## AI Voice and Transcription Pipeline
 
-### In Scope for Version 1
+![AI Audio Pipeline](docs/assets/ai-audio-pipeline.svg)
 
-- Manual job description input
-- Resume upload and paste fallback
-- PDF/DOCX/text parsing
-- OCR-ready parse status, but no OCR implementation yet
-- JD and resume chunking
-- Embedding storage using Postgres + pgvector
-- Basic JD-resume match scoring
-- Curated benchmark profile fixtures
-- Benchmark profile seeding
-- Benchmark profile embedding and retrieval
-- Candidate-vs-benchmark comparison
-- Benchmark gap dashboard
-- Benchmark-driven mixed interview question generation
-- Turn-based interview flow
-- OpenAI-generated interviewer voice
-- Candidate audio recording and upload
-- Candidate audio transcription
-- Benchmark-aware answer evaluation
-- Communication signal scoring
-- Benchmark-aware final readiness report
+The first version uses a reliable turn-based audio flow:
 
-### Interview Categories
+```txt
+Benchmark-driven question text
+  → OpenAI TTS
+  → store interviewer audio in MinIO
+  → frontend plays question audio
+  → candidate records answer
+  → upload answer audio
+  → transcription
+  → communication signal analysis
+  → benchmark-aware answer evaluation
+  → save scores and feedback
+```
 
-The interview plan should generate questions across these categories:
+This avoids realtime WebRTC complexity while still giving a polished voice-interview experience.
+
+---
+
+## What Is In Scope
+
+Version 1 includes:
+
+- Single-session demo without login.
+- Manual job description input.
+- Resume upload and paste fallback.
+- PDF/DOCX/TXT text extraction.
+- OCR-ready parse status, but no OCR implementation.
+- JD/resume chunking.
+- OpenAI/mock embeddings.
+- Postgres + pgvector vector storage.
+- Basic JD-resume match analysis.
+- Curated benchmark profile fixtures.
+- Benchmark profile seeding.
+- Benchmark profile embedding and retrieval.
+- Candidate-vs-benchmark analysis.
+- Benchmark read API for dashboard.
+- Benchmark gap dashboard.
+- Benchmark-driven interview question generation.
+- On-demand interviewer TTS.
+- Browser audio recording.
+- Candidate audio upload.
+- Transcription.
+- Communication signal analysis.
+- Benchmark-aware answer evaluation.
+- Benchmark-aware final report.
+
+Interview categories:
 
 ```txt
 technical
@@ -223,26 +244,43 @@ For non-software jobs, `technical` means role-specific competency, not programmi
 
 ---
 
-## Out of Scope for Version 1
+## What Is Out of Scope
 
-Do not implement these unless explicitly moved into scope:
+Do not build these in version 1 unless explicitly moved into scope:
 
-- User login
-- Multi-user accounts
-- Payments or subscriptions
-- Recruiter dashboard
-- Admin dashboard
-- Realtime AI conversation
-- Google Meet-style video room
-- Monaco editor
-- Code compiler
-- Full OCR pipeline
-- Live scraping of personal resumes from LinkedIn/Naukri/job boards
-- Claims that benchmark profiles are verified hired-candidate resumes
-- Video-based confidence analysis
-- Emotion detection
-- Personality detection
-- Custom voice cloning
+- User login.
+- Multi-user accounts.
+- Payments or subscriptions.
+- Recruiter/admin dashboard.
+- Full WebRTC video interview.
+- Realtime AI conversation.
+- Monaco editor.
+- Code compiler.
+- Full OCR pipeline.
+- Live scraping of LinkedIn/Naukri/job-board/personal resumes.
+- Claims that benchmark profiles are verified hired-candidate resumes.
+- Video confidence analysis.
+- Emotion detection.
+- Personality detection.
+- Voice cloning.
+
+Use safe wording:
+
+```txt
+benchmark profiles
+curated top-candidate archetypes
+role benchmark corpus
+```
+
+Avoid unsupported wording:
+
+```txt
+hired resumes
+selected resumes
+LinkedIn selected profiles
+true confidence detection
+emotion detection
+```
 
 ---
 
@@ -250,33 +288,16 @@ Do not implement these unless explicitly moved into scope:
 
 | Area | Technology |
 | --- | --- |
-| Frontend | Next.js App Router |
+| Frontend | Next.js App Router, TypeScript, Tailwind |
 | Backend API | FastAPI |
 | Database | PostgreSQL |
 | Vector Search | pgvector |
 | Queue | Redis + RQ |
 | Object Storage | MinIO |
-| AI Provider | OpenAI |
+| AI Provider | OpenAI, with mock mode for local development |
 | Interviewer Voice | OpenAI TTS |
 | Transcription | OpenAI transcription / Whisper-compatible flow |
 | Local Runtime | Docker Compose |
-
----
-
-## Recommended AI Services
-
-| Capability | Recommended Direction |
-| --- | --- |
-| Interviewer voice | OpenAI TTS with professional interviewer instructions |
-| Candidate transcription | OpenAI transcription model or Whisper-compatible flow |
-| Embeddings | OpenAI text embeddings |
-| Match analysis | LLM service module |
-| Benchmark analysis | LLM service module with structured output |
-| Question generation | LLM service module using benchmark gaps |
-| Answer evaluation | LLM service module with benchmark-aware rubric |
-| Final report | LLM service module with strict interviewer tone |
-
-All AI calls should be isolated inside backend service modules. Do not call OpenAI directly from frontend pages or route handlers.
 
 ---
 
@@ -306,16 +327,9 @@ minioadmin / minioadmin
 
 ## Required Environment Variables
 
+The exact `.env.example` is the source of truth. The core variables are:
+
 ```env
-ENV=development
-LOG_LEVEL=INFO
-
-API_PORT=8000
-API_CORS_ORIGINS=http://localhost:3000
-
-WEB_PORT=3000
-NEXT_PUBLIC_API_URL=http://localhost:8000
-
 AI_PROVIDER=openai
 AI_MOCK_MODE=true
 OPENAI_API_KEY=
@@ -324,7 +338,6 @@ OPENAI_TTS_MODEL=gpt-4o-mini-tts
 OPENAI_TTS_VOICE=marin
 OPENAI_TRANSCRIBE_MODEL=gpt-4o-transcribe
 OPENAI_EMBEDDING_MODEL=text-embedding-3-small
-ANTHROPIC_API_KEY=
 
 POSTGRES_USER=app
 POSTGRES_PASSWORD=app
@@ -332,17 +345,17 @@ POSTGRES_DB=app
 POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
 
-REDIS_HOST=redis
-REDIS_PORT=6379
 REDIS_URL=redis://redis:6379/0
 
-MINIO_ROOT_USER=minioadmin
-MINIO_ROOT_PASSWORD=minioadmin
 MINIO_ENDPOINT=minio:9000
 MINIO_PUBLIC_ENDPOINT=http://localhost:9000
 MINIO_BUCKET=uploads
 MINIO_USE_SSL=false
+
+NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
+
+Keep `AI_MOCK_MODE=true` during most local development so the full flow can be built without real AI calls.
 
 ---
 
@@ -354,12 +367,13 @@ Expected backend modules:
 backend/app/api/
 ├── sessions.py
 ├── documents.py
+├── benchmark.py
 ├── interview.py
 ├── audio.py
 ├── reports.py
 
 backend/app/services/
-├── openai_client.py
+├── openai_gateway.py
 ├── document_parser.py
 ├── chunking.py
 ├── embeddings.py
@@ -376,7 +390,15 @@ backend/app/services/
 ├── prompts.py
 ```
 
-Keep route handlers thin. Business logic should live in services. Slow operations should be run through workers.
+Rules:
+
+- Keep FastAPI routes thin.
+- Put business logic in services.
+- Put slow work in RQ tasks.
+- Do not call OpenAI from frontend.
+- Do not call OpenAI directly from route handlers.
+- Store AI prompts in a prompt registry.
+- Keep LLM outputs structured with Pydantic schemas.
 
 ---
 
@@ -392,23 +414,92 @@ Expected frontend routes:
   Job description and resume input
 
 /session/[sessionId]/match
-  JD-resume match and session preparation status
+  JD-resume match and preparation status
 
 /session/[sessionId]/benchmark
   Benchmark gap dashboard
 
 /session/[sessionId]/interview
-  Turn-based benchmark-driven mock interview
+  Turn-based benchmark-driven interview
 
 /session/[sessionId]/report
-  Final benchmark-aware readiness report
+  Benchmark-aware readiness report
 ```
 
-Frontend API calls should be centralized inside `frontend/src/lib`.
+The benchmark dashboard should be treated as the main novelty screen.
 
 ---
 
-## Scoring Rubric
+## Task Execution Order
+
+Implementation tasks live in `tasks/` and should be executed one at a time.
+
+Phase 0 is the foundation layer. After Phase 0, use this order:
+
+```txt
+PHASE 1 — Session + Documents
+004 core session/document models
+005 session API
+006 resume upload/paste
+007 document text extraction
+
+PHASE 2 — Embeddings + Match
+008 question/answer/evaluation/report/embedding models
+009 chunking service
+010 embedding service
+011 match analysis service
+
+PHASE 2.5 — Benchmark Engine
+012 benchmark models
+013 benchmark fixtures
+014 benchmark seeding
+015 benchmark embedding/retrieval
+016 candidate-vs-benchmark analysis
+017 benchmark read API
+018 update question generation with benchmark gaps
+
+PHASE 3 — Interview Engine
+012 session preparation job
+013 question generation service
+014 question list API
+015 on-demand TTS
+
+PHASE 4 — Answer Flow
+016 browser recording UI
+017 answer upload API
+018 transcription service
+019 communication analysis
+
+PHASE 5 — Evaluation + Report Backend
+020 answer evaluation service
+021 answer read API
+022 final report service
+023 report API
+
+PHASE 6 — Frontend
+024 frontend API client
+025 setup and match pages
+026 benchmark dashboard page
+027 interview page
+028 report page
+029 loading/error/demo polish
+```
+
+When using Codex:
+
+```txt
+Read AGENTS.md, docs/00-project-overview.md, docs/01-architecture.md,
+docs/08-implementation-sequence.md, docs/13-benchmark-engine-design.md,
+and only the selected task file.
+
+Implement only the selected task.
+Do not add out-of-scope features.
+Report changed files and verification steps.
+```
+
+---
+
+## Scoring and Report Direction
 
 The final report should include:
 
@@ -419,7 +510,7 @@ The final report should include:
 4. Resume competitiveness score
 5. Evidence strength score
 6. Missing benchmark signals
-7. Interview risk radar
+7. Interview risk areas
 8. Answer-by-answer performance
 9. Resume fixes based on benchmark gaps
 10. Preparation plan
@@ -439,36 +530,6 @@ Each answer should be evaluated using:
 
 ---
 
-## Communication Signal Analysis
-
-The first version may estimate communication quality using measurable signals:
-
-- transcript length
-- word count
-- speaking speed
-- filler words
-- repetition
-- answer structure
-- clarity
-- hesitation markers
-- relevance to question
-
-Use this language:
-
-```txt
-communication signal score
-```
-
-Avoid unsupported claims such as:
-
-```txt
-emotion detection
-true confidence detection
-personality detection
-```
-
----
-
 ## Development Commands
 
 ```bash
@@ -478,7 +539,7 @@ make shell-api
 make worker-restart
 ```
 
-If Makefile commands are unavailable, use Docker Compose directly:
+If Makefile commands are unavailable:
 
 ```bash
 docker compose up --build
@@ -488,38 +549,15 @@ docker compose restart worker
 
 ---
 
-## Task-Based Development
+## Current Build Principle
 
-Implementation tasks live in `tasks/` and should be executed one at a time.
+Build the product in thin, verifiable layers.
 
-Recommended order:
-
-```txt
-phase0-foundation
-phase1-session-documents
-phase2-embeddings-match
-phase2-benchmark-engine
-phase3-interview-engine
-phase4-answer-flow
-phase5-evaluation-report
-phase6-frontend-polish
-```
-
-When using Codex or another coding agent:
+Do not jump directly to the frontend or voice interview before the benchmark backend is working. The judge-facing value is:
 
 ```txt
-Read AGENTS.md, docs/08-implementation-sequence.md, docs/13-benchmark-engine-design.md, and only the selected task file.
-Implement only the selected task.
-Do not add out-of-scope features.
-Report changed files and verification steps.
-```
-
----
-
-## Current Milestone
-
-The first stable milestone is:
-
-```txt
-A candidate can paste a JD, upload or paste a resume, compare their resume against curated benchmark profiles, see benchmark evidence gaps, generate a benchmark-driven interview, hear AI-spoken questions, record spoken answers, receive transcriptions, get strict benchmark-aware feedback, and view a final readiness report.
+Benchmark Gap Dashboard
+  → Benchmark-driven questions
+  → Benchmark-aware evaluation
+  → Benchmark-aware final report
 ```
