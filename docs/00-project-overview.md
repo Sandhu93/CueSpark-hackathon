@@ -6,25 +6,31 @@
 
 ## One-Line Description
 
-CueSpark Interview Coach is a benchmark-driven AI interview readiness platform that helps candidates practice against the hiring bar, not just against generic AI-generated questions.
+CueSpark Interview Coach is a benchmark-driven, multimodal AI interview readiness platform that helps candidates practice against the hiring benchmark, not just against generic AI interview questions.
 
 ## Target Users
 
-Initial users:
+Primary users:
 
-- Job seekers applying to job roles.
-- Experienced professionals switching roles.
+- Job seekers applying to a specific role.
+- Experienced professionals switching role, domain, or seniority level.
+- Students preparing for placements.
+- Bootcamps, colleges, and placement teams that need scalable readiness diagnosis.
+- Career coaches who want structured resume/interview gap analysis.
 
-The system must support any job role, not only software/IT. For non-technical roles, `technical` means role-specific competency.
+The system must support any job role, not only software/IT. For non-technical roles, `technical` means role-specific competency, tools, processes, domain knowledge, and practical execution ability.
 
 ## Core Product Idea
 
-A normal AI mock interview can be created with one prompt. CueSpark adds a benchmark layer.
+A normal AI mock interview can be created with one prompt. CueSpark adds two stronger product layers:
 
-The system compares:
+1. **Benchmark intelligence** — compare the candidate against a role-specific benchmark corpus.
+2. **Multimodal evaluation** — evaluate the candidate response across the modalities required by the question.
+
+The product compares:
 
 ```txt
-Candidate Resume ↔ Job Description ↔ Benchmark Profiles
+Candidate Resume ↔ Job Description ↔ Benchmark Profiles ↔ Candidate Interview Response
 ```
 
 Then it identifies what stronger candidates show that this candidate does not:
@@ -36,8 +42,12 @@ Then it identifies what stronger candidates show that this candidate does not:
 - missing business impact
 - weak project depth
 - interview risk areas
+- weak answer structure
+- weak communication signals
+- weak written response quality
+- weak code quality where coding is required
 
-The mock interview is generated from these benchmark gaps.
+The interview is generated from these benchmark gaps, and the final report explains whether the candidate addressed those gaps.
 
 ## Core User Flow
 
@@ -52,20 +62,23 @@ Candidate opens app
   -> system generates benchmark gap analysis
   -> system generates benchmark-driven interview plan
   -> interviewer bot asks one question at a time using voice
-  -> candidate records an answer
-  -> system transcribes and evaluates the answer
-  -> final benchmark-aware strict interviewer report is generated
+  -> question declares expected response mode
+  -> candidate answers using audio, text, code, or mixed response as required
+  -> modality agents analyze the response
+  -> benchmark gap agent checks whether the tested gap was addressed
+  -> final evaluation orchestrator combines agent outputs
+  -> final multimodal benchmark-aware readiness report is generated
 ```
 
 ## Benchmark Engine
 
-The benchmark engine is the novelty layer.
+The benchmark engine is the first product differentiator.
 
-For the hackathon version:
+Rules:
 
 - Use curated/anonymized benchmark profiles.
-- Do not live-scrape personal resumes.
-- Do not claim profiles are verified hired-candidate resumes.
+- Do not live-scrape personal resumes by default.
+- Do not claim profiles are verified hired-candidate resumes unless verification exists.
 - Use safe wording: `benchmark profiles`, `curated top-candidate archetypes`, or `role benchmark corpus`.
 
 Recommended initial benchmark roles:
@@ -76,19 +89,42 @@ backend_developer
 data_analyst
 ```
 
-Each role should have 5 benchmark profiles.
+Each role should have multiple benchmark profiles covering entry-level, mid-level, experienced, role-switcher, and high-impact portfolio archetypes.
+
+## Multimodal Evaluation
+
+CueSpark questions can request different response modes:
+
+```txt
+spoken_answer
+written_answer
+code_answer
+mixed_answer
+```
+
+Each response mode activates the relevant analyzers:
+
+- Audio Agent: transcript, pace, filler words, hesitation markers, clarity, structure.
+- Text Answer Agent: relevance, structure, specificity, completeness, evidence, clarity.
+- Code Evaluation Agent: correctness, edge cases, complexity, readability, testability, explanation quality.
+- Video Signal Agent MVP: face in frame, lighting quality, camera presence, eye contact proxy, posture stability, distraction markers.
+- Benchmark Gap Agent: whether the candidate addressed the benchmark gap being tested.
+- Final Evaluation Orchestrator: combines available agent outputs into a final answer score.
+
+Video-related language must remain careful. CueSpark analyzes **observable visual presence signals**, not emotions, personality, truthfulness, or true confidence.
 
 ## Interview Mode
 
-Initial version is **turn-based**:
+The first production version is **turn-based**:
 
 - One question is shown and played as audio.
-- Candidate records one answer.
+- Candidate responds using the expected response mode.
 - Candidate submits the answer.
-- Backend transcribes and evaluates.
+- Backend runs the relevant modality agents.
+- Candidate sees transcript/status/feedback.
 - Candidate moves to the next question.
 
-Realtime conversation is future scope.
+Realtime WebRTC conversation is future scope.
 
 ## Interview Categories
 
@@ -114,21 +150,24 @@ The final report must include:
 - Resume competitiveness score
 - Evidence strength score
 - Role-specific depth
-- Communication clarity
 - Benchmark gap coverage
+- Communication signal summary
+- Text/code quality summaries where applicable
 - Interview risk areas
-- Strict hiring-style recommendation
+- Strict hiring-style recommendation without a guarantee
 
-The tone should be **strict interviewer style**, not soft coaching. However, feedback should remain professional and actionable.
+The tone should be **strict interviewer style**, not soft coaching. Feedback should remain professional, evidence-based, and actionable.
 
 ## Allowed Claims
 
 The app may claim:
 
 - It compares candidate evidence against curated benchmark profiles.
-- It analyzes communication signals.
+- It analyzes observable communication signals.
 - It estimates fluency from transcript and audio metadata.
 - It identifies filler words, answer structure, relevance, and hesitation markers.
+- It analyzes written answers for structure, evidence, specificity, and completeness.
+- It analyzes code answers for correctness, complexity, edge cases, readability, and explanation quality.
 - It identifies resume/interview gaps relative to a role benchmark corpus.
 
 The app must not claim:
@@ -136,40 +175,45 @@ The app must not claim:
 - It uses verified hired-candidate resumes unless such verification exists.
 - It detects true confidence.
 - It detects emotions reliably.
+- It scores personality.
+- It detects truthfulness.
 - It replaces a human recruiter.
 - It guarantees interview success.
 
-## Initial Version Scope
+## Product Scope
 
-In scope:
+In scope for the product roadmap:
 
-- Single-session demo without login.
 - JD paste input.
 - Resume upload and resume paste fallback.
-- PDF/DOCX text parsing.
-- OCR provision but not OCR implementation.
+- PDF/DOCX/TXT parsing.
+- OCR-ready parse status, with OCR implementation later.
 - Local Docker Postgres + pgvector.
 - MinIO storage.
-- Curated benchmark profile fixtures.
-- Benchmark profile seeding.
+- Curated benchmark profile fixtures and seeding.
 - Benchmark embedding and retrieval.
 - Candidate-vs-benchmark comparison.
 - Benchmark gap dashboard.
 - Benchmark-driven question generation.
 - OpenAI TTS for interviewer voice.
-- OpenAI transcription for candidate audio.
-- Benchmark-aware strict answer evaluation.
-- Final benchmark-aware report UI.
+- Response-mode-aware interview room.
+- Audio recording and transcription.
+- Text answer capture and analysis.
+- Code answer capture and static code analysis.
+- Safe visual signal summary MVP.
+- Benchmark-gap coverage analysis.
+- Final multimodal evaluation orchestrator.
+- Final benchmark-aware readiness report.
 
-Out of scope:
+Out of scope until explicitly planned:
 
-- User accounts.
 - Billing.
 - Recruiter dashboard.
 - Full WebRTC meeting.
-- Live video analysis.
-- Coding compiler.
-- Monaco editor.
-- OCR implementation.
-- Job URL scraping.
+- Full video recording storage.
+- Emotion detection.
+- Personality scoring.
+- True confidence detection.
+- Truthfulness detection.
+- Unsandboxed code execution.
 - Live scraping of personal resumes from LinkedIn/Naukri/job boards.
