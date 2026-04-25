@@ -2,7 +2,7 @@
 
 ## Backend Goal
 
-Create a reliable benchmark-driven interview readiness engine, not a chatbot API.
+Create a reliable benchmark-driven, multimodal interview readiness engine, not a chatbot API.
 
 The backend is responsible for:
 
@@ -16,10 +16,14 @@ The backend is responsible for:
 - Benchmark gap analysis.
 - Benchmark-driven interview planning.
 - Question audio generation.
-- Candidate answer storage.
-- Transcription.
-- Benchmark-aware strict answer evaluation.
-- Final benchmark-aware report generation.
+- Response-mode-aware candidate answer storage.
+- Audio transcription and communication signal analysis.
+- Written answer analysis.
+- Code answer static evaluation.
+- Safe video/visual signal summary MVP.
+- Benchmark gap coverage analysis.
+- Final answer evaluation orchestration.
+- Final multimodal benchmark-aware report generation.
 
 ## Suggested Backend Files
 
@@ -27,6 +31,7 @@ The backend is responsible for:
 backend/app/api/
   sessions.py
   documents.py
+  benchmark.py
   interview.py
   audio.py
   reports.py
@@ -34,12 +39,14 @@ backend/app/api/
 backend/app/models/
   session.py
   document.py
-  benchmark.py
+  benchmark_profile.py
+  benchmark_comparison.py
   question.py
   answer.py
+  agent_result.py
   evaluation.py
   report.py
-  embedding.py
+  embedding_chunk.py
 
 backend/app/schemas/
   session.py
@@ -47,6 +54,7 @@ backend/app/schemas/
   benchmark.py
   question.py
   answer.py
+  agent_results.py
   evaluation.py
   report.py
   ai_outputs.py
@@ -63,15 +71,23 @@ backend/app/services/
   question_generator.py
   tts.py
   transcription.py
-  communication_analysis.py
-  answer_evaluator.py
+  audio_agent.py
+  text_answer_agent.py
+  code_evaluation_agent.py
+  video_signal_agent.py
+  benchmark_gap_agent.py
+  final_evaluation_orchestrator.py
   report_generator.py
   prompts.py
 
 backend/app/tasks/
   prepare_session.py
   generate_question_audio.py
-  transcribe_answer.py
+  process_audio_answer.py
+  analyze_text_answer.py
+  analyze_code_answer.py
+  analyze_video_signals.py
+  analyze_benchmark_gap_coverage.py
   evaluate_answer.py
   generate_report.py
 ```
@@ -92,6 +108,7 @@ Routes should not:
 - Parse large documents inline.
 - Transcribe audio inline.
 - Evaluate answers inline.
+- Run modality agents inline if the work is slow.
 - Generate benchmark comparisons inline if it may be slow.
 
 ## Task Lifecycle Pattern
@@ -107,13 +124,13 @@ Every worker task should follow this lifecycle:
 6. On failure, store error and mark failed.
 ```
 
-Use the existing task pattern in the repository. Do not invent a second job framework.
+Use the existing RQ/task pattern. Do not invent a second job framework.
 
 ## Core Domain Concepts
 
 ### Interview Session
 
-A single benchmark-driven mock interview attempt. No login is required in v1.
+A benchmark-driven interview attempt. Login can be added later, but the product flow should not depend on accounts initially.
 
 ### Document
 
@@ -135,7 +152,7 @@ Used for:
 
 A curated/anonymized strong candidate archetype for a role.
 
-For the hackathon version, benchmark profiles come from local fixtures, not live scraping.
+Benchmark profiles should not be described as verified hired-candidate resumes unless that is actually true.
 
 ### Benchmark Comparison
 
@@ -158,21 +175,56 @@ question_targets
 
 ### Interview Question
 
-A planned question with category, difficulty, expected signal, source/provenance, and optional benchmark gap reference.
+A planned question with category, difficulty, expected signal, source/provenance, benchmark gap references, and response-mode requirements.
+
+Each question should include:
+
+```text
+response_mode: spoken_answer | written_answer | code_answer | mixed_answer
+requires_audio
+requires_video
+requires_text
+requires_code
+```
 
 If benchmark gaps exist, questions should not be generic.
 
 ### Candidate Answer
 
-A candidate audio response and transcript for a specific question.
+A candidate response to a question.
+
+It can include:
+
+- audio object key
+- transcript
+- text answer
+- code answer
+- code language
+- visual signal metadata
+- response mode
+
+### Agent Result
+
+A structured output from one modality or evaluation agent.
+
+Agent types:
+
+```text
+audio
+text_answer
+code_evaluation
+video_signal
+benchmark_gap
+final_orchestrator
+```
 
 ### Answer Evaluation
 
-Strict rubric-based assessment of one answer, including whether the candidate addressed the benchmark gap being tested.
+Final answer-level scoring produced by the final evaluation orchestrator. It combines relevant agent outputs based on response mode.
 
 ### Interview Report
 
-Aggregated final benchmark-aware report for the session.
+Aggregated final multimodal benchmark-aware report for the session.
 
 ## OpenAI Model Configuration
 
@@ -195,7 +247,7 @@ If a model is changed later, implementation should not require editing multiple 
 
 ## Session Preparation Pipeline
 
-`prepare_session` should eventually perform:
+`prepare_session` should perform:
 
 ```text
 1. Load session.
@@ -208,21 +260,39 @@ If a model is changed later, implementation should not require editing multiple 
 8. Retrieve relevant benchmark profiles.
 9. Generate benchmark comparison.
 10. Generate benchmark-driven questions.
-11. Mark session ready.
+11. Add default response mode and modality flags to questions.
+12. Mark session ready.
 ```
 
 If benchmark comparison fails, session should be recoverable and should not silently fall back to generic questions without logging/state.
+
+## Multimodal Answer Pipeline
+
+After question delivery and TTS:
+
+```text
+1. Candidate submits response based on question.response_mode.
+2. Backend validates required modalities.
+3. Backend stores audio in MinIO if present.
+4. Backend stores text/code content in Postgres if present.
+5. Backend creates candidate_answers row.
+6. Backend enqueues relevant modality-agent jobs.
+7. Agents write agent_results rows.
+8. Benchmark gap agent checks whether the response addressed the tested gap.
+9. Final evaluation orchestrator writes answer_evaluations row.
+10. Report generator aggregates evaluations into interview_reports.
+```
 
 ## Benchmark Rules
 
 For v1:
 
 - Use curated/anonymized benchmark fixtures.
-- Do not scrape LinkedIn, Naukri, or personal websites.
+- Do not scrape LinkedIn, Naukri, or personal websites by default.
 - Do not claim benchmark profiles are verified hired-candidate resumes.
 - Use safe wording: `benchmark profiles`, `curated top-candidate archetypes`, or `role benchmark corpus`.
 - Store benchmark comparison as structured JSON fields, not only prose.
-- Feed benchmark gaps into question generation and report generation.
+- Feed benchmark gaps into question generation, agent scoring, and report generation.
 
 ## Document Parsing Rules
 
@@ -246,9 +316,9 @@ metadata: file type, page count if available, character count
 
 If a resume upload has little or no extractable text, mark `ocr_required` and let the frontend show a paste fallback.
 
-## Communication Analysis Rules
+## Communication and Visual Signal Rules
 
-Use measurable signals only:
+Use measurable or observable signals only:
 
 - Transcript word count.
 - Approximate words per minute.
@@ -256,14 +326,34 @@ Use measurable signals only:
 - Hesitation markers.
 - Answer structure.
 - Relevance to question.
+- Face in frame.
+- Lighting quality.
+- Eye contact proxy.
+- Posture stability.
+- Camera presence.
 
-Do not claim true emotion detection or true confidence detection. Use `communication_signal_score`, not `confidence_detection_score`.
+Do not claim true emotion detection, true confidence detection, personality scoring, truthfulness detection, or hiring guarantees.
+
+## Code Evaluation Rules
+
+Initial product version should use static review and structured LLM-based analysis.
+
+Evaluate:
+
+- correctness
+- edge cases
+- complexity
+- readability
+- testability
+- explanation quality
+
+Do not execute arbitrary candidate code on the main backend. Future runtime execution must use a sandboxed worker/container.
 
 ## Error Handling
 
 For AI failures:
 
-- Store the error in the job.
+- Store the error in the job or agent result.
 - Keep the session recoverable.
 - Allow retrying TTS/transcription/evaluation.
 - Do not delete uploaded audio or original documents.
@@ -273,6 +363,12 @@ For benchmark failures:
 - Preserve session and match analysis.
 - Store a clear failed/pending benchmark status where supported.
 - Do not claim benchmark-driven results if no benchmark comparison exists.
+
+For modality-agent failures:
+
+- Store failed agent status.
+- Let final orchestrator use available agent results.
+- Do not block all evaluation because an optional agent failed.
 
 For parsing failures:
 
