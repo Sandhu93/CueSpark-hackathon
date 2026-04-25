@@ -1,36 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="820" viewBox="0 0 1280 820" role="img" aria-label="CueSpark candidate journey with benchmark dashboard">
   <defs>
-    <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity="0.13"/></filter>
+    <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity="0.12"/></filter>
     <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M2,2 L10,6 L2,10 Z" fill="#334155"/></marker>
     <style>
-      .bg{fill:#f8fafc} .title{font:700 28px Inter,Arial,sans-serif;fill:#0f172a} .subtitle{font:500 14px Inter,Arial,sans-serif;fill:#64748b}
-      .box{fill:#fff;stroke:#cbd5e1;stroke-width:2;filter:url(#shadow)} .blue{fill:#eef2ff;stroke:#6366f1} .cyan{fill:#ecfeff;stroke:#06b6d4} .green{fill:#f0fdf4;stroke:#22c55e} .orange{fill:#fff7ed;stroke:#f97316} .red{fill:#fef2f2;stroke:#ef4444}
-      .label{font:700 18px Inter,Arial,sans-serif;fill:#0f172a} .small{font:500 13px Inter,Arial,sans-serif;fill:#475569} .tiny{font:500 12px Inter,Arial,sans-serif;fill:#64748b}
-      .group{font:700 13px Inter,Arial,sans-serif;fill:#475569;letter-spacing:.08em} .num{font:800 18px Inter,Arial,sans-serif;fill:#4f46e5}
-      .line{stroke:#334155;stroke-width:2.4;fill:none;marker-end:url(#arrow)} .dash{stroke-dasharray:7 7}
+      .bg{fill:#f8fafc}.title{font:700 30px Inter,Arial,sans-serif;fill:#0f172a}.subtitle{font:500 15px Inter,Arial,sans-serif;fill:#64748b}
+      .box{fill:#fff;stroke:#cbd5e1;stroke-width:2;filter:url(#shadow)}.blue{fill:#eef2ff;stroke:#6366f1}.cyan{fill:#ecfeff;stroke:#06b6d4}.green{fill:#f0fdf4;stroke:#22c55e}.orange{fill:#fff7ed;stroke:#f97316}.red{fill:#fef2f2;stroke:#ef4444}.purple{fill:#faf5ff;stroke:#a855f7}
+      .label{font:700 17px Inter,Arial,sans-serif;fill:#0f172a}.small{font:500 12.5px Inter,Arial,sans-serif;fill:#475569}.num{font:800 18px Inter,Arial,sans-serif;fill:#4f46e5}.line{stroke:#334155;stroke-width:2.4;fill:none;marker-end:url(#arrow)}
     </style>
   </defs>
-  <rect class="bg" width="1200" height="760"/>
-  <text x="60" y="58" class="title">Candidate Journey</text>
-  <text x="60" y="86" class="subtitle">Single-session, turn-based interview experience.</text>
-  <rect x="60" y="140" width="250" height="110" class="box blue" rx="22"/>
-  <text x="90" y="175" class="num">01</text><text x="90" y="205" class="label">Enter JD</text><text x="90" y="229" class="small">Paste job description manually</text>
-  <rect x="475" y="140" width="250" height="110" class="box blue" rx="22"/>
-  <text x="505" y="175" class="num">02</text><text x="505" y="205" class="label">Add Resume</text><text x="505" y="229" class="small">Upload PDF/DOCX or paste text</text>
-  <rect x="890" y="140" width="250" height="110" class="box cyan" rx="22"/>
-  <text x="920" y="175" class="num">03</text><text x="920" y="205" class="label">Prepare Session</text><text x="920" y="229" class="small">Parse, chunk, embed, analyze</text>
-  <rect x="890" y="335" width="250" height="110" class="box green" rx="22"/>
-  <text x="920" y="370" class="num">04</text><text x="920" y="400" class="label">View Match</text><text x="920" y="424" class="small">Score, gaps, readiness preview</text>
-  <rect x="475" y="335" width="250" height="110" class="box orange" rx="22"/>
-  <text x="505" y="370" class="num">05</text><text x="505" y="400" class="label">Mock Interview</text><text x="505" y="424" class="small">Hear question, record answer</text>
-  <rect x="60" y="335" width="250" height="110" class="box orange" rx="22"/>
-  <text x="90" y="370" class="num">06</text><text x="90" y="400" class="label">Evaluate Answer</text><text x="90" y="424" class="small">Transcribe and score response</text>
-  <rect x="60" y="545" width="250" height="110" class="box red" rx="22"/>
-  <text x="90" y="580" class="num">07</text><text x="90" y="610" class="label">Adaptive Follow-up</text><text x="90" y="634" class="small">Only when answer is weak/vague</text>
-  <rect x="475" y="545" width="250" height="110" class="box green" rx="22"/>
-  <text x="505" y="580" class="num">08</text><text x="505" y="610" class="label">Final Report</text><text x="505" y="634" class="small">Strict readiness assessment</text>
-  <path class="line" d="M310 195 H475"/><path class="line" d="M725 195 H890"/>
-  <path class="line" d="M1015 250 V335"/><path class="line" d="M890 390 H725"/>
-  <path class="line" d="M475 390 H310"/><path class="line" d="M185 445 V545"/>
-  <path class="line" d="M310 600 H475"/><path class="line" d="M600 545 C710 500 715 450 690 445"/>
+  <rect class="bg" width="1280" height="820"/>
+  <text x="55" y="56" class="title">CueSpark Candidate Flow</text>
+  <text x="55" y="84" class="subtitle">The current implementation flow: setup → match → benchmark gap dashboard → benchmark-driven interview → report.</text>
+
+  <rect x="55" y="140" width="250" height="110" rx="22" class="box blue"/>
+  <text x="85" y="172" class="num">01</text><text x="85" y="202" class="label">Enter JD</text><text x="85" y="226" class="small">Paste target job description</text>
+
+  <rect x="380" y="140" width="250" height="110" rx="22" class="box blue"/>
+  <text x="410" y="172" class="num">02</text><text x="410" y="202" class="label">Add Resume</text><text x="410" y="226" class="small">Upload PDF/DOCX/TXT or paste text</text>
+
+  <rect x="705" y="140" width="250" height="110" rx="22" class="box cyan"/>
+  <text x="735" y="172" class="num">03</text><text x="735" y="202" class="label">Prepare Session</text><text x="735" y="226" class="small">Parse, chunk, embed, infer role</text>
+
+  <rect x="1030" y="140" width="205" height="110" rx="22" class="box green"/>
+  <text x="1060" y="172" class="num">04</text><text x="1060" y="202" class="label">JD Match</text><text x="1060" y="226" class="small">Fit score + role key</text>
+
+  <rect x="1030" y="335" width="205" height="135" rx="22" class="box purple"/>
+  <text x="1060" y="367" class="num">05</text><text x="1060" y="397" class="label">Benchmark Gap</text><text x="1060" y="421" class="small">Compare against curated</text><text x="1060" y="443" class="small">role benchmark profiles</text>
+
+  <rect x="705" y="335" width="250" height="135" rx="22" class="box purple"/>
+  <text x="735" y="367" class="num">06</text><text x="735" y="397" class="label">Question Strategy</text><text x="735" y="421" class="small">Questions target missing metrics,</text><text x="735" y="443" class="small">ownership, evidence, skill gaps</text>
+
+  <rect x="380" y="335" width="250" height="135" rx="22" class="box orange"/>
+  <text x="410" y="367" class="num">07</text><text x="410" y="397" class="label">Voice Interview</text><text x="410" y="421" class="small">Hear strict AI interviewer</text><text x="410" y="443" class="small">Record one answer per turn</text>
+
+  <rect x="55" y="335" width="250" height="135" rx="22" class="box orange"/>
+  <text x="85" y="367" class="num">08</text><text x="85" y="397" class="label">Evaluate Answer</text><text x="85" y="421" class="small">Transcribe, signal analysis,</text><text x="85" y="443" class="small">benchmark-gap coverage score</text>
+
+  <rect x="55" y="585" width="250" height="120" rx="22" class="box green"/>
+  <text x="85" y="617" class="num">09</text><text x="85" y="647" class="label">Final Report</text><text x="85" y="671" class="small">Readiness, benchmark similarity,</text><text x="85" y="693" class="small">evidence gaps, prep plan</text>
+
+  <rect x="380" y="585" width="250" height="120" rx="22" class="box red"/>
+  <text x="410" y="617" class="num">10</text><text x="410" y="647" class="label">Improve Resume</text><text x="410" y="671" class="small">Upgrade weak bullets based</text><text x="410" y="693" class="small">on benchmark gaps</text>
+
+  <path class="line" d="M305 195 H380"/><path class="line" d="M630 195 H705"/><path class="line" d="M955 195 H1030"/>
+  <path class="line" d="M1132 250 V335"/><path class="line" d="M1030 402 H955"/><path class="line" d="M705 402 H630"/><path class="line" d="M380 402 H305"/>
+  <path class="line" d="M180 470 V585"/><path class="line" d="M305 645 H380"/>
 </svg>

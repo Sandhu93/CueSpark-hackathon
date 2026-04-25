@@ -1,48 +1,76 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860" role="img" aria-label="CueSpark database and storage model">
   <defs>
-    <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity="0.13"/></filter>
+    <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity="0.12"/></filter>
     <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M2,2 L10,6 L2,10 Z" fill="#334155"/></marker>
     <style>
-      .bg{fill:#f8fafc} .title{font:700 28px Inter,Arial,sans-serif;fill:#0f172a} .subtitle{font:500 14px Inter,Arial,sans-serif;fill:#64748b}
-      .box{fill:#fff;stroke:#cbd5e1;stroke-width:2;filter:url(#shadow)} .blue{fill:#eef2ff;stroke:#6366f1} .cyan{fill:#ecfeff;stroke:#06b6d4} .green{fill:#f0fdf4;stroke:#22c55e} .orange{fill:#fff7ed;stroke:#f97316} .red{fill:#fef2f2;stroke:#ef4444}
-      .label{font:700 18px Inter,Arial,sans-serif;fill:#0f172a} .small{font:500 13px Inter,Arial,sans-serif;fill:#475569} .tiny{font:500 12px Inter,Arial,sans-serif;fill:#64748b}
-      .group{font:700 13px Inter,Arial,sans-serif;fill:#475569;letter-spacing:.08em} .num{font:800 18px Inter,Arial,sans-serif;fill:#4f46e5}
-      .line{stroke:#334155;stroke-width:2.4;fill:none;marker-end:url(#arrow)} .dash{stroke-dasharray:7 7}
+      .bg{fill:#f8fafc}.title{font:700 30px Inter,Arial,sans-serif;fill:#0f172a}.subtitle{font:500 15px Inter,Arial,sans-serif;fill:#64748b}
+      .box{fill:#fff;stroke:#cbd5e1;stroke-width:2;filter:url(#shadow)}.green{fill:#f0fdf4;stroke:#22c55e}.blue{fill:#eef2ff;stroke:#6366f1}.orange{fill:#fff7ed;stroke:#f97316}.purple{fill:#faf5ff;stroke:#a855f7}.cyan{fill:#ecfeff;stroke:#06b6d4}
+      .label{font:700 16px Inter,Arial,sans-serif;fill:#0f172a}.small{font:500 12px Inter,Arial,sans-serif;fill:#475569}.group{font:700 13px Inter,Arial,sans-serif;fill:#475569;letter-spacing:.08em}.line{stroke:#334155;stroke-width:2.2;fill:none;marker-end:url(#arrow)}
     </style>
   </defs>
-  <rect class="bg" width="1200" height="760"/>
-  <text x="60" y="58" class="title">Database + Storage Model</text>
-  <text x="60" y="86" class="subtitle">Structured interview state stays in Postgres; large artifacts stay in MinIO; semantic search uses pgvector.</text>
-  <rect x="60" y="130" width="680" height="560" class="box green" rx="28"/>
-  <text x="95" y="172" class="label">Postgres + pgvector</text>
-  <rect x="95" y="205" width="270" height="70" class="box " rx="16"/>
-  <text x="120" y="235" class="label">interview_sessions</text><text x="120" y="257" class="small">JD, resume text, status, scores</text>
-  <rect x="435" y="205" width="270" height="70" class="box " rx="16"/>
-  <text x="460" y="235" class="label">documents</text><text x="460" y="257" class="small">resume/JD source, parser status</text>
-  <rect x="95" y="320" width="270" height="70" class="box " rx="16"/>
-  <text x="120" y="350" class="label">interview_questions</text><text x="120" y="372" class="small">category, text, difficulty, TTS key</text>
-  <rect x="435" y="320" width="270" height="70" class="box " rx="16"/>
-  <text x="460" y="350" class="label">candidate_answers</text><text x="460" y="372" class="small">audio key, transcript, metrics</text>
-  <rect x="95" y="435" width="270" height="70" class="box " rx="16"/>
-  <text x="120" y="465" class="label">answer_evaluations</text><text x="120" y="487" class="small">rubric scores and feedback</text>
-  <rect x="435" y="435" width="270" height="70" class="box " rx="16"/>
-  <text x="460" y="465" class="label">interview_reports</text><text x="460" y="487" class="small">final readiness report</text>
-  <rect x="245" y="550" width="310" height="80" class="box orange" rx="16"/>
-  <text x="270" y="580" class="label">embedding_chunks</text><text x="270" y="602" class="small">JD, resume, rubric, answer, question bank vectors</text>
-  <path class="line" d="M365 240 H435"/><path class="line" d="M230 275 V320"/><path class="line" d="M570 275 V320"/><path class="line" d="M365 355 H435"/><path class="line" d="M570 390 V435"/><path class="line" d="M230 505 C245 535 260 545 290 550"/><path class="line" d="M570 505 C555 535 540 545 510 550"/>
+  <rect class="bg" width="1280" height="860"/>
+  <text x="55" y="56" class="title">CueSpark Data + Storage Model</text>
+  <text x="55" y="84" class="subtitle">Postgres holds state and benchmark intelligence; pgvector stores semantic chunks; MinIO stores binary artifacts.</text>
 
-  <rect x="820" y="130" width="320" height="560" class="box blue" rx="28"/>
-  <text x="855" y="172" class="label">MinIO Object Storage</text>
-  <rect x="855" y="215" width="250" height="70" class="box blue" rx="16"/>
-  <text x="880" y="245" class="label">resumes/original/</text><text x="880" y="267" class="small">uploaded PDF/DOCX files</text>
-  <rect x="855" y="330" width="250" height="70" class="box blue" rx="16"/>
-  <text x="880" y="360" class="label">audio/questions/</text><text x="880" y="382" class="small">AI interviewer voice files</text>
-  <rect x="855" y="445" width="250" height="70" class="box blue" rx="16"/>
-  <text x="880" y="475" class="label">audio/answers/</text><text x="880" y="497" class="small">candidate recordings</text>
-  <rect x="855" y="560" width="250" height="70" class="box blue" rx="16"/>
-  <text x="880" y="590" class="label">reports/</text><text x="880" y="612" class="small">optional exported JSON/PDF later</text>
-  <path class="line" d="M705 240 C760 240 790 250 855 250"/>
-  <path class="line" d="M705 355 C760 355 790 365 855 365"/>
-  <path class="line" d="M705 355 C760 420 790 480 855 480"/>
-  <path class="line" d="M705 470 C760 520 790 595 855 595"/>
+  <rect x="45" y="125" width="805" height="670" rx="28" class="box green"/>
+  <text x="80" y="165" class="group">POSTGRES + PGVECTOR</text>
+
+  <rect x="80" y="195" width="240" height="72" rx="16" class="box"/>
+  <text x="102" y="226" class="label">interview_sessions</text><text x="102" y="249" class="small">status, role_key, scores</text>
+
+  <rect x="365" y="195" width="220" height="72" rx="16" class="box"/>
+  <text x="387" y="226" class="label">documents</text><text x="387" y="249" class="small">JD/resume parse state</text>
+
+  <rect x="630" y="195" width="185" height="72" rx="16" class="box purple"/>
+  <text x="652" y="226" class="label">benchmark_profiles</text><text x="652" y="249" class="small">curated role corpus</text>
+
+  <rect x="80" y="315" width="240" height="78" rx="16" class="box purple"/>
+  <text x="102" y="347" class="label">benchmark_comparisons</text><text x="102" y="370" class="small">similarity, gaps, risks</text>
+
+  <rect x="365" y="315" width="220" height="78" rx="16" class="box"/>
+  <text x="387" y="347" class="label">interview_questions</text><text x="387" y="370" class="small">why asked + gap refs</text>
+
+  <rect x="630" y="315" width="185" height="78" rx="16" class="box"/>
+  <text x="652" y="347" class="label">candidate_answers</text><text x="652" y="370" class="small">audio key + transcript</text>
+
+  <rect x="80" y="440" width="240" height="78" rx="16" class="box"/>
+  <text x="102" y="472" class="label">answer_evaluations</text><text x="102" y="495" class="small">benchmark coverage score</text>
+
+  <rect x="365" y="440" width="220" height="78" rx="16" class="box"/>
+  <text x="387" y="472" class="label">interview_reports</text><text x="387" y="495" class="small">readiness + risk radar</text>
+
+  <rect x="630" y="440" width="185" height="78" rx="16" class="box orange"/>
+  <text x="652" y="472" class="label">embedding_chunks</text><text x="652" y="495" class="small">jd/resume/benchmark</text>
+
+  <rect x="170" y="590" width="560" height="125" rx="18" class="box cyan"/>
+  <text x="200" y="625" class="label">Vector chunk types</text>
+  <text x="200" y="653" class="small">jd · resume · benchmark_profile · answer · rubric · question_bank</text>
+  <text x="200" y="681" class="small">Benchmark chunks use owner_type=benchmark_profile and owner_id=benchmark_profiles.id</text>
+
+  <path class="line" d="M320 231 H365"/><path class="line" d="M585 231 H630"/>
+  <path class="line" d="M200 267 V315"/><path class="line" d="M475 267 V315"/><path class="line" d="M722 267 V315"/>
+  <path class="line" d="M320 354 H365"/><path class="line" d="M585 354 H630"/>
+  <path class="line" d="M200 393 V440"/><path class="line" d="M475 393 V440"/><path class="line" d="M722 393 V440"/>
+  <path class="line" d="M722 518 V590"/>
+
+  <rect x="925" y="125" width="305" height="315" rx="28" class="box blue"/>
+  <text x="960" y="165" class="group">MINIO OBJECT STORAGE</text>
+  <rect x="960" y="195" width="235" height="58" rx="16" class="box blue"/>
+  <text x="980" y="230" class="label">resumes/original/</text>
+  <rect x="960" y="280" width="235" height="58" rx="16" class="box blue"/>
+  <text x="980" y="315" class="label">audio/questions/</text>
+  <rect x="960" y="365" width="235" height="58" rx="16" class="box blue"/>
+  <text x="980" y="400" class="label">audio/answers/</text>
+
+  <rect x="925" y="500" width="305" height="295" rx="28" class="box purple"/>
+  <text x="960" y="540" class="group">LOCAL FIXTURES</text>
+  <rect x="960" y="570" width="235" height="72" rx="16" class="box purple"/>
+  <text x="980" y="600" class="label">fixtures/benchmarks/</text><text x="980" y="623" class="small">project_manager, backend, data</text>
+  <rect x="960" y="675" width="235" height="72" rx="16" class="box purple"/>
+  <text x="980" y="705" class="label">No live scraping</text><text x="980" y="728" class="small">curated/anonymized profiles</text>
+
+  <path class="line" d="M850 231 C895 220 910 224 960 224"/>
+  <path class="line" d="M850 354 C905 330 920 310 960 310"/>
+  <path class="line" d="M850 479 C900 440 920 405 960 394"/>
+  <path class="line" d="M925 606 C860 580 800 530 760 500"/>
 </svg>

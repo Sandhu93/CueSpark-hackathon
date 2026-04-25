@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-label="CueSpark benchmark engine flow">
+  <defs>
+    <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity="0.12"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M2,2 L10,6 L2,10 Z" fill="#334155"/></marker>
+    <style>
+      .bg{fill:#f8fafc}.title{font:700 30px Inter,Arial,sans-serif;fill:#0f172a}.subtitle{font:500 15px Inter,Arial,sans-serif;fill:#64748b}
+      .box{fill:#fff;stroke:#cbd5e1;stroke-width:2;filter:url(#shadow)}.blue{fill:#eef2ff;stroke:#6366f1}.purple{fill:#faf5ff;stroke:#a855f7}.orange{fill:#fff7ed;stroke:#f97316}.green{fill:#f0fdf4;stroke:#22c55e}.red{fill:#fef2f2;stroke:#ef4444}.cyan{fill:#ecfeff;stroke:#06b6d4}
+      .label{font:700 17px Inter,Arial,sans-serif;fill:#0f172a}.small{font:500 12.5px Inter,Arial,sans-serif;fill:#475569}.group{font:700 13px Inter,Arial,sans-serif;fill:#475569;letter-spacing:.08em}.line{stroke:#334155;stroke-width:2.4;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect class="bg" width="1280" height="760"/>
+  <text x="55" y="56" class="title">Benchmark Engine — Novelty Layer</text>
+  <text x="55" y="84" class="subtitle">CueSpark does not only score JD fit; it compares the candidate against curated strong-profile archetypes and interviews from those gaps.</text>
+
+  <text x="70" y="130" class="group">INPUTS</text>
+  <rect x="55" y="155" width="230" height="110" rx="22" class="box blue"/>
+  <text x="85" y="195" class="label">Job Description</text>
+  <text x="85" y="223" class="small">Required skills, domain, role</text>
+
+  <rect x="55" y="315" width="230" height="110" rx="22" class="box blue"/>
+  <text x="85" y="355" class="label">Candidate Resume</text>
+  <text x="85" y="383" class="small">Claims, projects, tools, evidence</text>
+
+  <rect x="55" y="475" width="230" height="130" rx="22" class="box purple"/>
+  <text x="85" y="515" class="label">Benchmark Corpus</text>
+  <text x="85" y="543" class="small">5 curated profiles per role</text>
+  <text x="85" y="567" class="small">No live personal scraping</text>
+
+  <text x="430" y="130" class="group">ANALYSIS</text>
+  <rect x="380" y="155" width="250" height="110" rx="22" class="box cyan"/>
+  <text x="410" y="195" class="label">Role Key Inference</text>
+  <text x="410" y="223" class="small">backend_developer, PM, analyst</text>
+
+  <rect x="380" y="315" width="250" height="110" rx="22" class="box orange"/>
+  <text x="410" y="355" class="label">Retrieve Top 5</text>
+  <text x="410" y="383" class="small">Role key + vector similarity</text>
+
+  <rect x="380" y="475" width="250" height="130" rx="22" class="box orange"/>
+  <text x="410" y="515" class="label">Three-Way Compare</text>
+  <text x="410" y="543" class="small">JD vs candidate</text>
+  <text x="410" y="567" class="small">JD vs benchmark</text>
+  <text x="410" y="591" class="small">Candidate vs benchmark</text>
+
+  <text x="750" y="130" class="group">OUTPUTS</text>
+  <rect x="710" y="155" width="250" height="110" rx="22" class="box red"/>
+  <text x="740" y="195" class="label">Evidence Gaps</text>
+  <text x="740" y="223" class="small">Missing metrics, weak ownership</text>
+
+  <rect x="710" y="315" width="250" height="110" rx="22" class="box red"/>
+  <text x="740" y="355" class="label">Interview Risks</text>
+  <text x="740" y="383" class="small">What a strict interviewer doubts</text>
+
+  <rect x="710" y="475" width="250" height="130" rx="22" class="box green"/>
+  <text x="740" y="515" class="label">Scores</text>
+  <text x="740" y="543" class="small">Benchmark similarity</text>
+  <text x="740" y="567" class="small">Resume competitiveness</text>
+  <text x="740" y="591" class="small">Evidence strength</text>
+
+  <text x="1070" y="130" class="group">USED BY</text>
+  <rect x="1030" y="205" width="210" height="110" rx="22" class="box purple"/>
+  <text x="1060" y="245" class="label">Question Targets</text>
+  <text x="1060" y="273" class="small">Why each question exists</text>
+
+  <rect x="1030" y="405" width="210" height="110" rx="22" class="box green"/>
+  <text x="1060" y="445" class="label">Final Report</text>
+  <text x="1060" y="473" class="small">Hiring-bar gap view</text>
+
+  <path class="line" d="M285 210 H380"/>
+  <path class="line" d="M285 370 H380"/>
+  <path class="line" d="M285 540 H380"/>
+  <path class="line" d="M505 265 V315"/>
+  <path class="line" d="M505 425 V475"/>
+  <path class="line" d="M630 540 H710"/>
+  <path class="line" d="M630 540 C675 455 690 385 710 370"/>
+  <path class="line" d="M630 540 C675 395 690 235 710 210"/>
+  <path class="line" d="M960 210 C995 220 1010 235 1030 260"/>
+  <path class="line" d="M960 370 C995 350 1010 315 1030 285"/>
+  <path class="line" d="M960 540 C1000 520 1015 490 1030 460"/>
+</svg>
