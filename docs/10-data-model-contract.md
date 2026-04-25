@@ -43,6 +43,52 @@ Required fields:
 - `metadata`
 - `created_at`
 
+## `benchmark_profiles`
+
+Required fields:
+
+- `id`
+- `role_key`
+- `role_title`
+- `seniority_level`
+- `domain`
+- `profile_name`
+- `resume_text`
+- `skills`
+- `tools`
+- `project_signals`
+- `impact_signals`
+- `ownership_signals`
+- `source_type`: `curated | public | synthetic`
+- `source_url`
+- `is_curated`
+- `quality_score`
+- `created_at`
+
+For the hackathon version, profiles must be curated/anonymized fixtures. Do not store scraped personal resumes.
+
+## `benchmark_comparisons`
+
+Required fields:
+
+- `id`
+- `session_id`
+- `role_key`
+- `benchmark_profile_ids`
+- `benchmark_similarity_score`
+- `resume_competitiveness_score`
+- `evidence_strength_score`
+- `missing_skills`
+- `weak_skills`
+- `missing_metrics`
+- `weak_ownership_signals`
+- `interview_risk_areas`
+- `recommended_resume_fixes`
+- `question_targets`
+- `created_at`
+
+This table stores the novelty-layer output used by benchmark-driven question generation and final reports.
+
 ## `interview_questions`
 
 Required fields:
@@ -54,7 +100,8 @@ Required fields:
 - `question_text`
 - `expected_signal`
 - `difficulty`
-- `source`: `base_plan | adaptive_followup`
+- `source`: `base_plan | adaptive_followup | benchmark_gap`
+- `benchmark_gap_refs`
 - `tts_object_key`
 - `created_at`
 
@@ -67,6 +114,7 @@ behavioral
 hr
 resume_gap
 jd_skill_validation
+benchmark_gap_validation
 ```
 
 For non-software jobs, `technical` means role-specific competency, not programming.
@@ -98,6 +146,7 @@ Required fields:
 - `evidence_score`
 - `clarity_score`
 - `jd_alignment_score`
+- `benchmark_gap_coverage_score`
 - `communication_score`
 - `overall_score`
 - `strengths`
@@ -115,7 +164,12 @@ Required fields:
 - `readiness_score`
 - `hiring_recommendation`
 - `summary`
+- `benchmark_similarity_score`
+- `resume_competitiveness_score`
+- `evidence_strength_score`
 - `skill_gaps`
+- `benchmark_gaps`
+- `interview_risk_areas`
 - `answer_feedback`
 - `resume_feedback`
 - `improvement_plan`
@@ -149,9 +203,18 @@ Valid chunk types:
 ```txt
 jd
 resume
+benchmark_profile
 answer
 rubric
 question_bank
+```
+
+For benchmark profile chunks:
+
+```txt
+owner_type = benchmark_profile
+owner_id = benchmark_profiles.id
+chunk_type = benchmark_profile
 ```
 
 ## Notes
@@ -160,3 +223,4 @@ question_bank
 - Store MinIO object keys in the database.
 - Store JSON-like evaluation details in JSONB fields.
 - Use `vector(1536)` if using OpenAI `text-embedding-3-small` with default dimensions.
+- Do not claim benchmark profiles are verified hired-candidate resumes unless verified source data exists.
