@@ -8,6 +8,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
+from app.core.time import utc_now
 
 
 class BenchmarkComparison(Base):
@@ -26,7 +27,9 @@ class BenchmarkComparison(Base):
     weak_skills: Mapped[list] = mapped_column(JSONB, default=list)
     missing_metrics: Mapped[list] = mapped_column(JSONB, default=list)
     weak_ownership_signals: Mapped[list] = mapped_column(JSONB, default=list)
+    missing_project_depth: Mapped[list] = mapped_column(JSONB, default=list)
     interview_risk_areas: Mapped[list] = mapped_column(JSONB, default=list)
     recommended_resume_fixes: Mapped[list] = mapped_column(JSONB, default=list)
     question_targets: Mapped[list] = mapped_column(JSONB, default=list)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now, onupdate=utc_now)

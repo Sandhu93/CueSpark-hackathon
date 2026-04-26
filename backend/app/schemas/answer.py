@@ -37,10 +37,14 @@ class AnswerRead(BaseModel):
     text_answer: str | None
     code_answer: str | None
     code_language: str | None
+    transcription_status: str
+    processing_status: str
     duration_seconds: float | None
     word_count: int | None
     words_per_minute: float | None
     filler_word_count: int | None
     communication_metrics: dict[str, Any]
+    communication_metadata: dict[str, Any]
     visual_signal_metadata: dict[str, Any]
     created_at: datetime
+    updated_at: datetime

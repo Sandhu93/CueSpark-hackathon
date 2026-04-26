@@ -120,6 +120,8 @@ def test_spoken_answer_upload_stores_audio(
     assert body["processing_status"] == "stored"
     assert answer.answer_mode == "spoken_answer"
     assert answer.audio_object_key == "answers/audio/answer.webm"
+    assert answer.transcription_status == "pending"
+    assert answer.processing_status == "pending"
     assert stored["data"] == b"audio-bytes"
     assert stored["content_type"] == "audio/webm"
 
@@ -142,6 +144,8 @@ def test_written_answer_submission_stores_text(client: TestClient, fake_db: Fake
     assert answer.answer_mode == "written_answer"
     assert answer.text_answer == "Structured written response."
     assert answer.audio_object_key is None
+    assert answer.transcription_status == "not_required"
+    assert answer.processing_status == "pending"
 
 
 def test_answer_submission_stores_visual_signal_metadata(
@@ -275,3 +279,100 @@ def test_answer_submission_validates_required_text(client: TestClient, fake_db: 
     )
 
     assert response.status_code == 422
+
+
+def test_answer_submission_rejects_invalid_answer_mode(
+    client: TestClient, fake_db: FakeSession
+):
+    _question(
+        fake_db,
+        question_id="question-invalid-mode",
+        response_mode=ResponseMode.WRITTEN_ANSWER,
+        requires_text=True,
+    )
+
+    response = client.post(
+        "/api/questions/question-invalid-mode/answers",
+        json={"answer_mode": "essay", "text_answer": "Answer"},
+    )
+
+    assert response.status_code == 422
+    assert "Unsupported answer mode" in response.json()["detail"]
+
+
+def test_answer_submission_rejects_mode_mismatch(
+    client: TestClient, fake_db: FakeSession
+):
+    _question(
+        fake_db,
+        question_id="question-mode-mismatch",
+        response_mode=ResponseMode.CODE_ANSWER,
+        requires_code=True,
+    )
+
+    response = client.post(
+        "/api/questions/question-mode-mismatch/answers",
+        json={"answer_mode": "written_answer", "text_answer": "Wrong mode"},
+    )
+
+    assert response.status_code == 422
+    assert "must match question response mode" in response.json()["detail"]
+
+
+def test_code_answer_submission_requires_language(client: TestClient, fake_db: FakeSession):
+    _question(
+        fake_db,
+        question_id="question-code-language",
+        response_mode=ResponseMode.CODE_ANSWER,
+        requires_code=True,
+    )
+
+    response = client.post(
+        "/api/questions/question-code-language/answers",
+        json={"answer_mode": "code_answer", "code_answer": "SELECT 1"},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == "Code language is required"
+
+
+def test_answer_submission_rejects_invalid_visual_signal_metadata(
+    client: TestClient, fake_db: FakeSession
+):
+    _question(
+        fake_db,
+        question_id="question-bad-visual-metadata",
+        response_mode=ResponseMode.WRITTEN_ANSWER,
+        requires_text=True,
+    )
+
+    response = client.post(
+        "/api/questions/question-bad-visual-metadata/answers",
+        json={
+            "answer_mode": "written_answer",
+            "text_answer": "Answer",
+            "visual_signal_metadata": "[1, 2, 3]",
+        },
+    )
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == "visual_signal_metadata must be a JSON object"
+
+
+def test_answer_submission_rejects_unsupported_content_type(
+    client: TestClient, fake_db: FakeSession
+):
+    _question(
+        fake_db,
+        question_id="question-content-type",
+        response_mode=ResponseMode.WRITTEN_ANSWER,
+        requires_text=True,
+    )
+
+    response = client.post(
+        "/api/questions/question-content-type/answers",
+        content="answer_mode=written_answer&text_answer=Answer",
+        headers={"content-type": "text/plain"},
+    )
+
+    assert response.status_code == 415

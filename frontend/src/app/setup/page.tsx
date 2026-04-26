@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
 
+import { NoticePanel } from "@/components/product/NoticePanel";
+import { SessionNav } from "@/components/product/SessionNav";
 import { api } from "@/lib/api";
 
 type SubmitState = "idle" | "creating" | "uploading" | "preparing" | "done";
@@ -71,9 +73,7 @@ export default function SetupPage() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-6 py-10">
       <header className="mb-8 border-b border-[var(--border)] pb-5">
-        <Link href="/" className="text-sm text-[var(--muted)]">
-          CueSpark Interview Coach
-        </Link>
+        <SessionNav active="setup" />
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">Setup benchmark demo</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">
           Paste a job description and resume evidence, then prepare a session for benchmark
@@ -138,6 +138,8 @@ export default function SetupPage() {
             </p>
           </section>
 
+          <SetupProgress state={state} />
+
           <button
             type="submit"
             disabled={!canSubmit || state !== "idle"}
@@ -170,19 +172,72 @@ export default function SetupPage() {
           )}
 
           {prepareNotice && (
-            <div className="rounded border border-yellow-400/40 bg-yellow-400/10 p-4 text-sm leading-6 text-yellow-100">
+            <NoticePanel
+              title="Preparation did not start"
+              tone="warning"
+              action={
+                createdSessionId ? (
+                  <Link
+                    href={`/session/${createdSessionId}/match`}
+                    className="rounded border border-[var(--border)] px-3 py-2 text-xs"
+                  >
+                    Open match status
+                  </Link>
+                ) : null
+              }
+            >
               {prepareNotice}
-            </div>
+            </NoticePanel>
           )}
 
           {error && (
-            <div className="rounded border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200">
+            <NoticePanel
+              title="Setup failed"
+              tone="error"
+              action={
+                <button
+                  type="button"
+                  onClick={() => setError(null)}
+                  className="rounded border border-red-300/40 px-3 py-2 text-xs"
+                >
+                  Dismiss and retry
+                </button>
+              }
+            >
               {error}
-            </div>
+            </NoticePanel>
           )}
         </aside>
       </form>
     </main>
+  );
+}
+
+function SetupProgress({ state }: { state: SubmitState }) {
+  const steps: SubmitState[] = ["creating", "uploading", "preparing", "done"];
+  if (state === "idle") {
+    return (
+      <div className="rounded border border-[var(--border)] bg-black/20 p-4 text-sm text-[var(--muted)]">
+        Ready to create a session. Required inputs: job description and resume text or file.
+      </div>
+    );
+  }
+  return (
+    <div className="rounded border border-[var(--border)] bg-black/20 p-4">
+      <h2 className="text-sm font-semibold">Setup progress</h2>
+      <div className="mt-3 space-y-2 text-sm">
+        {steps.map((step) => (
+          <div
+            key={step}
+            className={`rounded border px-3 py-2 capitalize ${
+              step === state ? "border-[var(--accent)] text-[var(--accent)]" : "border-[var(--border)] text-[var(--muted)]"
+            }`}
+          >
+            {statusLabel(step)}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 

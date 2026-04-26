@@ -39,10 +39,13 @@ class QuestionRead(BaseModel):
     source: QuestionSource
     benchmark_gap_refs: list[Any]
     why_this_was_asked: str | None
+    provenance: dict[str, Any]
     response_mode: ResponseMode
     requires_audio: bool
     requires_video: bool
     requires_text: bool
     requires_code: bool
     tts_object_key: str | None
+    tts_status: str | None
     created_at: datetime
+    updated_at: datetime

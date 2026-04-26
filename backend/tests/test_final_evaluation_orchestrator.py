@@ -143,8 +143,35 @@ def test_evaluate_answer_stores_answer_evaluation_row():
     assert row.overall_score == result.overall_score
     assert row.benchmark_gap_coverage_score == 70
     assert row.communication_score == 80
+    assert row.communication_signal_score == 80
+    assert row.modality_breakdown["answer_mode"] == "spoken_answer"
+    assert row.red_flags == []
     assert row.strict_feedback == result.strict_feedback
     assert "benchmark_gap_summary" in row.improved_answer
+    assert answer.processing_status == "evaluated"
+
+
+def test_evaluate_answer_persists_mode_specific_score_columns():
+    answer = _answer(ResponseMode.CODE_ANSWER)
+    db = FakeDB(
+        answer,
+        [
+            _benchmark_result(6),
+            AgentResult(
+                answer_id=answer.id,
+                agent_type=AgentType.CODE_EVALUATION.value,
+                status=AgentResultStatus.SUCCEEDED.value,
+                score=8,
+                payload={"score": 8},
+            ),
+        ],
+    )
+
+    _, row = evaluate_answer(db, answer.id)
+
+    assert row.code_quality_score == 80
+    assert row.jd_alignment_score == 60
+    assert row.modality_breakdown["answer_mode"] == "code_answer"
 
 
 def test_evaluate_answer_job_kind_registered():

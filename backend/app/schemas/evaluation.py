@@ -27,12 +27,20 @@ class EvaluationRead(BaseModel):
     role_depth_score: int | None
     evidence_score: int | None
     clarity_score: int | None
+    structure_score: int | None
     jd_alignment_score: int | None
     benchmark_gap_coverage_score: int | None
     communication_score: int | None
+    communication_signal_score: int | None
+    code_quality_score: int | None
+    written_answer_score: int | None
+    visual_signal_score: int | None
     overall_score: int | None
     strengths: str | None
     weaknesses: str | None
     strict_feedback: str | None
     improved_answer: str | None
+    red_flags: list[Any]
+    modality_breakdown: dict[str, Any]
     created_at: datetime
+    updated_at: datetime

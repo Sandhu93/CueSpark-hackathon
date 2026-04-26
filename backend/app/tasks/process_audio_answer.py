@@ -3,7 +3,7 @@ from __future__ import annotations
 from loguru import logger
 
 from app.core import storage
-from app.models.answer import CandidateAnswer
+from app.models.answer import AnswerTranscriptionStatus, CandidateAnswer
 from app.models.job import Job, JobStatus
 from app.services.audio_agent import process_audio_answer
 from app.tasks._db import session_scope
@@ -45,6 +45,7 @@ def run(job_id: str) -> None:
 
 def process_candidate_answer_audio(answer: CandidateAnswer) -> dict:
     if not answer.audio_object_key:
+        answer.transcription_status = AnswerTranscriptionStatus.FAILED.value
         raise ValueError("Candidate answer has no audio object key")
 
     audio_bytes = storage.get_object(answer.audio_object_key)
@@ -58,6 +59,7 @@ def process_candidate_answer_audio(answer: CandidateAnswer) -> dict:
     answer.duration_seconds = result.duration_seconds
     answer.words_per_minute = result.words_per_minute
     answer.filler_word_count = result.filler_word_count
+    answer.transcription_status = AnswerTranscriptionStatus.TRANSCRIBED.value
     answer.communication_metrics = {
         "filler_words": result.filler_words,
         "hesitation_markers": result.hesitation_markers,

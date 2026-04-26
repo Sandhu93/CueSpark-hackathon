@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
+import { NoticePanel } from "@/components/product/NoticePanel";
+import { SessionNav } from "@/components/product/SessionNav";
 import { api } from "@/lib/api";
 import type { BenchmarkResponse } from "@/lib/types";
 import { isBenchmarkComparison } from "@/lib/types";
@@ -15,11 +17,10 @@ export default function BenchmarkPage() {
   const [benchmark, setBenchmark] = useState<BenchmarkResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [preparing, setPreparing] = useState(false);
 
-  useEffect(() => {
-    let active = true;
-
-    async function load() {
+  const loadBenchmark = useCallback(
+    async (active = true) => {
       try {
         const result = await api.getBenchmark(sessionId);
         if (!active) return;
@@ -31,23 +32,24 @@ export default function BenchmarkPage() {
       } finally {
         if (active) setLoading(false);
       }
-    }
+    },
+    [sessionId],
+  );
 
-    load();
-    const interval = window.setInterval(load, 3000);
+  useEffect(() => {
+    let active = true;
+    loadBenchmark(active);
+    const interval = window.setInterval(() => loadBenchmark(active), 3000);
     return () => {
       active = false;
       window.clearInterval(interval);
     };
-  }, [sessionId]);
+  }, [loadBenchmark]);
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-6xl px-6 py-10">
       <header className="mb-8 border-b border-[var(--border)] pb-5">
-        <div className="flex flex-wrap gap-4 text-sm text-[var(--muted)]">
-          <Link href="/setup">Setup</Link>
-          <Link href={`/session/${sessionId}/match`}>Match</Link>
-        </div>
+        <SessionNav sessionId={sessionId} active="benchmark" />
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">Benchmark gap dashboard</h1>
         <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--muted)]">
           CueSpark compares candidate evidence against curated role benchmark profiles,
@@ -56,13 +58,61 @@ export default function BenchmarkPage() {
       </header>
 
       {loading && <StatePanel>Loading benchmark comparison...</StatePanel>}
-      {error && <ErrorPanel message={error} />}
+      {error && (
+        <NoticePanel
+          title="Benchmark unavailable"
+          tone="error"
+          action={
+            <button
+              onClick={() => {
+                setLoading(true);
+                void loadBenchmark();
+              }}
+              className="rounded border border-red-300/40 px-3 py-2 text-xs"
+            >
+              Refresh benchmark
+            </button>
+          }
+        >
+          {error}
+        </NoticePanel>
+      )}
 
       {benchmark && !isBenchmarkComparison(benchmark) && (
-        <StatePanel>
+        <NoticePanel
+          title="Benchmark pending"
+          action={
+            <>
+              <button
+                onClick={() => {
+                  setLoading(true);
+                  void loadBenchmark();
+                }}
+                className="rounded border border-[var(--border)] px-3 py-2 text-xs"
+              >
+                Refresh status
+              </button>
+              <button
+                onClick={async () => {
+                  setPreparing(true);
+                  try {
+                    await api.prepareSession(sessionId);
+                    await loadBenchmark();
+                  } finally {
+                    setPreparing(false);
+                  }
+                }}
+                disabled={preparing}
+                className="rounded bg-[var(--accent)] px-3 py-2 text-xs font-semibold text-black disabled:opacity-50"
+              >
+                {preparing ? "Starting..." : "Retry preparation"}
+              </button>
+            </>
+          }
+        >
           Benchmark comparison is pending for this session. Start preparation from the match
           page, then keep this dashboard open while the backend writes the comparison.
-        </StatePanel>
+        </NoticePanel>
       )}
 
       {benchmark && isBenchmarkComparison(benchmark) && (
@@ -112,6 +162,24 @@ export default function BenchmarkPage() {
             items={benchmark.question_targets}
             description="These are the benchmark gaps that should drive strict interviewer questions."
           />
+
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href={`/session/${sessionId}/interview`}
+              className="rounded bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-black"
+            >
+              Continue interview
+            </Link>
+            <button
+              onClick={() => {
+                setLoading(true);
+                void loadBenchmark();
+              }}
+              className="rounded border border-[var(--border)] px-4 py-2 text-sm"
+            >
+              Refresh benchmark
+            </button>
+          </div>
 
           <section className="rounded border border-[var(--border)] bg-black/20 p-5">
             <h2 className="text-sm font-semibold">Benchmark profiles</h2>
@@ -189,14 +257,6 @@ function StatePanel({ children }: { children: React.ReactNode }) {
   return (
     <div className="rounded border border-[var(--border)] bg-black/20 p-5 text-sm leading-6 text-[var(--muted)]">
       {children}
-    </div>
-  );
-}
-
-function ErrorPanel({ message }: { message: string }) {
-  return (
-    <div className="rounded border border-red-500/40 bg-red-500/10 p-5 text-sm text-red-200">
-      {message}
     </div>
   );
 }

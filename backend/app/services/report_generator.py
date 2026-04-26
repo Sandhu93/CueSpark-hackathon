@@ -58,11 +58,16 @@ def build_multimodal_report(
     answer_feedback = _answer_feedback(answers, evaluations)
     modality_summary = _modality_summary(answers, agent_results, benchmark_gap_score, communication_score)
 
+    audio_communication_summary = modality_summary.get("audio_communication_summary")
+    written_answer_quality_summary = modality_summary.get("written_answer_quality_summary")
+    code_answer_quality_summary = modality_summary.get("code_answer_quality_summary")
+
     return InterviewReport(
         session_id=session.id,
         readiness_score=readiness_score,
         hiring_recommendation=_recommendation(readiness_score).value,
         summary=_summary(readiness_score, benchmark_gap_score),
+        jd_resume_match_summary=_jd_resume_match_summary(session),
         benchmark_similarity_score=_first_not_none(
             session.benchmark_similarity_score,
             comparison.benchmark_similarity_score if comparison else None,
@@ -80,10 +85,13 @@ def build_multimodal_report(
         interview_risk_areas=list(comparison.interview_risk_areas if comparison else []),
         answer_feedback=answer_feedback,
         benchmark_gap_coverage_summary=_benchmark_gap_summary(benchmark_gap_score, agent_results),
-        audio_communication_summary=modality_summary.get("audio_communication_summary"),
+        audio_communication_summary=audio_communication_summary,
+        communication_summary=audio_communication_summary,
         visual_signal_summary=modality_summary.get("visual_signal_summary"),
-        written_answer_quality_summary=modality_summary.get("written_answer_quality_summary"),
-        code_answer_quality_summary=modality_summary.get("code_answer_quality_summary"),
+        written_answer_quality_summary=written_answer_quality_summary,
+        written_answer_summary=written_answer_quality_summary,
+        code_answer_quality_summary=code_answer_quality_summary,
+        code_answer_summary=code_answer_quality_summary,
         multimodal_summary=modality_summary,
         resume_feedback=_resume_feedback(comparison),
         improvement_plan=_improvement_plan(comparison, benchmark_gap_score, communication_score),
@@ -309,6 +317,12 @@ def _summary(readiness_score: int | None, benchmark_gap_score: int | None) -> st
     if readiness_score >= 65:
         return "Moderate readiness signal. The candidate needs stronger benchmark-gap proof before applying."
     return "Low readiness signal. The candidate should improve evidence depth and benchmark-gap coverage."
+
+
+def _jd_resume_match_summary(session: InterviewSession) -> str | None:
+    if session.match_score is None:
+        return None
+    return f"JD-resume match score is {session.match_score}/100 for this session."
 
 
 def _recommendation(readiness_score: int | None) -> HiringRecommendation:

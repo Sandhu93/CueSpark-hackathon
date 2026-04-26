@@ -8,6 +8,7 @@ from sqlalchemy import JSON, DateTime, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
+from app.core.time import utc_now
 
 
 class DocumentType(str, Enum):
@@ -44,9 +45,9 @@ class Document(Base):
         String, default=DocumentParseStatus.PENDING.value, index=True
     )
     metadata_: Mapped[dict] = mapped_column("metadata", JSON, default=dict)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+        DateTime, default=utc_now, onupdate=utc_now
     )
 
     session: Mapped["InterviewSession"] = relationship(back_populates="documents")

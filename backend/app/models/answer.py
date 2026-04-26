@@ -2,13 +2,30 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
+from enum import Enum
 
 from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
+from app.core.time import utc_now
 from app.models.question import ResponseMode
+
+
+class AnswerTranscriptionStatus(str, Enum):
+    PENDING = "pending"
+    QUEUED = "queued"
+    TRANSCRIBED = "transcribed"
+    FAILED = "failed"
+    NOT_REQUIRED = "not_required"
+
+
+class AnswerProcessingStatus(str, Enum):
+    PENDING = "pending"
+    PROCESSING = "processing"
+    EVALUATED = "evaluated"
+    FAILED = "failed"
 
 
 class CandidateAnswer(Base):
@@ -29,10 +46,18 @@ class CandidateAnswer(Base):
     text_answer: Mapped[str | None] = mapped_column(Text, nullable=True)
     code_answer: Mapped[str | None] = mapped_column(Text, nullable=True)
     code_language: Mapped[str | None] = mapped_column(String, nullable=True)
+    transcription_status: Mapped[str] = mapped_column(
+        String, default=AnswerTranscriptionStatus.PENDING.value, index=True
+    )
+    processing_status: Mapped[str] = mapped_column(
+        String, default=AnswerProcessingStatus.PENDING.value, index=True
+    )
     duration_seconds: Mapped[float | None] = mapped_column(Float, nullable=True)
     word_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     words_per_minute: Mapped[float | None] = mapped_column(Float, nullable=True)
     filler_word_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     communication_metrics: Mapped[dict] = mapped_column(JSONB, default=dict)
+    communication_metadata: Mapped[dict] = mapped_column(JSONB, default=dict)
     visual_signal_metadata: Mapped[dict] = mapped_column(JSONB, default=dict)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now, onupdate=utc_now)

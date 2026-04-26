@@ -70,6 +70,7 @@ def test_process_candidate_answer_audio_stores_transcript_and_metrics(monkeypatc
     assert answer.word_count == 7
     assert answer.words_per_minute == 35.0
     assert answer.filler_word_count == 0
+    assert answer.transcription_status == "transcribed"
     assert answer.communication_metrics["communication_signal_score"] == 8
     assert "speaking pace" in answer.communication_metrics["safe_signal_labels"]
 
@@ -85,6 +86,7 @@ def test_process_candidate_answer_audio_requires_audio_object_key():
         task.process_candidate_answer_audio(answer)
     except ValueError as exc:
         assert "audio object key" in str(exc)
+        assert answer.transcription_status == "failed"
     else:
         raise AssertionError("Expected ValueError")
 

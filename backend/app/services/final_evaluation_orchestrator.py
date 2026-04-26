@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.agent_result import AgentResult, AgentResultStatus, AgentType
-from app.models.answer import CandidateAnswer
+from app.models.answer import AnswerProcessingStatus, CandidateAnswer
 from app.models.evaluation import AnswerEvaluation
 from app.models.question import ResponseMode
 from app.schemas.evaluation import FinalEvaluationResult
@@ -30,6 +30,7 @@ def evaluate_answer(db: Session, answer_id: str) -> tuple[FinalEvaluationResult,
     )
     result = orchestrate_final_evaluation(answer=answer, agent_results=agent_results)
     row = _store_answer_evaluation(db, answer_id=answer_id, result=result)
+    answer.processing_status = AnswerProcessingStatus.EVALUATED.value
     return result, row
 
 
@@ -221,13 +222,20 @@ def _store_answer_evaluation(
         role_depth_score=_pick_score(result.category_scores, ["role_specific_depth", "reasoning_explanation"]),
         evidence_score=_pick_score(result.category_scores, ["evidence_examples", "evidence_specificity"]),
         clarity_score=_pick_score(result.category_scores, ["communication_clarity", "clarity"]),
+        structure_score=_pick_score(result.category_scores, ["structure", "readability_testability"]),
         jd_alignment_score=_pick_score(result.category_scores, ["benchmark_relevance", "benchmark_gap_coverage"]),
         benchmark_gap_coverage_score=result.category_scores.get("benchmark_gap_coverage"),
         communication_score=_pick_score(result.category_scores, ["communication_clarity", "audio_professionalism", "spoken_quality"]),
+        communication_signal_score=_pick_score(result.category_scores, ["communication_clarity", "audio_professionalism", "spoken_quality"]),
+        code_quality_score=_pick_score(result.category_scores, ["code_correctness", "code_quality"]),
+        written_answer_score=_pick_score(result.category_scores, ["relevance", "written_quality"]),
+        visual_signal_score=None,
         overall_score=result.overall_score,
         strengths="\n".join(result.strengths),
         weaknesses="\n".join(result.weaknesses),
         strict_feedback=result.strict_feedback,
+        red_flags=[],
+        modality_breakdown=result.modality_breakdown,
         improved_answer=json.dumps(
             {
                 "improvement_suggestions": result.improvement_suggestions,

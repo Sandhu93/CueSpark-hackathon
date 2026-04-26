@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core import storage
 from app.core.db import get_db
-from app.models.answer import CandidateAnswer
+from app.models.answer import AnswerProcessingStatus, AnswerTranscriptionStatus, CandidateAnswer
 from app.models.question import InterviewQuestion, ResponseMode
 from app.schemas.answer import AnswerSubmitResponse
 
@@ -60,6 +60,12 @@ async def submit_answer(
         question_id=question.id,
         audio_object_key=audio_object_key,
         answer_mode=answer_mode.value,
+        transcription_status=(
+            AnswerTranscriptionStatus.PENDING.value
+            if audio_object_key
+            else AnswerTranscriptionStatus.NOT_REQUIRED.value
+        ),
+        processing_status=AnswerProcessingStatus.PENDING.value,
         text_answer=_clean_optional_text(payload.get("text_answer")),
         code_answer=_clean_optional_text(payload.get("code_answer")),
         code_language=_clean_optional_text(payload.get("code_language")),

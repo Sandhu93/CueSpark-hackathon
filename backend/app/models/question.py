@@ -9,6 +9,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
+from app.core.time import utc_now
 
 
 class QuestionCategory(str, Enum):
@@ -24,6 +25,7 @@ class QuestionCategory(str, Enum):
 class QuestionSource(str, Enum):
     BASE_PLAN = "base_plan"
     ADAPTIVE_FOLLOWUP = "adaptive_followup"
+    MANUAL = "manual"
     BENCHMARK_GAP = "benchmark_gap"
 
 
@@ -51,6 +53,7 @@ class InterviewQuestion(Base):
     benchmark_gap_refs: Mapped[list] = mapped_column(JSONB, default=list)
     # Human-readable annotation explaining why this question was chosen
     why_this_was_asked: Mapped[str | None] = mapped_column(Text, nullable=True)
+    provenance: Mapped[dict] = mapped_column(JSONB, default=dict)
     response_mode: Mapped[str] = mapped_column(
         String, default=ResponseMode.SPOKEN_ANSWER.value
     )
@@ -59,4 +62,6 @@ class InterviewQuestion(Base):
     requires_text: Mapped[bool] = mapped_column(default=False)
     requires_code: Mapped[bool] = mapped_column(default=False)
     tts_object_key: Mapped[str | None] = mapped_column(String, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    tts_status: Mapped[str | None] = mapped_column(String, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now, onupdate=utc_now)

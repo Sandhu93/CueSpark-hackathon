@@ -9,6 +9,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
+from app.core.time import utc_now
 
 
 class BenchmarkSourceType(str, Enum):
@@ -38,4 +39,5 @@ class BenchmarkProfile(Base):
     source_url: Mapped[str | None] = mapped_column(String, nullable=True)
     is_curated: Mapped[bool] = mapped_column(Boolean, default=False)
     quality_score: Mapped[float | None] = mapped_column(Float, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now, onupdate=utc_now)

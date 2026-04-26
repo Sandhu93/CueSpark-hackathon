@@ -13,6 +13,7 @@ def _session() -> InterviewSession:
     return InterviewSession(
         id="session-1",
         job_description_text="Senior backend role.",
+        match_score=63,
         benchmark_similarity_score=54,
         resume_competitiveness_score=48,
         evidence_strength_score=39,
@@ -126,6 +127,7 @@ def test_build_multimodal_report_aggregates_scores_and_benchmark_gaps():
     assert "weak ownership proof" in report.benchmark_gaps
     assert report.benchmark_gap_coverage_summary
     assert "weak ownership proof" in report.benchmark_gap_coverage_summary
+    assert report.jd_resume_match_summary == "JD-resume match score is 63/100 for this session."
     assert len(report.answer_feedback) == 2
 
 
@@ -139,7 +141,9 @@ def test_build_multimodal_report_includes_only_available_modality_summaries():
     )
 
     assert report.audio_communication_summary is not None
+    assert report.communication_summary == report.audio_communication_summary
     assert report.code_answer_quality_summary is not None
+    assert report.code_answer_summary == report.code_answer_quality_summary
     assert report.visual_signal_summary is None
     assert report.written_answer_quality_summary is None
     assert report.multimodal_summary["answer_count"] == 2
