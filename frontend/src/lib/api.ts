@@ -36,7 +36,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 export interface UploadInitResponse {
   object_key: string;
   upload_url: string;
-  public_url: string;
+  download_url: string;
 }
 
 async function http<T>(path: string, init?: RequestInit): Promise<T> {
@@ -48,8 +48,7 @@ async function http<T>(path: string, init?: RequestInit): Promise<T> {
     },
   });
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`${res.status} ${res.statusText}: ${text}`);
+    throw new Error(await responseErrorMessage(res));
   }
   return res.json() as Promise<T>;
 }
@@ -60,8 +59,7 @@ async function httpForm<T>(path: string, body: FormData): Promise<T> {
     body,
   });
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`${res.status} ${res.statusText}: ${text}`);
+    throw new Error(await responseErrorMessage(res));
   }
   return res.json() as Promise<T>;
 }
@@ -173,7 +171,7 @@ export const api = {
       method: "POST",
       body: fd,
     });
-    if (!res.ok) throw new Error(await res.text());
+    if (!res.ok) throw new Error(await responseErrorMessage(res));
     return res.json() as Promise<DocumentUploadResponse>;
   },
 
@@ -190,8 +188,8 @@ export const api = {
       method: "POST",
       body: fd,
     });
-    if (!res.ok) throw new Error(await res.text());
-    return res.json() as Promise<{ object_key: string; public_url: string; size: number }>;
+    if (!res.ok) throw new Error(await responseErrorMessage(res));
+    return res.json() as Promise<{ object_key: string; download_url: string; size: number }>;
   },
 
   createJob: (kind: string, input: Record<string, unknown> = {}) =>
@@ -213,4 +211,25 @@ export async function putToPresigned(url: string, file: File): Promise<void> {
     headers: { "Content-Type": file.type || "application/octet-stream" },
   });
   if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+}
+
+async function responseErrorMessage(res: Response): Promise<string> {
+  const fallback = `${res.status} ${res.statusText || "Request failed"}`;
+  const text = await res.text();
+  if (!text) return fallback;
+  try {
+    const parsed = JSON.parse(text) as { detail?: unknown };
+    if (typeof parsed.detail === "string") {
+      return `${fallback}: ${truncateErrorDetail(parsed.detail)}`;
+    }
+  } catch {
+    // Fall through to a generic message; raw backend bodies can contain internals.
+  }
+  return fallback;
+}
+
+function truncateErrorDetail(detail: string): string {
+  const cleaned = detail.replace(/\s+/g, " ").trim();
+  if (cleaned.length <= 240) return cleaned;
+  return `${cleaned.slice(0, 237)}...`;
 }

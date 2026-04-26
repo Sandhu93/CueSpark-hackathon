@@ -23,7 +23,9 @@ class AnswerTranscriptionStatus(str, Enum):
 
 class AnswerProcessingStatus(str, Enum):
     PENDING = "pending"
+    QUEUED = "queued"
     PROCESSING = "processing"
+    EVALUATING = "evaluating"
     EVALUATED = "evaluated"
     FAILED = "failed"
 

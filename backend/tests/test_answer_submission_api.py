@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 from app.core.db import get_db
 from app.main import app
 from app.models.answer import CandidateAnswer
+from app.models.job import Job
 from app.models.question import InterviewQuestion, QuestionCategory, ResponseMode
 
 
@@ -47,10 +48,11 @@ def fake_db() -> FakeSession:
 
 
 @pytest.fixture
-def client(fake_db: FakeSession) -> TestClient:
+def client(fake_db: FakeSession, monkeypatch: pytest.MonkeyPatch) -> TestClient:
     async def override_get_db():
         yield fake_db
 
+    monkeypatch.setattr("app.api.answers.default_queue.enqueue", lambda *args, **kwargs: None)
     app.dependency_overrides[get_db] = override_get_db
     test_client = TestClient(app)
     try:
@@ -117,11 +119,11 @@ def test_spoken_answer_upload_stores_audio(
     assert response.status_code == 200
     body = response.json()
     answer = fake_db.items[(CandidateAnswer, body["answer_id"])]
-    assert body["processing_status"] == "stored"
+    assert body["processing_status"] == "queued"
     assert answer.answer_mode == "spoken_answer"
     assert answer.audio_object_key == "answers/audio/answer.webm"
     assert answer.transcription_status == "pending"
-    assert answer.processing_status == "pending"
+    assert answer.processing_status == "queued"
     assert stored["data"] == b"audio-bytes"
     assert stored["content_type"] == "audio/webm"
 
@@ -145,7 +147,44 @@ def test_written_answer_submission_stores_text(client: TestClient, fake_db: Fake
     assert answer.text_answer == "Structured written response."
     assert answer.audio_object_key is None
     assert answer.transcription_status == "not_required"
-    assert answer.processing_status == "pending"
+    assert answer.processing_status == "queued"
+
+
+def test_answer_submission_enqueues_processing_pipeline(
+    fake_db: FakeSession, monkeypatch: pytest.MonkeyPatch
+):
+    enqueued: list[tuple[str, str]] = []
+
+    def fake_enqueue(task_path: str, *args, **kwargs):
+        enqueued.append((task_path, kwargs.get("job_id") or args[0]))
+
+    monkeypatch.setattr("app.api.answers.default_queue.enqueue", fake_enqueue)
+
+    async def override_get_db():
+        yield fake_db
+
+    app.dependency_overrides[get_db] = override_get_db
+    client = TestClient(app)
+    try:
+        _question(
+            fake_db,
+            question_id="question-enqueue",
+            response_mode=ResponseMode.WRITTEN_ANSWER,
+            requires_text=True,
+        )
+
+        response = client.post(
+            "/api/questions/question-enqueue/answers",
+            json={"answer_mode": "written_answer", "text_answer": "Structured response."},
+        )
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 200
+    assert enqueued
+    task_path, job_id = enqueued[0]
+    assert task_path == "app.tasks.process_answer_pipeline.run"
+    assert (Job, job_id) in fake_db.items
 
 
 def test_answer_submission_stores_visual_signal_metadata(
@@ -263,6 +302,47 @@ def test_answer_submission_rejects_unsupported_audio_type(
     )
 
     assert response.status_code == 400
+
+
+def test_answer_submission_rejects_audio_extension_mismatch(
+    client: TestClient, fake_db: FakeSession
+):
+    _question(
+        fake_db,
+        question_id="question-audio-extension",
+        response_mode=ResponseMode.SPOKEN_ANSWER,
+        requires_audio=True,
+    )
+
+    response = client.post(
+        "/api/questions/question-audio-extension/answers",
+        data={"answer_mode": "spoken_answer"},
+        files={"audio": ("answer.txt", b"audio", "audio/webm")},
+    )
+
+    assert response.status_code == 400
+
+
+def test_answer_submission_rejects_oversized_audio(
+    client: TestClient,
+    fake_db: FakeSession,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    _question(
+        fake_db,
+        question_id="question-large-audio",
+        response_mode=ResponseMode.SPOKEN_ANSWER,
+        requires_audio=True,
+    )
+    monkeypatch.setattr("app.api.answers.settings.max_audio_upload_bytes", 4)
+
+    response = client.post(
+        "/api/questions/question-large-audio/answers",
+        data={"answer_mode": "spoken_answer"},
+        files={"audio": ("answer.webm", b"large audio", "audio/webm")},
+    )
+
+    assert response.status_code == 413
 
 
 def test_answer_submission_validates_required_text(client: TestClient, fake_db: FakeSession):

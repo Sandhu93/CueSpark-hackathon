@@ -5,13 +5,21 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core import storage
+from app.core.config import settings
 from app.core.db import get_db
+from app.core.redis_client import default_queue
+from app.models.job import Job, JobStatus
+from app.models.agent_result import AgentResult
 from app.models.answer import AnswerProcessingStatus, AnswerTranscriptionStatus, CandidateAnswer
+from app.models.evaluation import AnswerEvaluation
 from app.models.question import InterviewQuestion, ResponseMode
-from app.schemas.answer import AnswerSubmitResponse
+from app.schemas.agent_results import AgentResultRead
+from app.schemas.answer import AgentResultsResponse, AnswerDetailRead, AnswerRead, AnswerSubmitResponse
+from app.schemas.evaluation import EvaluationRead
 
 router = APIRouter()
 
@@ -27,6 +35,7 @@ SUPPORTED_AUDIO_CONTENT_TYPES = {
     "audio/x-m4a",
     "video/webm",
 }
+SUPPORTED_AUDIO_EXTENSIONS = {"mp3", "mp4", "m4a", "wav", "wave", "webm", "ogg"}
 
 
 @router.post("/questions/{question_id}/answers", response_model=AnswerSubmitResponse)
@@ -48,10 +57,13 @@ async def submit_answer(
         if not _is_supported_audio_file(audio):
             raise HTTPException(status_code=400, detail="Unsupported audio file type")
         ext = Path(audio.filename or "").suffix.lstrip(".")
+        body = await audio.read()
+        if len(body) > settings.max_audio_upload_bytes:
+            raise HTTPException(status_code=413, detail="Audio file is too large")
         audio_object_key = storage.new_object_key(prefix="answers/audio", ext=ext)
         storage.put_object(
             audio_object_key,
-            await audio.read(),
+            body,
             content_type=audio.content_type or "application/octet-stream",
         )
 
@@ -65,7 +77,7 @@ async def submit_answer(
             if audio_object_key
             else AnswerTranscriptionStatus.NOT_REQUIRED.value
         ),
-        processing_status=AnswerProcessingStatus.PENDING.value,
+        processing_status=AnswerProcessingStatus.QUEUED.value,
         text_answer=_clean_optional_text(payload.get("text_answer")),
         code_answer=_clean_optional_text(payload.get("code_answer")),
         code_language=_clean_optional_text(payload.get("code_language")),
@@ -77,7 +89,73 @@ async def submit_answer(
     await db.commit()
     await db.refresh(answer)
 
-    return AnswerSubmitResponse(answer_id=answer.id, processing_status="stored")
+    job = Job(
+        kind="process_answer_pipeline",
+        status=JobStatus.QUEUED.value,
+        input={"answer_id": answer.id},
+    )
+    db.add(job)
+    await db.commit()
+    await db.refresh(job)
+    default_queue.enqueue(
+        "app.tasks.process_answer_pipeline.run",
+        job.id,
+        job_id=job.id,
+    )
+
+    return AnswerSubmitResponse(answer_id=answer.id, processing_status=answer.processing_status)
+
+
+@router.get("/answers/{answer_id}", response_model=AnswerDetailRead)
+async def get_answer(
+    answer_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> AnswerDetailRead:
+    answer = await db.get(CandidateAnswer, answer_id)
+    if answer is None:
+        raise HTTPException(status_code=404, detail="Answer not found")
+
+    agent_results = (
+        await db.execute(
+            select(AgentResult)
+            .where(AgentResult.answer_id == answer_id)
+            .order_by(AgentResult.created_at.asc())
+        )
+    ).scalars().all()
+    evaluation = (
+        await db.execute(
+            select(AnswerEvaluation)
+            .where(AnswerEvaluation.answer_id == answer_id)
+            .order_by(AnswerEvaluation.created_at.desc())
+        )
+    ).scalars().first()
+
+    return AnswerDetailRead(
+        **AnswerRead.model_validate(answer).model_dump(),
+        agent_results=[AgentResultRead.model_validate(row) for row in agent_results],
+        evaluation=EvaluationRead.model_validate(evaluation) if evaluation else None,
+    )
+
+
+@router.get("/answers/{answer_id}/agent-results", response_model=AgentResultsResponse)
+async def get_answer_agent_results(
+    answer_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> AgentResultsResponse:
+    answer = await db.get(CandidateAnswer, answer_id)
+    if answer is None:
+        raise HTTPException(status_code=404, detail="Answer not found")
+    agent_results = (
+        await db.execute(
+            select(AgentResult)
+            .where(AgentResult.answer_id == answer_id)
+            .order_by(AgentResult.created_at.asc())
+        )
+    ).scalars().all()
+    return AgentResultsResponse(
+        answer_id=answer_id,
+        agent_results=[AgentResultRead.model_validate(row) for row in agent_results],
+    )
 
 
 async def _parse_payload(request: Request) -> tuple[dict[str, Any], UploadFile | None]:
@@ -142,7 +220,11 @@ def _validate_answer_against_question(
 
 
 def _is_supported_audio_file(file: UploadFile) -> bool:
-    return (file.content_type or "").lower() in SUPPORTED_AUDIO_CONTENT_TYPES
+    extension = Path(file.filename or "").suffix.lower().lstrip(".")
+    return (
+        (file.content_type or "").lower() in SUPPORTED_AUDIO_CONTENT_TYPES
+        and extension in SUPPORTED_AUDIO_EXTENSIONS
+    )
 
 
 def _looks_like_upload_file(value: Any) -> bool:

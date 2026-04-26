@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class FinalEvaluationResult(BaseModel):
@@ -44,3 +44,13 @@ class EvaluationRead(BaseModel):
     modality_breakdown: dict[str, Any]
     created_at: datetime
     updated_at: datetime
+
+    @field_validator("red_flags", mode="before")
+    @classmethod
+    def _default_red_flags(cls, value: object) -> object:
+        return [] if value is None else value
+
+    @field_validator("modality_breakdown", mode="before")
+    @classmethod
+    def _default_modality_breakdown(cls, value: object) -> object:
+        return {} if value is None else value

@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     minio_root_password: str = "minioadmin"
     minio_bucket: str = "uploads"
     minio_use_ssl: bool = False
+    max_resume_upload_bytes: int = 10 * 1024 * 1024
+    max_audio_upload_bytes: int = 25 * 1024 * 1024
+    max_generic_upload_bytes: int = 25 * 1024 * 1024
 
     # AI providers
     ai_provider: str = "openai"

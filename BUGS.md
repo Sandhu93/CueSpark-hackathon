@@ -33,6 +33,7 @@ Recommended workflow:
 | Bug ID | Status | Area | Short Title | Date Found | Date Resolved |
 | --- | --- | --- | --- | --- | --- |
 | BUG-001 | Template | Example | Example bug entry | YYYY-MM-DD | YYYY-MM-DD |
+| BUG-002 | Open | security/privacy | Remaining production privacy hardening | 2026-04-26 | Not resolved yet |
 
 Status values:
 
@@ -186,6 +187,96 @@ Example:
 ```txt
 Add a test that verifies every allowed job kind maps to an importable task handler.
 ```
+
+---
+
+## BUG-002 — Remaining production privacy hardening
+
+**Status:** Open  
+**Area:** security / privacy / storage  
+**Date Found:** 2026-04-26  
+**Date Resolved:** Not resolved yet  
+**Related Task:** `tasks/phase7-production-hardening/044-add-security-privacy-review.md`  
+**Related Commit/PR:** Not committed yet
+
+### What Happened
+
+The initial security/privacy review found local hardening gaps around object storage, uploads, error leakage, and retention expectations. Some local/hackathon risks were tightened immediately, but full production privacy controls need separate product/infrastructure work.
+
+### Expected Behavior
+
+Production users should have private object storage, bounded uploads, sanitized errors, clear retention policies, and access control for session artifacts.
+
+### Actual Behavior
+
+The current MVP has no authentication or per-session authorization, no malware scanning, no formal retention/deletion workflow, and presigned PUT uploads cannot enforce content length without a stronger upload policy mechanism.
+
+### Error Message / Logs
+
+```txt
+No runtime error. This is a security/privacy hardening finding.
+```
+
+### Steps to Reproduce
+
+1. Review object-storage and upload paths.
+2. Review job error storage and UI error display.
+3. Review frontend and docs for privacy/safety claims.
+
+### Suspected Cause
+
+The app is still in local/hackathon MVP mode and intentionally does not yet include production identity, retention, malware scanning, or infrastructure policy management.
+
+### Root Cause
+
+Production security controls are out of scope for the current task sequence and require dedicated design.
+
+### Resolution
+
+Partially resolved in task 044:
+
+- MinIO init now sets the local bucket to non-anonymous access.
+- Generic upload endpoints validate file type and size.
+- Resume and audio uploads now enforce size limits.
+- Audio uploads now require an allowed extension and content type.
+- Frontend API errors no longer dump arbitrary raw backend response bodies.
+- Mock AI text responses no longer echo full prompts.
+
+Not resolved yet:
+
+- Authentication and per-session authorization.
+- Formal deletion/retention workflow.
+- Malware scanning for uploaded files.
+- Strong content-length enforcement for presigned PUT uploads.
+- Production secrets management and bucket lifecycle policies.
+- Sanitized/typed job error codes instead of storing raw exception strings.
+
+### Files Changed
+
+- `.env.example`
+- `backend/app/api/answers.py`
+- `backend/app/api/uploads.py`
+- `backend/app/core/config.py`
+- `backend/app/schemas/common.py`
+- `backend/app/services/ai_mock.py`
+- `backend/app/services/documents.py`
+- `docker-compose.yml`
+- `frontend/src/lib/api.ts`
+
+### Verification
+
+```bash
+docker compose exec api pytest -q
+npm.cmd --prefix frontend run build
+```
+
+### Learning Notes
+
+Private object storage should be the default. Public bucket policy is too broad for resumes, audio, transcripts, and report artifacts.
+
+### Prevention
+
+Add security/privacy checks whenever introducing upload surfaces, signed URLs, candidate artifacts, or user-visible AI claims.
 
 ---
 

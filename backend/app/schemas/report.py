@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 from app.models.report import HiringRecommendation
 
@@ -37,3 +37,19 @@ class ReportRead(BaseModel):
     improvement_plan: str | None
     created_at: datetime
     updated_at: datetime
+
+    @field_validator(
+        "skill_gaps",
+        "benchmark_gaps",
+        "interview_risk_areas",
+        "answer_feedback",
+        mode="before",
+    )
+    @classmethod
+    def _default_json_list(cls, value: object) -> object:
+        return [] if value is None else value
+
+    @field_validator("multimodal_summary", mode="before")
+    @classmethod
+    def _default_multimodal_summary(cls, value: object) -> object:
+        return {} if value is None else value

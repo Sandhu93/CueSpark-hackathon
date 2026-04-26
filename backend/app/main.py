@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
-from app.api import answers, benchmark, documents, jobs, sessions, uploads
+from app.api import answers, benchmark, documents, interview, jobs, reports, sessions, uploads
 from app.core.config import settings
 from app.core.db import init_db
 from app.core.storage import ensure_bucket
@@ -45,3 +45,5 @@ app.include_router(sessions.router, prefix="/api/sessions", tags=["sessions"])
 app.include_router(benchmark.router, prefix="/api/sessions", tags=["benchmark"])
 app.include_router(documents.router, prefix="/api", tags=["documents"])
 app.include_router(answers.router, prefix="/api", tags=["answers"])
+app.include_router(interview.router, prefix="/api", tags=["interview"])
+app.include_router(reports.router, prefix="/api", tags=["reports"])

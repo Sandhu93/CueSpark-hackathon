@@ -14,7 +14,7 @@ class UploadInitRequest(BaseModel):
 class UploadInitResponse(BaseModel):
     object_key: str
     upload_url: str = Field(description="PUT this URL with the file body")
-    public_url: str
+    download_url: str = Field(description="Short-lived signed URL for reading the object")
 
 
 class JobCreate(BaseModel):

@@ -3,9 +3,11 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 from app.models.question import ResponseMode
+from app.schemas.agent_results import AgentResultRead
+from app.schemas.evaluation import EvaluationRead
 
 
 class AudioAgentResult(BaseModel):
@@ -48,3 +50,23 @@ class AnswerRead(BaseModel):
     visual_signal_metadata: dict[str, Any]
     created_at: datetime
     updated_at: datetime
+
+    @field_validator(
+        "communication_metrics",
+        "communication_metadata",
+        "visual_signal_metadata",
+        mode="before",
+    )
+    @classmethod
+    def _default_json_object(cls, value: object) -> object:
+        return {} if value is None else value
+
+
+class AnswerDetailRead(AnswerRead):
+    agent_results: list[AgentResultRead]
+    evaluation: EvaluationRead | None
+
+
+class AgentResultsResponse(BaseModel):
+    answer_id: str
+    agent_results: list[AgentResultRead]

@@ -121,6 +121,20 @@ def test_resume_upload_rejects_unsupported_file_type(client: TestClient):
     assert response.status_code == 400
 
 
+def test_resume_upload_rejects_oversized_file(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr("app.services.documents.settings.max_resume_upload_bytes", 4)
+
+    response = client.post(
+        "/api/sessions/session-id/resume",
+        files={"file": ("resume.txt", b"large resume", "text/plain")},
+    )
+
+    assert response.status_code == 413
+
+
 def test_resume_upload_unknown_session_returns_404(client: TestClient):
     response = client.post(
         "/api/sessions/missing/resume",

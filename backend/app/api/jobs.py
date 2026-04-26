@@ -21,6 +21,7 @@ TASK_REGISTRY: dict[str, str] = {
     "analyze_video_signals": "app.tasks.analyze_video_signals.run",
     "analyze_benchmark_gap_coverage": "app.tasks.analyze_benchmark_gap_coverage.run",
     "evaluate_answer": "app.tasks.evaluate_answer.run",
+    "process_answer_pipeline": "app.tasks.process_answer_pipeline.run",
     "generate_report": "app.tasks.generate_report.run",
     # "transcribe": "app.tasks.transcribe.run",
     # "score_answer": "app.tasks.score_answer.run",

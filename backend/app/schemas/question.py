@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.models.question import QuestionCategory, QuestionSource, ResponseMode
 
@@ -49,3 +49,26 @@ class QuestionRead(BaseModel):
     tts_status: str | None
     created_at: datetime
     updated_at: datetime
+
+    @field_validator("benchmark_gap_refs", mode="before")
+    @classmethod
+    def _default_benchmark_gap_refs(cls, value: object) -> object:
+        return [] if value is None else value
+
+    @field_validator("provenance", mode="before")
+    @classmethod
+    def _default_provenance(cls, value: object) -> object:
+        return {} if value is None else value
+
+
+class QuestionWithAudioRead(QuestionRead):
+    tts_audio_url: str | None = None
+
+
+class QuestionsResponse(BaseModel):
+    questions: list[QuestionWithAudioRead]
+
+
+class TtsResponse(BaseModel):
+    question_id: str
+    audio_url: str

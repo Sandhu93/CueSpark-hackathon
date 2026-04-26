@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from fastapi import UploadFile
+from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core import storage
+from app.core.config import settings
 from app.models.document import (
     Document,
     DocumentInputType,
@@ -51,6 +52,8 @@ async def create_uploaded_resume_document(
     extension = Path(filename).suffix.lower().lstrip(".")
     object_key = storage.new_object_key(prefix=f"resumes/original/{session_id}", ext=extension)
     body = await file.read()
+    if len(body) > settings.max_resume_upload_bytes:
+        raise HTTPException(status_code=413, detail="Resume file is too large")
     storage.put_object(
         object_key,
         body,
