@@ -6,6 +6,7 @@ import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { CodeAnswerCapture } from "@/components/interview/CodeAnswerCapture";
+import { MixedAnswerCapture } from "@/components/interview/MixedAnswerCapture";
 import { SpokenAnswerCapture } from "@/components/interview/SpokenAnswerCapture";
 import { WrittenAnswerCapture } from "@/components/interview/WrittenAnswerCapture";
 import { NoticePanel, SafetyCopy } from "@/components/product/NoticePanel";
@@ -290,6 +291,7 @@ function VoicePanel({
 
 function ResponseCapturePanel({ question }: { question: QuestionRead }) {
   const mode = question.response_mode;
+  const isMixed = mode === "mixed_answer";
   const showSpoken = question.requires_audio || mode === "spoken_answer" || mode === "mixed_answer";
   const showWritten = question.requires_text || mode === "written_answer" || mode === "mixed_answer";
   const showCode = question.requires_code || mode === "code_answer" || mode === "mixed_answer";
@@ -308,24 +310,27 @@ function ResponseCapturePanel({ question }: { question: QuestionRead }) {
       </div>
 
       <div className="mt-5 grid gap-4">
-        {showSpoken && (
+        {isMixed && (
+          <MixedAnswerCapture key={`mixed-${question.id}`} question={question} />
+        )}
+        {!isMixed && showSpoken && (
           <SpokenAnswerCapture key={`spoken-${question.id}`} questionId={question.id} />
         )}
-        {showWritten && (
+        {!isMixed && showWritten && (
           <WrittenAnswerCapture
             key={`written-${question.id}`}
             questionId={question.id}
             questionText={question.question_text}
           />
         )}
-        {showCode && (
+        {!isMixed && showCode && (
           <CodeAnswerCapture
             key={`code-${question.id}`}
             questionId={question.id}
             questionText={question.question_text}
           />
         )}
-        {showVisual && (
+        {!isMixed && showVisual && (
           <CapturePlaceholder
             title="Visual signal metadata"
             status="Optional MVP"
