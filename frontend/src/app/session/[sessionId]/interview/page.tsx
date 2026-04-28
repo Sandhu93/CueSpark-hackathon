@@ -314,16 +314,18 @@ function ResponseCapturePanel({ question }: { question: QuestionRead }) {
 
       <div className="mt-5 grid gap-4">
         {showSpoken && (
-          <SpokenAnswerCapture questionId={question.id} />
+          <SpokenAnswerCapture key={`spoken-${question.id}`} questionId={question.id} />
         )}
         {showWritten && (
           <WrittenAnswerCapture
+            key={`written-${question.id}`}
             questionId={question.id}
             questionText={question.question_text}
           />
         )}
         {showCode && (
           <CodeAnswerCapture
+            key={`code-${question.id}`}
             questionId={question.id}
             questionText={question.question_text}
           />

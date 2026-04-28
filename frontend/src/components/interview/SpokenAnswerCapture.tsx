@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { AnswerResultSummary } from "@/components/interview/AnswerResultSummary";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
@@ -20,10 +20,22 @@ type SpokenFlowState =
 
 export function SpokenAnswerCapture({ questionId }: { questionId: string }) {
   const recorder = useAudioRecorder();
+  const resetRecorder = recorder.reset;
+  const previousQuestionIdRef = useRef(questionId);
   const [flowState, setFlowState] = useState<SpokenFlowState>("idle");
   const [answerId, setAnswerId] = useState<string | null>(null);
   const [answer, setAnswer] = useState<CandidateAnswerRead | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (previousQuestionIdRef.current === questionId) return;
+    previousQuestionIdRef.current = questionId;
+    setFlowState("idle");
+    setAnswerId(null);
+    setAnswer(null);
+    setSubmitError(null);
+    resetRecorder();
+  }, [questionId, resetRecorder]);
 
   useEffect(() => {
     if (recorder.state === "recording") setFlowState("recording");
