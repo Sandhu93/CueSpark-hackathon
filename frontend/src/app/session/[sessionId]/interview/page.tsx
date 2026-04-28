@@ -198,17 +198,12 @@ export default function InterviewRoomPage() {
             <QuestionNavigation
               currentIndex={currentIndex}
               total={questions.length}
+              reportHref={`/session/${sessionId}/report`}
               onPrevious={() => setCurrentIndex((index) => Math.max(0, index - 1))}
               onNext={() =>
                 setCurrentIndex((index) => Math.min(questions.length - 1, index + 1))
               }
             />
-            <Link
-              href={`/session/${sessionId}/report`}
-              className="block rounded border border-[var(--border)] bg-black/20 p-5 text-sm text-[var(--accent)]"
-            >
-              Open readiness report
-            </Link>
           </aside>
         </div>
       )}
@@ -377,14 +372,18 @@ function EvaluationStatusPanel({ state }: { state: EvaluationState }) {
 function QuestionNavigation({
   currentIndex,
   total,
+  reportHref,
   onPrevious,
   onNext,
 }: {
   currentIndex: number;
   total: number;
+  reportHref: string;
   onPrevious: () => void;
   onNext: () => void;
 }) {
+  const isFinalQuestion = total > 0 && currentIndex === total - 1;
+
   return (
     <section className="rounded border border-[var(--border)] bg-black/20 p-5">
       <h2 className="text-sm font-semibold">Question navigation</h2>
@@ -399,13 +398,22 @@ function QuestionNavigation({
         >
           Previous
         </button>
-        <button
-          onClick={onNext}
-          disabled={currentIndex >= total - 1}
-          className="rounded border border-[var(--border)] px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Next
-        </button>
+        {isFinalQuestion ? (
+          <Link
+            href={reportHref}
+            className="rounded bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-black"
+          >
+            Finish interview & open report
+          </Link>
+        ) : (
+          <button
+            onClick={onNext}
+            disabled={total === 0}
+            className="rounded border border-[var(--border)] px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Next
+          </button>
+        )}
       </div>
     </section>
   );
