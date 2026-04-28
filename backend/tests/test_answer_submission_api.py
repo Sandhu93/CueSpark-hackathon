@@ -128,6 +128,44 @@ def test_spoken_answer_upload_stores_audio(
     assert stored["content_type"] == "audio/webm"
 
 
+def test_spoken_answer_accepts_mediarecorder_audio_type_with_codec(
+    client: TestClient, fake_db: FakeSession, monkeypatch: pytest.MonkeyPatch
+):
+    _question(
+        fake_db,
+        question_id="question-spoken-codec",
+        response_mode=ResponseMode.SPOKEN_ANSWER,
+        requires_audio=True,
+    )
+    stored: dict[str, Any] = {}
+
+    monkeypatch.setattr(
+        "app.api.answers.storage.new_object_key",
+        lambda prefix, ext: f"{prefix}/answer.{ext}",
+    )
+
+    def fake_put_object(key: str, data: bytes, content_type: str) -> str:
+        stored["key"] = key
+        stored["data"] = data
+        stored["content_type"] = content_type
+        return key
+
+    monkeypatch.setattr("app.api.answers.storage.put_object", fake_put_object)
+
+    response = client.post(
+        "/api/questions/question-spoken-codec/answers",
+        data={"answer_mode": "spoken_answer"},
+        files={"audio": ("answer.webm", b"audio-bytes", "audio/webm;codecs=opus")},
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    answer = fake_db.items[(CandidateAnswer, body["answer_id"])]
+    assert answer.audio_object_key == "answers/audio/answer.webm"
+    assert stored["data"] == b"audio-bytes"
+    assert stored["content_type"] == "audio/webm;codecs=opus"
+
+
 def test_written_answer_submission_stores_text(client: TestClient, fake_db: FakeSession):
     _question(
         fake_db,
@@ -299,6 +337,25 @@ def test_answer_submission_rejects_unsupported_audio_type(
         "/api/questions/question-audio/answers",
         data={"answer_mode": "spoken_answer"},
         files={"audio": ("answer.exe", b"binary", "application/octet-stream")},
+    )
+
+    assert response.status_code == 400
+
+
+def test_answer_submission_rejects_unsupported_audio_mime_with_supported_extension(
+    client: TestClient, fake_db: FakeSession
+):
+    _question(
+        fake_db,
+        question_id="question-audio-mime",
+        response_mode=ResponseMode.SPOKEN_ANSWER,
+        requires_audio=True,
+    )
+
+    response = client.post(
+        "/api/questions/question-audio-mime/answers",
+        data={"answer_mode": "spoken_answer"},
+        files={"audio": ("answer.webm", b"binary", "application/octet-stream")},
     )
 
     assert response.status_code == 400

@@ -222,9 +222,13 @@ def _validate_answer_against_question(
 def _is_supported_audio_file(file: UploadFile) -> bool:
     extension = Path(file.filename or "").suffix.lower().lstrip(".")
     return (
-        (file.content_type or "").lower() in SUPPORTED_AUDIO_CONTENT_TYPES
+        _normalized_content_type(file.content_type) in SUPPORTED_AUDIO_CONTENT_TYPES
         and extension in SUPPORTED_AUDIO_EXTENSIONS
     )
+
+
+def _normalized_content_type(content_type: str | None) -> str:
+    return (content_type or "").split(";", 1)[0].strip().lower()
 
 
 def _looks_like_upload_file(value: Any) -> bool:
