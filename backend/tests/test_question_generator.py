@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 from unittest.mock import patch
 
-from app.models.question import InterviewQuestion, QuestionCategory, QuestionSource
+from app.models.question import InterviewQuestion, QuestionCategory, QuestionSource, ResponseMode
 from app.schemas.benchmark import BenchmarkAnalysisResult
 from app.schemas.match import MatchAnalysisResult
 from app.services import question_generator as qg
@@ -69,6 +69,51 @@ def test_generation_with_benchmark_returns_10_questions(monkeypatch):
     assert len(questions) == 10
     assert [q.question_number for q in questions] == list(range(1, 11))
     assert len(db.added) == 10
+
+
+def test_mock_generation_uses_multimodal_distribution(monkeypatch):
+    monkeypatch.setattr(qg.settings, "ai_mock_mode", True)
+    db = FakeDB()
+
+    questions = generate_interview_questions(
+        SAMPLE_JD,
+        SAMPLE_RESUME,
+        _match_result(),
+        _benchmark_result(),
+        session_id="session-1",
+        db=db,
+    )
+
+    assert [q.response_mode for q in questions] == [
+        ResponseMode.SPOKEN_ANSWER,
+        ResponseMode.SPOKEN_ANSWER,
+        ResponseMode.WRITTEN_ANSWER,
+        ResponseMode.CODE_ANSWER,
+        ResponseMode.MIXED_ANSWER,
+        ResponseMode.SPOKEN_ANSWER,
+        ResponseMode.SPOKEN_ANSWER,
+        ResponseMode.WRITTEN_ANSWER,
+        ResponseMode.SPOKEN_ANSWER,
+        ResponseMode.MIXED_ANSWER,
+    ]
+    assert {q.response_mode for q in questions} == {
+        ResponseMode.SPOKEN_ANSWER,
+        ResponseMode.WRITTEN_ANSWER,
+        ResponseMode.CODE_ANSWER,
+        ResponseMode.MIXED_ANSWER,
+    }
+    assert [(q.requires_audio, q.requires_text, q.requires_code, q.requires_video) for q in questions] == [
+        (True, False, False, False),
+        (True, False, False, False),
+        (False, True, False, False),
+        (False, False, True, False),
+        (True, True, True, False),
+        (True, False, False, False),
+        (True, False, False, False),
+        (False, True, False, False),
+        (True, False, False, False),
+        (True, True, False, True),
+    ]
 
 
 def test_generation_with_benchmark_includes_at_least_four_gap_questions(monkeypatch):
@@ -154,6 +199,35 @@ def test_generation_persists_question_rows(monkeypatch):
     assert rows[0].requires_video is False
     assert rows[0].requires_text is False
     assert rows[0].requires_code is False
+
+
+def test_generation_persists_multimodal_question_flags(monkeypatch):
+    monkeypatch.setattr(qg.settings, "ai_mock_mode", True)
+    db = FakeDB()
+
+    generate_interview_questions(
+        SAMPLE_JD,
+        SAMPLE_RESUME,
+        _match_result(),
+        _benchmark_result(),
+        session_id="session-42",
+        db=db,
+    )
+
+    rows = [obj for obj in db.added if isinstance(obj, InterviewQuestion)]
+    rows.sort(key=lambda row: row.question_number)
+    assert [(row.response_mode, row.requires_audio, row.requires_text, row.requires_code, row.requires_video) for row in rows] == [
+        ("spoken_answer", True, False, False, False),
+        ("spoken_answer", True, False, False, False),
+        ("written_answer", False, True, False, False),
+        ("code_answer", False, False, True, False),
+        ("mixed_answer", True, True, True, False),
+        ("spoken_answer", True, False, False, False),
+        ("spoken_answer", True, False, False, False),
+        ("written_answer", False, True, False, False),
+        ("spoken_answer", True, False, False, False),
+        ("mixed_answer", True, True, False, True),
+    ]
 
 
 def test_format_benchmark_section_includes_question_targets():

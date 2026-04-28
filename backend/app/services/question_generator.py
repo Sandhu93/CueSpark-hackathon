@@ -4,12 +4,13 @@ from __future__ import annotations
 import json
 import re
 import uuid
+from typing import Any
 
 from loguru import logger
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.models.question import InterviewQuestion, QuestionCategory, QuestionSource
+from app.models.question import InterviewQuestion, QuestionCategory, QuestionSource, ResponseMode
 from app.schemas.benchmark import BenchmarkAnalysisResult
 from app.schemas.match import MatchAnalysisResult
 from app.schemas.question import GeneratedQuestion
@@ -175,6 +176,130 @@ _BASE_PLAN_SPECS: list[dict] = [
 ]
 
 
+_MOCK_MODE_DISTRIBUTION: list[dict[str, Any]] = [
+    {
+        "response_mode": ResponseMode.SPOKEN_ANSWER,
+        "requires_audio": True,
+        "requires_video": False,
+        "requires_text": False,
+        "requires_code": False,
+    },
+    {
+        "response_mode": ResponseMode.SPOKEN_ANSWER,
+        "requires_audio": True,
+        "requires_video": False,
+        "requires_text": False,
+        "requires_code": False,
+    },
+    {
+        "response_mode": ResponseMode.WRITTEN_ANSWER,
+        "requires_audio": False,
+        "requires_video": False,
+        "requires_text": True,
+        "requires_code": False,
+        "question_text": (
+            "Write a structured response explaining how you would address this benchmark gap "
+            "with context, actions, evidence, and measurable impact."
+        ),
+        "expected_signal": (
+            "Written answer with clear structure, specific evidence, and measurable impact."
+        ),
+    },
+    {
+        "response_mode": ResponseMode.CODE_ANSWER,
+        "requires_audio": False,
+        "requires_video": False,
+        "requires_text": False,
+        "requires_code": True,
+        "question_text": (
+            "Provide code or pseudocode for a small solution that demonstrates the technical "
+            "depth expected for this role. Include edge cases in the implementation."
+        ),
+        "expected_signal": (
+            "Static code or pseudocode showing correctness, edge-case handling, readability, "
+            "and role-relevant reasoning."
+        ),
+    },
+    {
+        "response_mode": ResponseMode.MIXED_ANSWER,
+        "requires_audio": True,
+        "requires_video": False,
+        "requires_text": True,
+        "requires_code": True,
+        "question_text": (
+            "Write a short technical approach, include code or pseudocode, and explain the "
+            "trade-offs verbally."
+        ),
+        "expected_signal": (
+            "Combined written/code artifact plus spoken explanation of trade-offs and impact."
+        ),
+    },
+    {
+        "response_mode": ResponseMode.SPOKEN_ANSWER,
+        "requires_audio": True,
+        "requires_video": False,
+        "requires_text": False,
+        "requires_code": False,
+    },
+    {
+        "response_mode": ResponseMode.SPOKEN_ANSWER,
+        "requires_audio": True,
+        "requires_video": False,
+        "requires_text": False,
+        "requires_code": False,
+    },
+    {
+        "response_mode": ResponseMode.WRITTEN_ANSWER,
+        "requires_audio": False,
+        "requires_video": False,
+        "requires_text": True,
+        "requires_code": False,
+        "question_text": (
+            "Rewrite one weak resume bullet into a benchmark-style bullet with ownership, "
+            "scope, and measurable result."
+        ),
+        "expected_signal": (
+            "Concise written improvement with ownership, scope, metric, and outcome evidence."
+        ),
+    },
+    {
+        "response_mode": ResponseMode.SPOKEN_ANSWER,
+        "requires_audio": True,
+        "requires_video": False,
+        "requires_text": False,
+        "requires_code": False,
+    },
+    {
+        "response_mode": ResponseMode.MIXED_ANSWER,
+        "requires_audio": True,
+        "requires_video": True,
+        "requires_text": True,
+        "requires_code": False,
+        "question_text": (
+            "Summarize your strongest fit for this role in writing, then explain it verbally "
+            "as a final interview close."
+        ),
+        "expected_signal": (
+            "Clear final summary with written structure, spoken delivery, and optional "
+            "observable visual presence metadata."
+        ),
+    },
+]
+
+
+def _apply_mock_modalities(questions: list[GeneratedQuestion]) -> None:
+    for question, config in zip(questions, _MOCK_MODE_DISTRIBUTION, strict=False):
+        question.response_mode = config["response_mode"]
+        question.requires_audio = bool(config["requires_audio"])
+        question.requires_video = bool(config["requires_video"])
+        question.requires_text = bool(config["requires_text"])
+        question.requires_code = bool(config["requires_code"])
+        if "question_text" in config:
+            question.question_text = str(config["question_text"])
+        if "expected_signal" in config:
+            question.expected_signal = str(config["expected_signal"])
+
+
 def _mock_questions(
     match_result: MatchAnalysisResult,
     benchmark_result: BenchmarkAnalysisResult | None,
@@ -203,7 +328,9 @@ def _mock_questions(
     for index, question in enumerate(all_qs, 1):
         question.question_number = index
 
-    return all_qs[:10]
+    questions = all_qs[:10]
+    _apply_mock_modalities(questions)
+    return questions
 
 
 def _parse_questions(raw: str) -> list[dict]:

@@ -319,6 +319,100 @@ def test_product_path_missing_resources_return_clear_api_errors(client: TestClie
     assert client.get("/api/sessions/missing-session/report").status_code == 404
 
 
+def test_answer_submission_accepts_written_code_and_mixed_modes(
+    client: TestClient,
+    store: SharedStore,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    enqueued: list[tuple[str, str]] = []
+    monkeypatch.setattr("app.api.answers.default_queue.enqueue", _capture_enqueue(enqueued))
+    monkeypatch.setattr("app.api.answers.storage.new_object_key", lambda prefix, ext: f"{prefix}/answer.{ext}")
+    monkeypatch.setattr("app.api.answers.storage.put_object", lambda key, data, content_type: key)
+    session = InterviewSession(
+        id="session-multimodal",
+        status=InterviewSessionStatus.READY.value,
+        job_description_text=SAMPLE_JD,
+        resume_text=SAMPLE_RESUME,
+    )
+    store.persist(session)
+    written_question = _persist_question(
+        store,
+        question_id="question-written",
+        session_id=session.id,
+        question_number=1,
+        response_mode=ResponseMode.WRITTEN_ANSWER,
+        requires_text=True,
+    )
+    code_question = _persist_question(
+        store,
+        question_id="question-code",
+        session_id=session.id,
+        question_number=2,
+        response_mode=ResponseMode.CODE_ANSWER,
+        requires_code=True,
+    )
+    mixed_question = _persist_question(
+        store,
+        question_id="question-mixed",
+        session_id=session.id,
+        question_number=3,
+        response_mode=ResponseMode.MIXED_ANSWER,
+        requires_audio=True,
+        requires_text=True,
+        requires_code=True,
+        requires_video=True,
+    )
+
+    written_response = client.post(
+        f"/api/questions/{written_question.id}/answers",
+        json={
+            "answer_mode": ResponseMode.WRITTEN_ANSWER.value,
+            "text_answer": "Context, action, evidence, and measurable result.",
+        },
+    )
+    assert written_response.status_code == 200
+    written_answer = store.get(CandidateAnswer, written_response.json()["answer_id"])
+    assert written_answer.answer_mode == ResponseMode.WRITTEN_ANSWER.value
+    assert written_answer.text_answer == "Context, action, evidence, and measurable result."
+
+    code_response = client.post(
+        f"/api/questions/{code_question.id}/answers",
+        json={
+            "answer_mode": ResponseMode.CODE_ANSWER.value,
+            "code_answer": "def solve(items):\n    return len(items)",
+            "code_language": "python",
+        },
+    )
+    assert code_response.status_code == 200
+    code_answer = store.get(CandidateAnswer, code_response.json()["answer_id"])
+    assert code_answer.answer_mode == ResponseMode.CODE_ANSWER.value
+    assert code_answer.code_language == "python"
+    assert "def solve" in code_answer.code_answer
+
+    mixed_response = client.post(
+        f"/api/questions/{mixed_question.id}/answers",
+        data={
+            "answer_mode": ResponseMode.MIXED_ANSWER.value,
+            "text_answer": "I would first clarify constraints and success metrics.",
+            "code_answer": "SELECT count(*) FROM events;",
+            "code_language": "sql",
+            "visual_signal_metadata": (
+                '{"face_in_frame_ratio":0.95,"safe_signal_labels":["face in frame"]}'
+            ),
+        },
+        files={"audio": ("answer.webm", b"mock-audio", "audio/webm")},
+    )
+    assert mixed_response.status_code == 200
+    mixed_answer = store.get(CandidateAnswer, mixed_response.json()["answer_id"])
+    assert mixed_answer.answer_mode == ResponseMode.MIXED_ANSWER.value
+    assert mixed_answer.audio_object_key == "answers/audio/answer.webm"
+    assert mixed_answer.text_answer == "I would first clarify constraints and success metrics."
+    assert mixed_answer.code_answer == "SELECT count(*) FROM events;"
+    assert mixed_answer.code_language == "sql"
+    assert mixed_answer.visual_signal_metadata["safe_signal_labels"] == ["face in frame"]
+    assert len(enqueued) == 3
+
+
 def _capture_enqueue(enqueued: list[tuple[str, str]]):
     def fake_enqueue(task_path: str, *args: Any, **kwargs: Any) -> None:
         enqueued.append((task_path, str(kwargs.get("job_id") or args[0])))
@@ -338,6 +432,39 @@ def _create_session(client: TestClient) -> str:
     )
     assert response.status_code == 201
     return str(response.json()["session_id"])
+
+
+def _persist_question(
+    store: SharedStore,
+    *,
+    question_id: str,
+    session_id: str,
+    question_number: int,
+    response_mode: ResponseMode,
+    requires_audio: bool = False,
+    requires_video: bool = False,
+    requires_text: bool = False,
+    requires_code: bool = False,
+) -> InterviewQuestion:
+    question = InterviewQuestion(
+        id=question_id,
+        session_id=session_id,
+        question_number=question_number,
+        category=QuestionCategory.BENCHMARK_GAP_VALIDATION.value,
+        question_text="Answer this benchmark-driven question.",
+        expected_signal="Mode-specific response evidence.",
+        difficulty="medium",
+        source=QuestionSource.BENCHMARK_GAP.value,
+        benchmark_gap_refs=["mock validation gap"],
+        why_this_was_asked="Benchmark gap: mock validation gap",
+        response_mode=response_mode.value,
+        requires_audio=requires_audio,
+        requires_video=requires_video,
+        requires_text=requires_text,
+        requires_code=requires_code,
+    )
+    store.persist(question)
+    return question
 
 
 def _patch_prepare_pipeline(monkeypatch: pytest.MonkeyPatch, store: SharedStore) -> None:
