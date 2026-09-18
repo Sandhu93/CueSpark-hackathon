@@ -1,10 +1,25 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 
 import { AnswerResultSummary } from "@/components/interview/AnswerResultSummary";
+import {
+  defaultVisualSignalMetadata,
+  VisualSignalCapture,
+} from "@/components/interview/VisualSignalCapture";
 import { useSubmittedAnswerPolling } from "@/hooks/useSubmittedAnswerPolling";
 import { api } from "@/lib/api";
+import type { VisualSignalMetadata } from "@/lib/types";
+
+const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
+  ssr: false,
+  loading: () => (
+    <div className="mt-2 rounded border border-[var(--border)] bg-black/40 p-4 text-sm text-[var(--muted)]">
+      Loading code editor...
+    </div>
+  ),
+});
 
 const languages = [
   "python",
@@ -19,15 +34,21 @@ const languages = [
 export function CodeAnswerCapture({
   questionId,
   questionText,
+  requiresVideo = false,
 }: {
   questionId: string;
   questionText: string;
+  requiresVideo?: boolean;
 }) {
   const [codeAnswer, setCodeAnswer] = useState("");
   const [codeLanguage, setCodeLanguage] = useState("python");
   const [explanation, setExplanation] = useState("");
   const [answerId, setAnswerId] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [editorFailed, setEditorFailed] = useState(false);
+  const [visualMetadata, setVisualMetadata] = useState<VisualSignalMetadata>(
+    defaultVisualSignalMetadata(),
+  );
   const { answer, state, setAnswer, setState, refresh } = useSubmittedAnswerPolling(answerId);
 
   const canSubmit = codeAnswer.trim().length > 0 && codeLanguage.trim().length > 0 && !answerId;
@@ -41,6 +62,7 @@ export function CodeAnswerCapture({
         code_answer: codeAnswer.trim(),
         code_language: codeLanguage,
         text_answer: explanation.trim() || undefined,
+        visual_signal_metadata: requiresVideo ? visualMetadata : undefined,
       });
       setAnswerId(response.answer_id);
       setState("processing");
@@ -54,6 +76,7 @@ export function CodeAnswerCapture({
     setAnswerId(null);
     setAnswer(null);
     setSubmitError(null);
+    setVisualMetadata(defaultVisualSignalMetadata());
     setState("editing");
   }
 
@@ -96,19 +119,53 @@ export function CodeAnswerCapture({
       <label className="mt-4 block text-sm font-medium" htmlFor={`code-${questionId}`}>
         Code
       </label>
-      <textarea
-        id={`code-${questionId}`}
-        value={codeAnswer}
-        onChange={(event) => {
-          setCodeAnswer(event.target.value);
-          if (!answerId) setState("editing");
-        }}
-        disabled={Boolean(answerId)}
-        rows={12}
-        spellCheck={false}
-        className="mt-2 w-full resize-y rounded border border-[var(--border)] bg-black/40 p-3 font-mono text-sm leading-6 outline-none focus:border-[var(--accent)] disabled:opacity-70"
-        placeholder="Write your solution here. Static review only; no local execution."
-      />
+      {editorFailed ? (
+        <textarea
+          id={`code-${questionId}`}
+          value={codeAnswer}
+          onChange={(event) => {
+            setCodeAnswer(event.target.value);
+            if (!answerId) setState("editing");
+          }}
+          disabled={Boolean(answerId)}
+          rows={12}
+          spellCheck={false}
+          className="mt-2 w-full resize-y rounded border border-[var(--border)] bg-black/40 p-3 font-mono text-sm leading-6 outline-none focus:border-[var(--accent)] disabled:opacity-70"
+          placeholder="Write your solution here. Static review only; no local execution."
+        />
+      ) : (
+        <div className="mt-2 overflow-hidden rounded border border-[var(--border)]">
+          <MonacoEditor
+            height="320px"
+            language={monacoLanguage(codeLanguage)}
+            value={codeAnswer}
+            theme="vs-dark"
+            options={{
+              minimap: { enabled: false },
+              fontSize: 14,
+              wordWrap: "on",
+              readOnly: Boolean(answerId),
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+            }}
+            onChange={(value) => {
+              setCodeAnswer(value ?? "");
+              if (!answerId) setState("editing");
+            }}
+            onMount={() => setEditorFailed(false)}
+            onValidate={() => undefined}
+          />
+        </div>
+      )}
+      {!editorFailed && (
+        <button
+          type="button"
+          onClick={() => setEditorFailed(true)}
+          className="mt-2 text-xs text-[var(--muted)] underline"
+        >
+          Use fallback textarea
+        </button>
+      )}
 
       <label className="mt-4 block text-sm font-medium" htmlFor={`explanation-${questionId}`}>
         Explanation
@@ -129,6 +186,16 @@ export function CodeAnswerCapture({
       </div>
 
       {submitError && <p className="mt-3 text-sm text-red-200">{submitError}</p>}
+
+      {requiresVideo && (
+        <div className="mt-4">
+          <VisualSignalCapture
+            value={visualMetadata}
+            disabled={Boolean(answerId)}
+            onChange={setVisualMetadata}
+          />
+        </div>
+      )}
 
       <div className="mt-4 flex flex-wrap gap-3">
         <button
@@ -161,4 +228,14 @@ export function CodeAnswerCapture({
       />
     </div>
   );
+}
+
+function monacoLanguage(language: string) {
+  if (language === "typescript") return "typescript";
+  if (language === "javascript") return "javascript";
+  if (language === "python") return "python";
+  if (language === "java") return "java";
+  if (language === "go") return "go";
+  if (language === "sql") return "sql";
+  return "plaintext";
 }

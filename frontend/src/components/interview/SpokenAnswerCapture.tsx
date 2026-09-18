@@ -3,9 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 
 import { AnswerResultSummary } from "@/components/interview/AnswerResultSummary";
+import {
+  defaultVisualSignalMetadata,
+  VisualSignalCapture,
+} from "@/components/interview/VisualSignalCapture";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { api } from "@/lib/api";
-import type { CandidateAnswerRead } from "@/lib/types";
+import type { CandidateAnswerRead, VisualSignalMetadata } from "@/lib/types";
 
 type SpokenFlowState =
   | "idle"
@@ -18,7 +22,13 @@ type SpokenFlowState =
   | "evaluated"
   | "failed";
 
-export function SpokenAnswerCapture({ questionId }: { questionId: string }) {
+export function SpokenAnswerCapture({
+  questionId,
+  requiresVideo = false,
+}: {
+  questionId: string;
+  requiresVideo?: boolean;
+}) {
   const recorder = useAudioRecorder();
   const resetRecorder = recorder.reset;
   const previousQuestionIdRef = useRef(questionId);
@@ -26,6 +36,9 @@ export function SpokenAnswerCapture({ questionId }: { questionId: string }) {
   const [answerId, setAnswerId] = useState<string | null>(null);
   const [answer, setAnswer] = useState<CandidateAnswerRead | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [visualMetadata, setVisualMetadata] = useState<VisualSignalMetadata>(
+    defaultVisualSignalMetadata(),
+  );
 
   useEffect(() => {
     if (previousQuestionIdRef.current === questionId) return;
@@ -34,6 +47,7 @@ export function SpokenAnswerCapture({ questionId }: { questionId: string }) {
     setAnswerId(null);
     setAnswer(null);
     setSubmitError(null);
+    setVisualMetadata(defaultVisualSignalMetadata());
     resetRecorder();
   }, [questionId, resetRecorder]);
 
@@ -78,6 +92,7 @@ export function SpokenAnswerCapture({ questionId }: { questionId: string }) {
       const response = await api.submitSpokenAnswer(questionId, {
         audio: recorder.recording.file,
         duration_seconds: recorder.recording.durationSeconds,
+        visual_signal_metadata: requiresVideo ? visualMetadata : undefined,
       });
       setAnswerId(response.answer_id);
       setFlowState("processing");
@@ -91,6 +106,7 @@ export function SpokenAnswerCapture({ questionId }: { questionId: string }) {
     setAnswerId(null);
     setAnswer(null);
     setSubmitError(null);
+    setVisualMetadata(defaultVisualSignalMetadata());
     recorder.reset();
     setFlowState("idle");
   }
@@ -128,6 +144,16 @@ export function SpokenAnswerCapture({ questionId }: { questionId: string }) {
         <audio className="mt-4 w-full" controls src={recorder.recording.url}>
           <track kind="captions" />
         </audio>
+      )}
+
+      {requiresVideo && (
+        <div className="mt-4">
+          <VisualSignalCapture
+            value={visualMetadata}
+            disabled={Boolean(answerId)}
+            onChange={setVisualMetadata}
+          />
+        </div>
       )}
 
       <div className="mt-4 flex flex-wrap gap-3">

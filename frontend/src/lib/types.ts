@@ -149,7 +149,7 @@ export interface TtsResponse {
 }
 
 export interface VisualSignalMetadata {
-  face_in_frame_ratio?: number;
+  face_in_frame_ratio?: number | null;
   lighting_quality?: "good" | "moderate" | "poor" | string;
   eye_contact_proxy?: "steady" | "moderate" | "low" | string;
   posture_stability?: "steady" | "moderate" | "unstable" | string;

@@ -3,19 +3,29 @@
 import { useMemo, useState } from "react";
 
 import { AnswerResultSummary } from "@/components/interview/AnswerResultSummary";
+import {
+  defaultVisualSignalMetadata,
+  VisualSignalCapture,
+} from "@/components/interview/VisualSignalCapture";
 import { useSubmittedAnswerPolling } from "@/hooks/useSubmittedAnswerPolling";
 import { api } from "@/lib/api";
+import type { VisualSignalMetadata } from "@/lib/types";
 
 export function WrittenAnswerCapture({
   questionId,
   questionText,
+  requiresVideo = false,
 }: {
   questionId: string;
   questionText: string;
+  requiresVideo?: boolean;
 }) {
   const [textAnswer, setTextAnswer] = useState("");
   const [answerId, setAnswerId] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [visualMetadata, setVisualMetadata] = useState<VisualSignalMetadata>(
+    defaultVisualSignalMetadata(),
+  );
   const { answer, state, setAnswer, setState, refresh } = useSubmittedAnswerPolling(answerId);
 
   const wordCount = useMemo(
@@ -31,6 +41,7 @@ export function WrittenAnswerCapture({
     try {
       const response = await api.submitWrittenAnswer(questionId, {
         text_answer: textAnswer.trim(),
+        visual_signal_metadata: requiresVideo ? visualMetadata : undefined,
       });
       setAnswerId(response.answer_id);
       setState("processing");
@@ -44,6 +55,7 @@ export function WrittenAnswerCapture({
     setAnswerId(null);
     setAnswer(null);
     setSubmitError(null);
+    setVisualMetadata(defaultVisualSignalMetadata());
     setState("editing");
   }
 
@@ -85,6 +97,16 @@ export function WrittenAnswerCapture({
       </div>
 
       {submitError && <p className="mt-3 text-sm text-red-200">{submitError}</p>}
+
+      {requiresVideo && (
+        <div className="mt-4">
+          <VisualSignalCapture
+            value={visualMetadata}
+            disabled={Boolean(answerId)}
+            onChange={setVisualMetadata}
+          />
+        </div>
+      )}
 
       <div className="mt-4 flex flex-wrap gap-3">
         <button

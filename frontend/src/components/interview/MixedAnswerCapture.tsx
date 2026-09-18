@@ -1,9 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type React from "react";
 
 import { AnswerResultSummary } from "@/components/interview/AnswerResultSummary";
+import {
+  defaultVisualSignalMetadata,
+  VisualSignalCapture,
+} from "@/components/interview/VisualSignalCapture";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useSubmittedAnswerPolling } from "@/hooks/useSubmittedAnswerPolling";
 import { api } from "@/lib/api";
@@ -24,19 +27,9 @@ export function MixedAnswerCapture({ question }: { question: QuestionRead }) {
   const [textAnswer, setTextAnswer] = useState("");
   const [codeAnswer, setCodeAnswer] = useState("");
   const [codeLanguage, setCodeLanguage] = useState("python");
-  const [visualMetadata, setVisualMetadata] = useState<VisualSignalMetadata>({
-    face_in_frame_ratio: 0.9,
-    lighting_quality: "good",
-    eye_contact_proxy: "moderate",
-    posture_stability: "steady",
-    camera_presence: "stable",
-    safe_signal_labels: [
-      "face in frame",
-      "lighting quality",
-      "eye contact proxy",
-      "posture stability",
-    ],
-  });
+  const [visualMetadata, setVisualMetadata] = useState<VisualSignalMetadata>(
+    defaultVisualSignalMetadata(),
+  );
   const [answerId, setAnswerId] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const { answer, state, setAnswer, setState, refresh } = useSubmittedAnswerPolling(answerId);
@@ -86,6 +79,7 @@ export function MixedAnswerCapture({ question }: { question: QuestionRead }) {
     setAnswerId(null);
     setAnswer(null);
     setSubmitError(null);
+    setVisualMetadata(defaultVisualSignalMetadata());
     recorder.reset();
     setState("editing");
   }
@@ -227,8 +221,8 @@ export function MixedAnswerCapture({ question }: { question: QuestionRead }) {
       )}
 
       {requiresVideo && (
-        <VisualSignalMetadataPanel
-          metadata={visualMetadata}
+        <VisualSignalCapture
+          value={visualMetadata}
           disabled={Boolean(answerId)}
           onChange={setVisualMetadata}
         />
@@ -266,88 +260,6 @@ export function MixedAnswerCapture({ question }: { question: QuestionRead }) {
         onRefresh={answerId ? () => void refresh() : undefined}
       />
     </div>
-  );
-}
-
-function VisualSignalMetadataPanel({
-  metadata,
-  disabled,
-  onChange,
-}: {
-  metadata: VisualSignalMetadata;
-  disabled: boolean;
-  onChange: (metadata: VisualSignalMetadata) => void;
-}) {
-  return (
-    <section className="mt-4 rounded border border-[var(--border)] p-4">
-      <h4 className="text-sm font-semibold">Visual signal metadata</h4>
-      <p className="mt-1 text-xs leading-5 text-[var(--muted)]">
-        Optional mock/manual observable visual presence signals only. This does not request
-        camera access and does not detect emotion, personality, truthfulness, or true confidence.
-      </p>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <SelectField
-          label="Lighting quality"
-          value={String(metadata.lighting_quality ?? "good")}
-          disabled={disabled}
-          options={["good", "moderate", "poor"]}
-          onChange={(value) => onChange({ ...metadata, lighting_quality: value })}
-        />
-        <SelectField
-          label="Eye contact proxy"
-          value={String(metadata.eye_contact_proxy ?? "moderate")}
-          disabled={disabled}
-          options={["steady", "moderate", "low"]}
-          onChange={(value) => onChange({ ...metadata, eye_contact_proxy: value })}
-        />
-        <SelectField
-          label="Posture stability"
-          value={String(metadata.posture_stability ?? "steady")}
-          disabled={disabled}
-          options={["steady", "moderate", "unstable"]}
-          onChange={(value) => onChange({ ...metadata, posture_stability: value })}
-        />
-        <SelectField
-          label="Camera presence"
-          value={String(metadata.camera_presence ?? "stable")}
-          disabled={disabled}
-          options={["stable", "intermittent", "absent"]}
-          onChange={(value) => onChange({ ...metadata, camera_presence: value })}
-        />
-      </div>
-    </section>
-  );
-}
-
-function SelectField({
-  label,
-  value,
-  options,
-  disabled,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  options: string[];
-  disabled: boolean;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <label className="block text-sm">
-      <span className="font-medium">{label}</span>
-      <select
-        value={value}
-        disabled={disabled}
-        onChange={(event) => onChange(event.target.value)}
-        className="mt-2 w-full rounded border border-[var(--border)] bg-black/30 p-3 text-sm capitalize outline-none focus:border-[var(--accent)] disabled:opacity-70"
-      >
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-    </label>
   );
 }
 

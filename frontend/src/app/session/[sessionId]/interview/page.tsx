@@ -314,13 +314,18 @@ function ResponseCapturePanel({ question }: { question: QuestionRead }) {
           <MixedAnswerCapture key={`mixed-${question.id}`} question={question} />
         )}
         {!isMixed && showSpoken && (
-          <SpokenAnswerCapture key={`spoken-${question.id}`} questionId={question.id} />
+          <SpokenAnswerCapture
+            key={`spoken-${question.id}`}
+            questionId={question.id}
+            requiresVideo={question.requires_video}
+          />
         )}
         {!isMixed && showWritten && (
           <WrittenAnswerCapture
             key={`written-${question.id}`}
             questionId={question.id}
             questionText={question.question_text}
+            requiresVideo={question.requires_video}
           />
         )}
         {!isMixed && showCode && (
@@ -328,9 +333,10 @@ function ResponseCapturePanel({ question }: { question: QuestionRead }) {
             key={`code-${question.id}`}
             questionId={question.id}
             questionText={question.question_text}
+            requiresVideo={question.requires_video}
           />
         )}
-        {!isMixed && showVisual && (
+        {!isMixed && showVisual && !showSpoken && !showWritten && !showCode && (
           <CapturePlaceholder
             title="Visual signal metadata"
             status="Optional MVP"
